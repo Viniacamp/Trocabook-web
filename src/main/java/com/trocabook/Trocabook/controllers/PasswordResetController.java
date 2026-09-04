@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
+/*
 @Controller
 public class PasswordResetController {
 
@@ -135,4 +135,4 @@ public class PasswordResetController {
     private String getAppUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
-}
+}*/

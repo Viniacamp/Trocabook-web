@@ -1,4 +1,4 @@
-package com.trocabook.Trocabook.service;
+/*package com.trocabook.Trocabook.service;
 
 import com.trocabook.Trocabook.model.Categoria;
 import com.trocabook.Trocabook.model.dto.MyMemoryResponse;
@@ -117,4 +117,4 @@ public class TraducaoService {
         System.out.println("⏳ Fallback ativado (RateLimiter): " + ex.getMessage());
         return texto; // retorna original
     }
-}
+}*/

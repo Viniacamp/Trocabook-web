@@ -3,7 +3,7 @@ package com.trocabook.Trocabook.controllers;
 import com.trocabook.Trocabook.model.Usuario;
 import com.trocabook.Trocabook.model.UsuarioLivro;
 import com.trocabook.Trocabook.repository.UsuarioLivroRepository;
-import com.trocabook.Trocabook.service.LivroService; // 1. Importar o LivroService
+import com.trocabook.Trocabook.service.ILivroService; // 1. Importar o LivroService
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ public class LivrosController {
 
     // 2. Injetar o LivroService que vai conter a lógica de negócio
     @Autowired
-    private LivroService livroService;
+    private ILivroService livroService;
 
     private final Set<String> filtrosValidos = Set.of("TROCA", "VENDA", "AMBOS");
 

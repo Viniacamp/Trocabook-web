@@ -2,9 +2,11 @@ package com.trocabook.Trocabook.controllers;
 
 import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.UsuarioLivro;
+import com.trocabook.Trocabook.model.dto.UsuarioFirebaseOutput;
 import com.trocabook.Trocabook.repository.LivroRepository;
 import com.trocabook.Trocabook.repository.UsuarioLivroRepository;
 import com.trocabook.Trocabook.repository.UsuarioRepository;
+import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,14 +32,24 @@ public class IndexController {
     @Autowired
     private UsuarioLivroRepository usuarioLivroRepository;
 
+	@Autowired
+	private UsuarioAutenticadoService usuarioAutenticadoService;
+
 	@GetMapping("/")
 	public String index(Model model, HttpSession sessao) {
-		Usuario usuario = (Usuario) sessao.getAttribute("usuarioLogado");
-		if (usuario != null) {
+		try {
+			UsuarioFirebaseOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
+
 			model.addAttribute("usuario", usuario);
+		} catch (IllegalStateException ex){
+
 		}
-		List<Usuario> destaques = usuarioRepository.findTop6ByOrderByAvaliacaoDesc();
+
+		List<Usuario> destaques =
+				usuarioRepository.findTop6ByOrderByAvaliacaoDesc();
+
 		model.addAttribute("destaques", destaques);
+
 		return "index";
 	}
 	

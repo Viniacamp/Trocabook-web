@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+/*
 @Service
 public class LivroService {
 
@@ -260,4 +260,4 @@ public class LivroService {
 
         return resposta.getBody();
     }
-}
+}*/

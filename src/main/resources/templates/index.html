@@ -40,12 +40,12 @@
                         </form>
 
                         <span style="color: white; margin-left: 15px; font-weight: bold;">
-                            Olá, <span th:text="${#authentication.principal.usuario.nmUsuario}"></span>
+                            Olá, <span th:text="${usuario.nome}"></span>
                         </span>
                     </th:block>
 
                     <th:block sec:authorize="!isAuthenticated()">
-                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
+                        <a href="/loginNovo" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
                     </th:block>
                 </th></tr>
             </table>
@@ -83,7 +83,7 @@
                 <img src="/img/61460909.jpg" class="capaLivros">
                 <p>Livro Senhor dos Aneis: A Sociedade do Anel</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=10&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=10&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -96,7 +96,7 @@
                 <img src="/img/IALIVRO.png" class="capaLivros">
                 <p>A Era da IA: e nosso futuro como humanos</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=1&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=1&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -109,7 +109,7 @@
                 <img src="/img/livro2.png" class="capaLivros">
                 <p>A Floresta Sombria</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=2&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=2&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -122,7 +122,7 @@
                 <img src="/img/culpa.jpg" class="capaLivros">
                 <p>A Culpa é das Estrelas</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=3&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=3&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -135,7 +135,7 @@
                 <img src="/img/livro4.png" class="capaLivros">
                 <p>O Pequeno Príncipe</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=4&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=4&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -148,7 +148,7 @@
                 <img src="/img/livro6.png" class="capaLivros">
                 <p>365 Reflexões Estóicas</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=5&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=5&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -161,7 +161,7 @@
                 <img src="/img/dom casmurro.jpg" class="capaLivros">
                 <p>Dom Casmurro</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=6&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=6&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -174,7 +174,7 @@
                 <img src="/img/harry.jpg" class="capaLivros">
                 <p>Coletânea Harry Potter</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=7&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=7&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -187,7 +187,7 @@
                 <img src="/img/capa-ampliada-9788575224380.jpg" class="capaLivros">
                 <p>Fundamentos de html5 e css3</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=8&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=8&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>
@@ -200,7 +200,7 @@
                 <img src="/img/engenharia de software.jpg" class="capaLivros">
                 <p>Sommerville - Engenharia de Software</p>
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=9&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+                    <a th:href="@{'/chat/conversar?usuarioLivro=9&remetente=' + ${usuario.id}}">
                         <button type="button">Negociar</button>
                     </a>
                 </th:block>

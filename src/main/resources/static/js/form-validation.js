@@ -54,7 +54,7 @@ function validatePasswordRules(senha) {
 }
 
 // --- VALIDAÇÃO PRINCIPAL DO FORMULÁRIO (CHAMADA NO SUBMIT) ---
-function validateForm() {
+export function validateForm() {
     let isValid = true;
 
     // Função auxiliar para mostrar erros de forma padronizada
