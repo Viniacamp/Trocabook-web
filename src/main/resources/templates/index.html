@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
     <title>Home | Trocabook</title>
 </head>
-<body>
+<body th:attr="data-application-instance=${applicationInstance}">
 <div class="container">
     <header>
         <div class="wrapper">
@@ -35,9 +35,7 @@
                         <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
                         <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
 
-                        <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" id="deslogar">Sair</button>
-                        </form>
+                        <button type="button" id="deslogar">Sair</button>
 
                         <span style="color: white; margin-left: 15px; font-weight: bold;">
                             Olá, <span th:text="${usuario.nome}"></span>
@@ -45,7 +43,7 @@
                     </th:block>
 
                     <th:block sec:authorize="!isAuthenticated()">
-                        <a href="/loginNovo" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
+                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
                     </th:block>
                 </th></tr>
             </table>
@@ -71,147 +69,59 @@
             <th><h1>Negociantes em Destaque</h1>
                 <div class="responsive-destaques">
                     <div th:each="destaque : ${destaques}">
-                        <a th:href="@{'destaque/' + ${destaque.cdUsuario}}"><img th:src="${destaque.foto}" alt="Usuário em destaque"></a>
+                        <a th:href="@{'/destaque/' + ${destaque.id}}">
+                            <img th:src="${destaque.fotoPerfil}" alt="Usuário em destaque">
+                        </a>
                     </div>
                 </div>
             </th>
     </table>
+
     <div class="livros">
         <h2>Propostas recentes</h2>
+
         <section class="livros-grid">
-            <div class="livro-card">
-                <img src="/img/61460909.jpg" class="capaLivros">
-                <p>Livro Senhor dos Aneis: A Sociedade do Anel</p>
+
+            <div class="livro-card" th:each="anuncio : ${anuncios}">
+
+                <img th:src="${anuncio.capa}"
+                     class="capaLivros"
+                     alt="Capa do livro">
+
+                <p th:text="${anuncio.titulo}"></p>
+
                 <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=10&remetente=' + ${usuario.id}}">
+
+                    <a th:href="@{/chat/conversar(
+                        anuncio=${anuncio.id},
+                        remetente=${usuario.id},
+                        destinatario=${anuncio.uidUsuario}
+                    )}">
                         <button type="button">Negociar</button>
                     </a>
+
                 </th:block>
+
                 <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
+
+                    <a href="/login">
+                        <button type="button">Negociar</button>
+                    </a>
+
                 </th:block>
+
             </div>
 
-            <div class="livro-card">
-                <img src="/img/IALIVRO.png" class="capaLivros">
-                <p>A Era da IA: e nosso futuro como humanos</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=1&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/livro2.png" class="capaLivros">
-                <p>A Floresta Sombria</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=2&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/culpa.jpg" class="capaLivros">
-                <p>A Culpa é das Estrelas</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=3&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/livro4.png" class="capaLivros">
-                <p>O Pequeno Príncipe</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=4&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/livro6.png" class="capaLivros">
-                <p>365 Reflexões Estóicas</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=5&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/dom casmurro.jpg" class="capaLivros">
-                <p>Dom Casmurro</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=6&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/harry.jpg" class="capaLivros">
-                <p>Coletânea Harry Potter</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=7&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/capa-ampliada-9788575224380.jpg" class="capaLivros">
-                <p>Fundamentos de html5 e css3</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=8&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
-
-            <div class="livro-card">
-                <img src="/img/engenharia de software.jpg" class="capaLivros">
-                <p>Sommerville - Engenharia de Software</p>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{'/chat/conversar?usuarioLivro=9&remetente=' + ${usuario.id}}">
-                        <button type="button">Negociar</button>
-                    </a>
-                </th:block>
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a href="/login"><button type="button">Negociar</button></a>
-                </th:block>
-            </div>
         </section>
-        <a style="text-decoration: none", href="/livros">
-            <p style="text-align: right; text-decoration: none; color:#007BFF">> Ver todos os anúncios</p>
+
+        <a style="text-decoration: none" href="/livros">
+            <p style="text-align: right;
+                  text-decoration: none;
+                  color:#007BFF">
+                &gt; Ver todos os anúncios
+            </p>
         </a>
+
         <br><br><br>
     </div>
 
@@ -226,4 +136,39 @@
 </div>
 </body>
 <script src="/js/fetch.js"></script>
+<script type="module" src="/js/logout.js"></script>
+<script type="module">
+
+    import { signOut }
+        from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import { auth } from "/js/firebase.js";
+
+    const instanceAtual =
+        document.body.dataset.applicationInstance;
+
+    const instanceAnterior =
+        localStorage.getItem("trocabookInstance");
+
+    if (instanceAnterior && instanceAnterior !== instanceAtual) {
+
+        await signOut(auth);
+
+        localStorage.setItem(
+            "trocabookInstance",
+            instanceAtual
+        );
+
+        window.location.href = "/login";
+
+    } else {
+
+        localStorage.setItem(
+            "trocabookInstance",
+            instanceAtual
+        );
+
+    }
+
+</script>
 </html>

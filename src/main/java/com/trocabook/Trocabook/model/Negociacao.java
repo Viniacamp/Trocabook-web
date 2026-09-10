@@ -1,103 +1,186 @@
 package com.trocabook.Trocabook.model;
 
+import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.CreationTimestamp;
+public class Negociacao implements Serializable {
 
-import jakarta.validation.Valid;
+    private String id;
 
-@Entity
-public class Negociacao {
-    @Valid
+    private String usuarioAnuncianteId;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cdNegociacao;
+    private String usuarioCompradorId;
 
-    @ManyToOne
-    @JoinColumn(name = "cd_usuarioAnunciante", nullable = false)
-    private Usuario usuarioAnunciante;
+    private String anuncioId;
 
-    @ManyToOne
-    @JoinColumn(name = "cd_usuarioInteressado", nullable = false)
-    private Usuario usuarioInteressado;
+    private String dataNegociacao;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime dtNegociacao;
+    private TipoNegociacao tipoNegociacao;
 
-    @ManyToOne
-    @JoinColumn(name = "cd_livro", nullable = false)
-    private Livro livro;
+    private String nmAnunciante;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull(message = "Selecione o Tipo da Resolução da Negociação")
-    private Tipo tipo;
+    private String fotoPerfilAnunciante;
 
-    public int getCdNegociacao() {
-        return cdNegociacao;
+    private String nmComprador;
+
+    private String fotoPerfilComprador;
+
+    private String titulo;
+
+    private String capa;
+
+    public Negociacao() {
     }
 
-    public void setCdNegociacao(int cd_negociacao) {
-        this.cdNegociacao = cd_negociacao;
+    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, String dataNegociacao, TipoNegociacao tipoNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa) {
+        this.id = id;
+        this.usuarioAnuncianteId = usuarioAnuncianteId;
+        this.usuarioCompradorId = usuarioCompradorId;
+        this.anuncioId = anuncioId;
+        this.dataNegociacao = dataNegociacao;
+        this.tipoNegociacao = tipoNegociacao;
+        this.nmAnunciante = nmAnunciante;
+        this.fotoPerfilAnunciante = fotoPerfilAnunciante;
+        this.nmComprador = nmComprador;
+        this.fotoPerfilComprador = fotoPerfilComprador;
+        this.titulo = titulo;
+        this.capa = capa;
     }
 
-    // --- CORRIGIDO ---
-    public Usuario getUsuarioAnunciante() {
-        // Retorna uma CÓPIA, não a referência interna
-        return (this.usuarioAnunciante == null) ? null : new Usuario(this.usuarioAnunciante);
+    public String getId() {
+        return id;
     }
 
-    // --- CORRIGIDO ---
-    public void setUsuarioAnunciante(Usuario usuarioAnunciante) {
-        // Armazena uma CÓPIA, não a referência externa
-        this.usuarioAnunciante = (usuarioAnunciante == null) ? null : new Usuario(usuarioAnunciante);
+    public void setId(String id) {
+        this.id = id;
     }
 
-    // --- CORRIGIDO ---
-    public Usuario getUsuarioInteressado() {
-        // Retorna uma CÓPIA, não a referência interna
-        return (this.usuarioInteressado == null) ? null : new Usuario(this.usuarioInteressado);
+    public String getUsuarioAnuncianteId() {
+        return usuarioAnuncianteId;
     }
 
-    // --- CORRIGIDO ---
-    public void setUsuarioInteressado(Usuario usuarioInteressado) {
-        // Armazena uma CÓPIA, não a referência externa
-        this.usuarioInteressado = (usuarioInteressado == null) ? null : new Usuario(usuarioInteressado);
+    public void setUsuarioAnuncianteId(String usuarioAnuncianteId) {
+        this.usuarioAnuncianteId = usuarioAnuncianteId;
     }
 
-    public LocalDateTime getDtNegociacao() {
-        return dtNegociacao; // Seguro, LocalDateTime é IMUTÁVEL
+    public String getUsuarioCompradorId() {
+        return usuarioCompradorId;
     }
 
-    public void setDtNegociacao(LocalDateTime dtNegociacao) {
-        this.dtNegociacao = dtNegociacao; // Seguro, LocalDateTime é IMUTÁVEL
+    public void setUsuarioCompradorId(String usuarioCompradorId) {
+        this.usuarioCompradorId = usuarioCompradorId;
     }
 
-    // --- CORRIGIDO ---
-    public Livro getLivro() {
-        // Retorna uma CÓPIA, não a referência interna
-        return (this.livro == null) ? null : new Livro(this.livro);
+    public String getAnuncioId() {
+        return anuncioId;
     }
 
-    // --- CORRIGIDO ---
-    public void setLivro(Livro livro) {
-        // Armazena uma CÓPIA, não a referência externa
-        this.livro = (livro == null) ? null : new Livro(livro);
+    public void setAnuncioId(String anuncioId) {
+        this.anuncioId = anuncioId;
     }
 
-    public Tipo getTipo() {
-        return tipo; // Seguro, Enum é IMUTÁVEL
+    public String getDataNegociacao() {
+        return dataNegociacao;
     }
 
-    public void setTipo(Tipo tipo) {
-        this.tipo = tipo; // Seguro, Enum é IMUTÁVEL
+    public void setDataNegociacao(String dataNegociacao) {
+        this.dataNegociacao = dataNegociacao;
     }
 
-    public enum Tipo{
+    public TipoNegociacao getTipoNegociacao() {
+        return tipoNegociacao;
+    }
+
+    public void setTipoNegociacao(TipoNegociacao tipoNegociacao) {
+        this.tipoNegociacao = tipoNegociacao;
+    }
+
+    public String getNmAnunciante() {
+        return nmAnunciante;
+    }
+
+    public void setNmAnunciante(String nmAnunciante) {
+        this.nmAnunciante = nmAnunciante;
+    }
+
+    public String getFotoPerfilAnunciante() {
+        return fotoPerfilAnunciante;
+    }
+
+    public void setFotoPerfilAnunciante(String fotoPerfilAnunciante) {
+        this.fotoPerfilAnunciante = fotoPerfilAnunciante;
+    }
+
+    public String getNmComprador() {
+        return nmComprador;
+    }
+
+    public void setNmComprador(String nmComprador) {
+        this.nmComprador = nmComprador;
+    }
+
+    public String getFotoPerfilComprador() {
+        return fotoPerfilComprador;
+    }
+
+    public void setFotoPerfilComprador(String fotoPerfilComprador) {
+        this.fotoPerfilComprador = fotoPerfilComprador;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getCapa() {
+        return capa;
+    }
+
+    public void setCapa(String capa) {
+        this.capa = capa;
+    }
+
+    public enum TipoNegociacao {
         TROCA, VENDA, AMBOS
+    }
+
+    public static Negociacao from(NegociacaoDTO negociacaoDTO){
+        return new Negociacao(
+                negociacaoDTO.id(),
+                negociacaoDTO.usuarioAnuncianteId(),
+                negociacaoDTO.usuarioCompradorId(),
+                negociacaoDTO.anuncioId(),
+                negociacaoDTO.dataNegociacao().toString(),
+                TipoNegociacao.valueOf(negociacaoDTO.tipoNegociacao()),
+                negociacaoDTO.nmAnunciante(),
+                negociacaoDTO.fotoPerfilAnunciante(),
+                negociacaoDTO.nmComprador(),
+                negociacaoDTO.fotoPerfilComprador(),
+                negociacaoDTO.titulo(),
+                negociacaoDTO.capa()
+        );
+
+    }
+
+    public NegociacaoDTO paraDto(){
+        return new NegociacaoDTO(
+                this.id,
+                this.usuarioAnuncianteId,
+                this.usuarioCompradorId,
+                this.anuncioId,
+                LocalDateTime.parse(this.dataNegociacao),
+                this.tipoNegociacao.name(),
+                this.nmAnunciante,
+                this.fotoPerfilAnunciante,
+                this.nmComprador,
+                this.fotoPerfilComprador,
+                this.titulo,
+                this.capa
+        );
     }
 }

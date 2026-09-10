@@ -1,7 +1,7 @@
 package com.trocabook.Trocabook.service.impl;
 
 import com.trocabook.Trocabook.service.ITraducaoService;
-import com.trocabook.Trocabook.service.MyMemoryAPIService;
+import com.trocabook.Trocabook.service.feign.MyMemoryAPIService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -2,79 +2,107 @@ package com.trocabook.Trocabook.service.impl;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
-import com.trocabook.Trocabook.model.UsuarioFirebase;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseInput;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseOutput;
-import com.trocabook.Trocabook.repository.UsuarioFirebaseRepository;
-import com.trocabook.Trocabook.service.FirebaseAuthService;
+import com.trocabook.Trocabook.model.Usuario;
+import com.trocabook.Trocabook.model.dto.UsuarioInput;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.repository.UsuarioRepository;
 import com.trocabook.Trocabook.service.IUsuarioService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UsuarioService implements IUsuarioService {
-    private final UsuarioFirebaseRepository usuarioFirebaseRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private final FirebaseAuthService firebaseAuthService;
 
-    public UsuarioService(UsuarioFirebaseRepository usuarioFirebaseRepository, FirebaseAuthService firebaseAuthService) {
-        this.usuarioFirebaseRepository = usuarioFirebaseRepository;
+    public UsuarioService(UsuarioRepository usuarioRepository, FirebaseAuthService firebaseAuthService) {
+        this.usuarioRepository = usuarioRepository;
         this.firebaseAuthService = firebaseAuthService;
     }
 
     @Override
-    public void cadastrar(UsuarioFirebaseInput input) throws FirebaseAuthException {
+    public void cadastrar(UsuarioInput input) throws FirebaseAuthException {
         UserRecord userRecord = firebaseAuthService.criarUsuario(
                 input.emailPrincipal(),
                 input.senha()
         );
 
-        UsuarioFirebase entidade = UsuarioFirebase.from(input);
+        Usuario entidade = Usuario.from(input);
         entidade.setId(userRecord.getUid());
 
-        usuarioFirebaseRepository.cadastrar(entidade);
+        usuarioRepository.cadastrar(entidade);
 
     }
 
     @Override
-    public UsuarioFirebaseOutput logar(String uid) {
-        UsuarioFirebase usuarioFirebase = usuarioFirebaseRepository.buscarPorUid(uid);
+    public UsuarioOutput buscarPorUid(String uid) {
+        Usuario usuario = usuarioRepository.buscarPorUid(uid);
 
-        if (usuarioFirebase == null){
+        if (usuario == null){
             return null;
         }
 
-        return usuarioFirebase.paraOutput();
+        return usuario.paraOutput();
     }
 
     @Override
-    public UsuarioFirebaseOutput atualizar(String uid, UsuarioFirebaseInput input) {
-        if (usuarioFirebaseRepository.buscarPorUid(uid) == null){
+    public UsuarioOutput atualizar(String uid, UsuarioInput input) {
+        if (usuarioRepository.buscarPorUid(uid) == null){
             return null;
         }
 
-        UsuarioFirebase entidade = UsuarioFirebase.from(input);
+        Usuario entidade = Usuario.from(input);
 
         entidade.setId(uid);
 
-        UsuarioFirebase entidadeSalva = usuarioFirebaseRepository.atualizar(entidade);
+        Usuario entidadeSalva = usuarioRepository.atualizar(entidade);
         return entidadeSalva.paraOutput();
     }
 
 
     @Override
     public void deletar(String uid) {
-        if (usuarioFirebaseRepository.buscarPorUid(uid) != null){
-            usuarioFirebaseRepository.deletar(uid);
+        if (usuarioRepository.buscarPorUid(uid) != null){
+            usuarioRepository.deletar(uid);
         }
     }
 
     @Override
     public boolean existeComEmail(String email) {
-        return usuarioFirebaseRepository.buscarPorEmail(email) != null;
+        return usuarioRepository.buscarPorEmail(email) != null;
     }
 
     @Override
     public boolean existeComCpf(String cpf) {
-        return usuarioFirebaseRepository.buscarPorCpf(cpf) != null;
+        return usuarioRepository.buscarPorCpf(cpf) != null;
+    }
+
+    @Override
+    public UsuarioOutput buscarPorEmail(String email) {
+        Usuario usuario =
+                usuarioRepository.buscarPorEmail(email);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        return usuario.paraOutput();
+    }
+
+    @Override
+    public List<UsuarioOutput> buscarMelhoresAvaliados() {
+        return usuarioRepository.buscaTop6Avaliacao().stream()
+                .map(Usuario::paraOutput)
+                .toList();
+    }
+
+    @Override
+    public List<UsuarioOutput> buscarTodos() {
+        return usuarioRepository.buscarTodos()
+                .stream()
+                .map(Usuario::paraOutput)
+                .toList();
     }
 }

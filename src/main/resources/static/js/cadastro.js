@@ -67,3 +67,54 @@ if (cadastroForm) {
 
     });
 }
+
+/*
+ * Mostrar / ocultar senha
+ */
+const togglePassword = document.getElementById("togglePassword");
+const passwordField = document.getElementById("senha");
+
+if (togglePassword && passwordField) {
+
+    togglePassword.addEventListener("click", function () {
+
+        const tipoAtual =
+            passwordField.getAttribute("type");
+
+        const icone =
+            togglePassword.querySelector("i");
+
+        if (tipoAtual === "password") {
+
+            passwordField.setAttribute(
+                "type",
+                "text"
+            );
+
+            icone.classList.remove("fa-eye");
+            icone.classList.add("fa-eye-slash");
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Ocultar senha"
+            );
+
+        } else {
+
+            passwordField.setAttribute(
+                "type",
+                "password"
+            );
+
+            icone.classList.remove("fa-eye-slash");
+            icone.classList.add("fa-eye");
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Mostrar senha"
+            );
+        }
+
+    });
+
+}

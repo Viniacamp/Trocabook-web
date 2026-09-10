@@ -1,257 +1,535 @@
 package com.trocabook.Trocabook.config;
 
+import com.google.firebase.auth.FirebaseAuthException;
+import com.trocabook.Trocabook.model.Anuncio;
 import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.Negociacao;
-import com.trocabook.Trocabook.model.Usuario;
-import com.trocabook.Trocabook.model.UsuarioLivro;
-import com.trocabook.Trocabook.repository.LivroRepository;
-import com.trocabook.Trocabook.repository.NegociacaoRepository;
-import com.trocabook.Trocabook.repository.UsuarioLivroRepository;
-import com.trocabook.Trocabook.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.trocabook.Trocabook.model.dto.AnuncioDTO;
+import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
+import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
+import com.trocabook.Trocabook.model.dto.UsuarioInput;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.service.IAnuncioService;
+import com.trocabook.Trocabook.service.ILivroService;
+import com.trocabook.Trocabook.service.INegociacaoService;
+import com.trocabook.Trocabook.service.IUsuarioService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final IUsuarioService usuarioService;
+    private final ILivroService livroService;
+    private final IAnuncioService anuncioService;
+    private final INegociacaoService negociacaoService;
 
-    @Autowired
-    private LivroRepository livroRepository;
-
-    @Autowired
-    private UsuarioLivroRepository usuarioLivroRepository;
-
-    @Autowired
-    private NegociacaoRepository negociacaoRepository;
+    public DataInitializer(
+            IUsuarioService usuarioService,
+            ILivroService livroService,
+            IAnuncioService anuncioService,
+            INegociacaoService negociacaoService
+    ) {
+        this.usuarioService = usuarioService;
+        this.livroService = livroService;
+        this.anuncioService = anuncioService;
+        this.negociacaoService = negociacaoService;
+    }
 
     @Override
-    public void run(String... args) {
-        if (usuarioRepository.count() > 0 || livroRepository.count() > 0) {
+    public void run(String... args) throws Exception {
+        if (!usuarioService.buscarTodos().isEmpty()) {
+            System.out.println("Dados iniciais já existentes. Inicialização ignorada.");
             return;
         }
 
-        // --- USUÁRIOS COM DADOS CORRIGIDOS ---
-        Usuario u1 = new Usuario();
-        u1.setNmUsuario("squirtle");
-        u1.setEmail("squirtle@gmail.com");
-        u1.setSenha("Squirtle@123");
-        u1.setCPF("087.382.730-98");     // <-- CPF COM MÁSCARA
-        u1.setFoto("/img/vendedor1.svg");
-        u1.setAvaliacao(4.8);
-        u1.setStatus('A');
+        // ============================================================
+        // USUÁRIOS
+        // ============================================================
 
-        Usuario u2 = new Usuario();
-        u2.setNmUsuario("PedroLucas");
-        u2.setEmail("pedrol@gmail.com");
-        u2.setSenha("Pedro@456");
-        u2.setCPF("796.895.940-36");    // <-- CPF COM MÁSCARA
-        u2.setFoto("/img/vendedor2.svg");
-        u2.setAvaliacao(4.7);
-        u2.setStatus('A');
+        UsuarioOutput squirtle = criarUsuario(
+                new UsuarioInput(
+                        "squirtle",
+                        "087.382.730-98",
+                        "squirtle@gmail.com",
+                        null,
+                        "Squirtle@123",
+                        "/img/vendedor1.svg",
+                        null,
+                        LocalDate.of(2000, 1, 1),
+                        "123456789",
+                        "(11) 99999-1111"
+                )
+        );
 
-        Usuario u3 = new Usuario();
-        u3.setNmUsuario("Rafaela");
-        u3.setEmail("rafa@gmail.com");
-        u3.setSenha("Rafaela@789");
-        u3.setCPF("336.443.280-56");   // <-- CPF COM MÁSCARA
-        u3.setFoto("/img/vendedor3.svg");
-        u3.setAvaliacao(4.9);
-        u3.setStatus('A');
+        UsuarioOutput pedroLucas = criarUsuario(
+                new UsuarioInput(
+                        "PedroLucas",
+                        "796.895.940-36",
+                        "pedrol@gmail.com",
+                        null,
+                        "Pedro@456",
+                        "/img/vendedor2.svg",
+                        null,
+                        LocalDate.of(2000, 2, 2),
+                        "234567890",
+                        "(11) 99999-2222"
+                )
+        );
 
-        Usuario u4 = new Usuario();
-        u4.setNmUsuario("Vinicius");
-        u4.setEmail("vini@gmail.com");
-        u4.setSenha("Vini@101");
-        u4.setCPF("189.621.590-40");   // <-- CPF COM MÁSCARA
-        u4.setFoto("/img/vendedor4.svg");
-        u4.setAvaliacao(4.84);
-        u4.setStatus('A');
+        UsuarioOutput rafaela = criarUsuario(
+                new UsuarioInput(
+                        "Rafaela",
+                        "336.443.280-56",
+                        "rafa@gmail.com",
+                        null,
+                        "Rafaela@789",
+                        "/img/vendedor3.svg",
+                        null,
+                        LocalDate.of(2000, 3, 3),
+                        "345678901",
+                        "(11) 99999-3333"
+                )
+        );
 
-        Usuario u5 = new Usuario();
-        u5.setNmUsuario("Welligton");
-        u5.setEmail("well@gmail.com");
-        u5.setSenha("Well@202");
-        u5.setCPF("801.049.840-82");   // <-- CPF COM MÁSCARA
-        u5.setFoto("/img/vendedor5.svg");
-        u5.setAvaliacao(4.7);
-        u5.setStatus('A');
+        UsuarioOutput vinicius = criarUsuario(
+                new UsuarioInput(
+                        "Vinicius",
+                        "189.621.590-40",
+                        "vini@gmail.com",
+                        null,
+                        "Vini@101",
+                        "/img/vendedor4.svg",
+                        null,
+                        LocalDate.of(2000, 4, 4),
+                        "456789012",
+                        "(11) 99999-4444"
+                )
+        );
 
-        Usuario u6 = new Usuario();
-        u6.setNmUsuario("Gpt");
-        u6.setEmail("gpt@gmail.com");
-        u6.setSenha("GptBot@2025!");
-        u6.setCPF("598.833.780-50");     // <-- CPF COM MÁSCARA
-        u6.setFoto("/img/vendedor6.svg");
-        u6.setAvaliacao(0);
-        u6.setStatus('A');
-        // --- O RESTANTE DO CÓDIGO PERMANECE O MESMO ---
+        UsuarioOutput wellington = criarUsuario(
+                new UsuarioInput(
+                        "Welligton",
+                        "801.049.840-82",
+                        "well@gmail.com",
+                        null,
+                        "Well@202",
+                        "/img/vendedor5.svg",
+                        null,
+                        LocalDate.of(2000, 5, 5),
+                        "567890123",
+                        "(11) 99999-5555"
+                )
+        );
 
-        Livro l1 = new Livro();
-        l1.setNmLivro("A Era da IA: e nosso futuro como humanos");
-        l1.setAnoPublicacao(1980);
-        l1.setCapa("/img/IALIVRO.png");
+        UsuarioOutput gpt = criarUsuario(
+                new UsuarioInput(
+                        "Gpt",
+                        "598.833.780-50",
+                        "gpt@gmail.com",
+                        null,
+                        "GptBot@2025!",
+                        "/img/vendedor6.svg",
+                        null,
+                        LocalDate.of(2000, 6, 6),
+                        "678901234",
+                        "(11) 99999-6666"
+                )
+        );
 
-        Livro l2 = new Livro();
-        l2.setNmLivro("A Floresta Sombria");
-        l2.setAnoPublicacao(1980);
-        l2.setCapa("/img/livro2.png");
+        // ============================================================
+        // LIVROS
+        // ============================================================
 
-        Livro l3 = new Livro();
-        l3.setNmLivro("A Culpa é das Estrelas");
-        l3.setAnoPublicacao(1980);
-        l3.setCapa("/img/culpa.jpg");
+        Livro livro1 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-1",
+                        "A Era da IA: e nosso futuro como humanos",
+                        List.of("Henry Kissinger"),
+                        "Companhia das Letras",
+                        "1980",
+                        "/img/IALIVRO.png",
+                        "pt",
+                        List.of("Tecnologia", "Inteligência Artificial")
+                )
+        );
 
-        Livro l4 = new Livro();
-        l4.setNmLivro("O Pequeno Príncipe");
-        l4.setAnoPublicacao(1980);
-        l4.setCapa("/img/livro4.png");
+        Livro livro2 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-2",
+                        "A Floresta Sombria",
+                        List.of("Liu Cixin"),
+                        "Suma",
+                        "1980",
+                        "/img/livro2.png",
+                        "pt",
+                        List.of("Ficção Científica")
+                )
+        );
 
-        Livro l5 = new Livro();
-        l5.setNmLivro("365 Reflexões Estóica");
-        l5.setAnoPublicacao(1980);
-        l5.setCapa("/img/livro6.png");
+        Livro livro3 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-3",
+                        "A Culpa é das Estrelas",
+                        List.of("John Green"),
+                        "Intrínseca",
+                        "1980",
+                        "/img/culpa.jpg",
+                        "pt",
+                        List.of("Romance")
+                )
+        );
 
-        Livro l6 = new Livro();
-        l6.setNmLivro("Dom Casmurro");
-        l6.setAnoPublicacao(1980);
-        l6.setCapa("/img/dom casmurro.jpg");
+        Livro livro4 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-4",
+                        "O Pequeno Príncipe",
+                        List.of("Antoine de Saint-Exupéry"),
+                        "Agir",
+                        "1980",
+                        "/img/livro4.png",
+                        "pt",
+                        List.of("Literatura", "Infantil")
+                )
+        );
 
-        Livro l7 = new Livro();
-        l7.setNmLivro("Coletânea Harry Potter");
-        l7.setAnoPublicacao(1980);
-        l7.setCapa("/img/harry.jpg");
+        Livro livro5 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-5",
+                        "365 Reflexões Estóicas",
+                        List.of("Ryan Holiday"),
+                        "Alta Books",
+                        "1980",
+                        "/img/livro6.png",
+                        "pt",
+                        List.of("Filosofia")
+                )
+        );
 
-        Livro l8 = new Livro();
-        l8.setNmLivro("Fundamentos de html5 e css3");
-        l8.setAnoPublicacao(1980);
-        l8.setCapa("/img/capa-ampliada-9788575224380.jpg");
+        Livro livro6 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-6",
+                        "Dom Casmurro",
+                        List.of("Machado de Assis"),
+                        "Penguin-Companhia",
+                        "1980",
+                        "/img/dom casmurro.jpg",
+                        "pt",
+                        List.of("Literatura Brasileira")
+                )
+        );
 
-        Livro l9 = new Livro();
-        l9.setNmLivro("Sommerville - Engenharia de Software");
-        l9.setAnoPublicacao(1980);
-        l9.setCapa("/img/engenharia de software.jpg");
+        Livro livro7 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-7",
+                        "Coletânea Harry Potter",
+                        List.of("J. K. Rowling"),
+                        "Rocco",
+                        "1980",
+                        "/img/harry.jpg",
+                        "pt",
+                        List.of("Fantasia")
+                )
+        );
 
-        Livro l10 = new Livro();
-        l10.setNmLivro("Livro Senhor dos Aneis A Sociedade do Anel");
-        l10.setAnoPublicacao(1980);
-        l10.setCapa("/img/61460909.jpg");
+        Livro livro8 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-8",
+                        "Fundamentos de HTML5 e CSS3",
+                        List.of("Eric Freeman", "Elisabeth Robson"),
+                        "Alta Books",
+                        "1980",
+                        "/img/capa-ampliada-9788575224380.jpg",
+                        "pt",
+                        List.of("Programação", "Web")
+                )
+        );
 
-        LinkedList<Livro> livros = new LinkedList<>();
-        LinkedList<Usuario> usuarios = new LinkedList<>();
+        Livro livro9 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-9",
+                        "Sommerville - Engenharia de Software",
+                        List.of("Ian Sommerville"),
+                        "Pearson",
+                        "1980",
+                        "/img/engenharia de software.jpg",
+                        "pt",
+                        List.of("Engenharia de Software")
+                )
+        );
 
-        livros.addAll(Arrays.asList(l1, l2, l3, l4, l5, l6, l7, l8, l9, l10));
-        usuarios.addAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
+        Livro livro10 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-10",
+                        "Livro Senhor dos Aneis A Sociedade do Anel",
+                        List.of("J. R. R. Tolkien"),
+                        "HarperCollins",
+                        "1980",
+                        "/img/61460909.jpg",
+                        "pt",
+                        List.of("Fantasia")
+                )
+        );
 
-        usuarioRepository.saveAll(usuarios);
-        livroRepository.saveAll(livros);
+        Livro livro11 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-11",
+                        "Dracula",
+                        List.of("Bram Stoker"),
+                        "Penguin",
+                        "1980",
+                        "/img/livro5.png",
+                        "pt",
+                        List.of("Terror", "Literatura")
+                )
+        );
 
-        UsuarioLivro ul1 = new UsuarioLivro();
-        ul1.setUsuario(u1);
-        ul1.setLivro(l1);
-        ul1.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("TROCA"));
-        usuarioLivroRepository.save(ul1);
+        Livro livro12 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-12",
+                        "Harry Potter e a Pedra Filosofal",
+                        List.of("J. K. Rowling"),
+                        "Rocco",
+                        "1980",
+                        "/img/livro3.png",
+                        "pt",
+                        List.of("Fantasia")
+                )
+        );
 
-        UsuarioLivro ul2 = new UsuarioLivro();
-        ul2.setUsuario(u1);
-        ul2.setLivro(l2);
-        ul2.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("VENDA"));
-        usuarioLivroRepository.save(ul2);
+        Livro livro13 = cadastrarLivro(
+                new LivroBuscaOutput(
+                        "seed-livro-13",
+                        "A Garota do Lago",
+                        List.of("Charlie Donlea"),
+                        "Faro Editorial",
+                        "1980",
+                        "/img/image-15@2x.png",
+                        "pt",
+                        List.of("Suspense", "Mistério")
+                )
+        );
 
-        UsuarioLivro ul3 = new UsuarioLivro();
-        ul3.setUsuario(u2);
-        ul3.setLivro(l3);
-        ul3.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("TROCA"));
-        usuarioLivroRepository.save(ul3);
+        // ============================================================
+        // ANÚNCIOS
+        // ============================================================
 
-        UsuarioLivro ul4 = new UsuarioLivro();
-        ul4.setUsuario(u2);
-        ul4.setLivro(l4);
-        ul4.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("TROCA"));
-        usuarioLivroRepository.save(ul4);
+        AnuncioDTO anuncio1 = criarAnuncio(
+                livro1,
+                squirtle,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        UsuarioLivro ul5 = new UsuarioLivro();
-        ul5.setUsuario(u3);
-        ul5.setLivro(l5);
-        ul5.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("AMBOS"));
-        usuarioLivroRepository.save(ul5);
+        AnuncioDTO anuncio2 = criarAnuncio(
+                livro2,
+                squirtle,
+                Anuncio.TipoNegociacao.VENDA
+        );
 
-        UsuarioLivro ul6 = new UsuarioLivro();
-        ul6.setUsuario(u3);
-        ul6.setLivro(l6);
-        ul6.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("TROCA"));
-        usuarioLivroRepository.save(ul6);
+        AnuncioDTO anuncio3 = criarAnuncio(
+                livro3,
+                pedroLucas,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        UsuarioLivro ul7 = new UsuarioLivro();
-        ul7.setUsuario(u4);
-        ul7.setLivro(l7);
-        ul7.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("VENDA"));
-        usuarioLivroRepository.save(ul7);
+        AnuncioDTO anuncio4 = criarAnuncio(
+                livro4,
+                pedroLucas,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        UsuarioLivro ul8 = new UsuarioLivro();
-        ul8.setUsuario(u4);
-        ul8.setLivro(l8);
-        ul8.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("AMBOS"));
-        usuarioLivroRepository.save(ul8);
+        AnuncioDTO anuncio5 = criarAnuncio(
+                livro5,
+                rafaela,
+                Anuncio.TipoNegociacao.AMBOS
+        );
 
-        UsuarioLivro ul9 = new UsuarioLivro();
-        ul9.setUsuario(u5);
-        ul9.setLivro(l9);
-        ul9.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("TROCA"));
-        usuarioLivroRepository.save(ul9);
+        AnuncioDTO anuncio6 = criarAnuncio(
+                livro6,
+                rafaela,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        UsuarioLivro ul10 = new UsuarioLivro();
-        ul10.setUsuario(u5);
-        ul10.setLivro(l10);
-        ul10.setTipoNegociacao(UsuarioLivro.TipoNegociacao.valueOf("VENDA"));
-        usuarioLivroRepository.save(ul10);
+        AnuncioDTO anuncio7 = criarAnuncio(
+                livro7,
+                vinicius,
+                Anuncio.TipoNegociacao.VENDA
+        );
 
-        Livro l11 = new Livro();
-        l11.setCapa("/img/livro5.png");
-        l11.setAnoPublicacao(1980);
-        l11.setNmLivro("Dracula");
-        livroRepository.save(l11);
+        AnuncioDTO anuncio8 = criarAnuncio(
+                livro8,
+                vinicius,
+                Anuncio.TipoNegociacao.AMBOS
+        );
 
-        Negociacao n1 = new Negociacao();
-        n1.setUsuarioAnunciante(u1);
-        n1.setUsuarioInteressado(u2);
-        n1.setLivro(l11);
-        n1.setTipo(Negociacao.Tipo.valueOf("TROCA"));
+        AnuncioDTO anuncio9 = criarAnuncio(
+                livro9,
+                wellington,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        negociacaoRepository.save(n1);
+        AnuncioDTO anuncio10 = criarAnuncio(
+                livro10,
+                wellington,
+                Anuncio.TipoNegociacao.VENDA
+        );
 
-        Livro l12 = new Livro();
-        l12.setCapa("/img/livro3.png");
-        l12.setAnoPublicacao(1980);
-        l12.setNmLivro("Harry Potter e a Pedra Filososfal");
-        livroRepository.save(l12);
+        AnuncioDTO anuncio11 = criarAnuncio(
+                livro11,
+                squirtle,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        Negociacao n2 = new Negociacao();
-        n2.setUsuarioAnunciante(u3);
-        n2.setUsuarioInteressado(u4);
-        n2.setLivro(l12);
-        n2.setTipo(Negociacao.Tipo.valueOf("VENDA"));
+        AnuncioDTO anuncio12 = criarAnuncio(
+                livro12,
+                rafaela,
+                Anuncio.TipoNegociacao.VENDA
+        );
 
-        negociacaoRepository.save(n2);
+        AnuncioDTO anuncio13 = criarAnuncio(
+                livro13,
+                rafaela,
+                Anuncio.TipoNegociacao.TROCA
+        );
 
-        Livro l13 = new Livro();
-        l13.setCapa("/img/image-15@2x.png");
-        l13.setAnoPublicacao(1980);
-        l13.setNmLivro("A Garota do Lago");
-        livroRepository.save(l13);
+        // ============================================================
+        // NEGOCIAÇÕES
+        // ============================================================
 
-        Negociacao n3 = new Negociacao();
-        n3.setUsuarioAnunciante(u3);
-        n3.setUsuarioInteressado(u5);
-        n3.setLivro(l13);
-        n3.setTipo(Negociacao.Tipo.valueOf("TROCA"));
+        criarNegociacao(
+                anuncio11,
+                squirtle,
+                pedroLucas,
+                Negociacao.TipoNegociacao.TROCA
+        );
 
-        negociacaoRepository.save(n3);
+        criarNegociacao(
+                anuncio12,
+                rafaela,
+                vinicius,
+                Negociacao.TipoNegociacao.VENDA
+        );
 
+        criarNegociacao(
+                anuncio13,
+                rafaela,
+                wellington,
+                Negociacao.TipoNegociacao.TROCA
+        );
+
+        System.out.println("==========================================");
+        System.out.println("Dados iniciais do Trocabook carregados.");
+        System.out.println("==========================================");
+    }
+
+    // ================================================================
+    // USUÁRIO
+    // ================================================================
+
+    private UsuarioOutput criarUsuario(
+            UsuarioInput input
+    ) throws FirebaseAuthException {
+
+        if (!usuarioService.existeComEmail(input.emailPrincipal())) {
+            usuarioService.cadastrar(input);
+        }
+
+        return usuarioService.buscarPorEmail(input.emailPrincipal());
+    }
+
+    // ================================================================
+    // LIVRO
+    // ================================================================
+
+    private Livro cadastrarLivro(
+            LivroBuscaOutput livroInput
+    ) {
+
+        Livro livroExistente =
+                livroService.buscarPorGoogleBooksId(
+                        livroInput.googleBooksId()
+                );
+
+        if (livroExistente != null) {
+            return livroExistente;
+        }
+
+        return livroService.cadastrar(livroInput);
+    }
+
+    // ================================================================
+    // ANÚNCIO
+    // ================================================================
+
+    private AnuncioDTO criarAnuncio(
+            Livro livro,
+            UsuarioOutput usuario,
+            Anuncio.TipoNegociacao tipoNegociacao
+    ) {
+
+        List<AnuncioDTO> anunciosUsuario =
+                anuncioService.listarAnunciosUsuario(usuario.id());
+
+        for (AnuncioDTO anuncio : anunciosUsuario) {
+
+            if (anuncio.uidLivro().equals(livro.getId())
+                    && anuncio.tipoNegociacao().equals(tipoNegociacao.name())) {
+
+                return anuncio;
+            }
+        }
+
+        return anuncioService.anunciar(
+                livro.getId(),
+                usuario.id(),
+                tipoNegociacao.name()
+        );
+    }
+
+    // ================================================================
+    // NEGOCIAÇÃO
+    // ================================================================
+
+    private void criarNegociacao(
+            AnuncioDTO anuncio,
+            UsuarioOutput anunciante,
+            UsuarioOutput comprador,
+            Negociacao.TipoNegociacao tipoNegociacao
+    ) {
+
+        List<NegociacaoDTO> negociacoes =
+                negociacaoService.listarPorUsuarioAnunciante(
+                        anunciante.id()
+                );
+
+        for (NegociacaoDTO negociacao : negociacoes) {
+
+            if (negociacao.anuncioId().equals(anuncio.id())
+                    && negociacao.usuarioCompradorId().equals(comprador.id())) {
+
+                return;
+            }
+        }
+
+        NegociacaoDTO negociacaoDTO = new NegociacaoDTO(
+                null,
+                anunciante.id(),
+                comprador.id(),
+                anuncio.id(),
+                LocalDateTime.now(),
+                tipoNegociacao.name(),
+                anunciante.nome(),
+                anunciante.fotoPerfil(),
+                comprador.nome(),
+                comprador.fotoPerfil(),
+                anuncio.titulo(),
+                anuncio.capa()
+        );
+
+        negociacaoService.salvar(negociacaoDTO);
     }
 }

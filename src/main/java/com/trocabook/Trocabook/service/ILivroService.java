@@ -1,6 +1,6 @@
 package com.trocabook.Trocabook.service;
 
-import com.trocabook.Trocabook.model.LivroFirebase;
+import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public interface ILivroService {
      * @param livro dados do livro selecionado pelo usuário
      * @return livro persistido no Firebase
      */
-    LivroFirebase cadastrar(LivroBuscaOutput livro);
+    Livro cadastrar(LivroBuscaOutput livro);
 
     /**
      * Busca um livro pelo UID interno do Firebase.
@@ -29,7 +29,7 @@ public interface ILivroService {
      * @param uid identificador do livro
      * @return livro encontrado ou null caso não exista
      */
-    LivroFirebase buscarPorUid(String uid);
+    Livro buscarPorUid(String uid);
 
     /**
      * Busca um livro pelo identificador da Google Books.
@@ -37,7 +37,7 @@ public interface ILivroService {
      * @param googleBooksId identificador externo da Google Books API
      * @return livro encontrado ou null caso não exista
      */
-    LivroFirebase buscarPorGoogleBooksId(String googleBooksId);
+    Livro buscarPorGoogleBooksId(String googleBooksId);
 
     /**
      * Busca livros já cadastrados no catálogo pelo título.
@@ -45,12 +45,12 @@ public interface ILivroService {
      * @param titulo título do livro
      * @return lista de livros encontrados
      */
-    List<LivroFirebase> buscarPorTitulo(String titulo);
+    List<Livro> buscarPorTitulo(String titulo);
 
     /**
      * Retorna todos os livros cadastrados no catálogo.
      *
      * @return lista de livros
      */
-    List<LivroFirebase> buscarTodos();
+    List<Livro> buscarTodos();
 }

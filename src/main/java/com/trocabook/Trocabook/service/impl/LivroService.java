@@ -1,14 +1,14 @@
 package com.trocabook.Trocabook.service.impl;
 
 import com.trocabook.Trocabook.adapter.GoogleAPIBooksAdapter;
-import com.trocabook.Trocabook.model.AutorFirebase;
-import com.trocabook.Trocabook.model.CategoriaFirebase;
-import com.trocabook.Trocabook.model.LivroFirebase;
+import com.trocabook.Trocabook.model.Autor;
+import com.trocabook.Trocabook.model.Categoria;
+import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
-import com.trocabook.Trocabook.repository.AutorFirebaseRepository;
-import com.trocabook.Trocabook.repository.CategoriaFirebaseRepository;
-import com.trocabook.Trocabook.repository.LivroFirebaseRepository;
-import com.trocabook.Trocabook.service.GoogleAPIBooksService;
+import com.trocabook.Trocabook.repository.AutorRepository;
+import com.trocabook.Trocabook.repository.CategoriaRepository;
+import com.trocabook.Trocabook.repository.LivroRepository;
+import com.trocabook.Trocabook.service.feign.GoogleAPIBooksService;
 import com.trocabook.Trocabook.service.ILivroService;
 import com.trocabook.Trocabook.service.ITraducaoService;
 import org.springframework.stereotype.Service;
@@ -18,24 +18,24 @@ import java.util.List;
 @Service
 public class LivroService implements ILivroService {
 
-    private final LivroFirebaseRepository livroFirebaseRepository;
-    private final AutorFirebaseRepository autorFirebaseRepository;
-    private final CategoriaFirebaseRepository categoriaFirebaseRepository;
+    private final LivroRepository livroRepository;
+    private final AutorRepository autorRepository;
+    private final CategoriaRepository categoriaRepository;
     private final GoogleAPIBooksService googleAPIBooksService;
     private final ITraducaoService traducaoService;
     private final GoogleAPIBooksAdapter adapter;
 
     public LivroService(
-            LivroFirebaseRepository livroFirebaseRepository,
-            AutorFirebaseRepository autorFirebaseRepository,
-            CategoriaFirebaseRepository categoriaFirebaseRepository,
+            LivroRepository livroRepository,
+            AutorRepository autorRepository,
+            CategoriaRepository categoriaRepository,
             GoogleAPIBooksService googleAPIBooksService,
             ITraducaoService traducaoService,
             GoogleAPIBooksAdapter adapter
     ) {
-        this.livroFirebaseRepository = livroFirebaseRepository;
-        this.autorFirebaseRepository = autorFirebaseRepository;
-        this.categoriaFirebaseRepository = categoriaFirebaseRepository;
+        this.livroRepository = livroRepository;
+        this.autorRepository = autorRepository;
+        this.categoriaRepository = categoriaRepository;
         this.googleAPIBooksService = googleAPIBooksService;
         this.traducaoService = traducaoService;
         this.adapter = adapter;
@@ -49,13 +49,13 @@ public class LivroService implements ILivroService {
     }
 
     @Override
-    public LivroFirebase cadastrar(LivroBuscaOutput livro) {
+    public Livro cadastrar(LivroBuscaOutput livro) {
 
         /*
          * Verifica se o livro já foi cadastrado.
          */
-        LivroFirebase livroExistente =
-                livroFirebaseRepository.buscarPorGoogleBooksId(
+        Livro livroExistente =
+                livroRepository.buscarPorGoogleBooksId(
                         livro.googleBooksId()
                 );
 
@@ -77,14 +77,14 @@ public class LivroService implements ILivroService {
                 .map(nome -> {
 
                     var autorExistente =
-                            autorFirebaseRepository.buscarPorNome(nome);
+                            autorRepository.buscarPorNome(nome);
 
                     if (autorExistente != null) {
                         return autorExistente.getId();
                     }
 
-                    AutorFirebase novoAutor =
-                            new AutorFirebase();
+                    Autor novoAutor =
+                            new Autor();
 
                     novoAutor.setId(
                             java.util.UUID.randomUUID().toString()
@@ -92,7 +92,7 @@ public class LivroService implements ILivroService {
 
                     novoAutor.setNome(nome);
 
-                    autorFirebaseRepository.salvar(novoAutor);
+                    autorRepository.salvar(novoAutor);
 
                     return novoAutor.getId();
                 })
@@ -106,14 +106,14 @@ public class LivroService implements ILivroService {
                 .map(nome -> {
 
                     var categoriaExistente =
-                            categoriaFirebaseRepository.buscarPorNome(nome);
+                            categoriaRepository.buscarPorNome(nome);
 
                     if (categoriaExistente != null) {
                         return categoriaExistente.getId();
                     }
 
-                    CategoriaFirebase novaCategoria =
-                            new CategoriaFirebase();
+                    Categoria novaCategoria =
+                            new Categoria();
 
                     novaCategoria.setId(
                             java.util.UUID.randomUUID().toString()
@@ -121,7 +121,7 @@ public class LivroService implements ILivroService {
 
                     novaCategoria.setNome(nome);
 
-                    categoriaFirebaseRepository.salvar(novaCategoria);
+                    categoriaRepository.salvar(novaCategoria);
 
                     return novaCategoria.getId();
                 })
@@ -130,8 +130,8 @@ public class LivroService implements ILivroService {
         /*
          * Converte o DTO de busca traduzido para a entidade Firebase.
          */
-        LivroFirebase entidade =
-                LivroFirebase.from(
+        Livro entidade =
+                Livro.from(
                         livroTraduzido,
                         idsAutores,
                         idsCategorias
@@ -147,27 +147,27 @@ public class LivroService implements ILivroService {
         /*
          * Persiste o livro.
          */
-        return livroFirebaseRepository.salvar(entidade);
+        return livroRepository.salvar(entidade);
     }
 
     @Override
-    public LivroFirebase buscarPorUid(String uid) {
-        return livroFirebaseRepository.buscarPorUid(uid);
+    public Livro buscarPorUid(String uid) {
+        return livroRepository.buscarPorUid(uid);
     }
 
     @Override
-    public LivroFirebase buscarPorGoogleBooksId(String googleBooksId) {
-        return livroFirebaseRepository.buscarPorGoogleBooksId(googleBooksId);
+    public Livro buscarPorGoogleBooksId(String googleBooksId) {
+        return livroRepository.buscarPorGoogleBooksId(googleBooksId);
     }
 
     @Override
-    public List<LivroFirebase> buscarPorTitulo(String titulo) {
-        return livroFirebaseRepository.buscarPorTitulo(titulo);
+    public List<Livro> buscarPorTitulo(String titulo) {
+        return livroRepository.buscarPorTitulo(titulo);
     }
 
     @Override
-    public List<LivroFirebase> buscarTodos() {
-        return livroFirebaseRepository.buscarTodos();
+    public List<Livro> buscarTodos() {
+        return livroRepository.buscarTodos();
     }
 
     private LivroBuscaOutput traduzirLivro(LivroBuscaOutput livro) {

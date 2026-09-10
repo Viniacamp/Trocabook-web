@@ -1,52 +1,50 @@
 package com.trocabook.Trocabook.controllers;
 
-import com.trocabook.Trocabook.model.Livro;
-import com.trocabook.Trocabook.model.Negociacao;
-import com.trocabook.Trocabook.model.Usuario;
-import com.trocabook.Trocabook.model.UsuarioLivro;
-import com.trocabook.Trocabook.repository.NegociacaoRepository;
-import com.trocabook.Trocabook.repository.UsuarioLivroRepository;
-import com.trocabook.Trocabook.repository.UsuarioRepository;
+import com.trocabook.Trocabook.model.*;
+import com.trocabook.Trocabook.model.dto.AnuncioDTO;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.service.IAnuncioService;
+import com.trocabook.Trocabook.service.INegociacaoService;
+import com.trocabook.Trocabook.service.IUsuarioService;
+import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Controller
 public class DestaqueController {
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final IAnuncioService anuncioService;
 
-    @Autowired
-    private UsuarioLivroRepository usuarioLivroRepository;
+    private final IUsuarioService usuarioService;
 
-    @Autowired
-    private NegociacaoRepository negociacaoRepository;
+    private final INegociacaoService negociacaoService;
 
+    private final UsuarioAutenticadoService usuarioAutenticadoService;
 
-    @GetMapping("/destaque/{id}")
-    public String destaque(HttpSession sessao, Model model, @PathVariable int id) {
-        Usuario usuarioLogado = (Usuario) sessao.getAttribute("usuarioLogado");
+    public DestaqueController(IAnuncioService anuncioService, IUsuarioService usuarioService, INegociacaoService negociacaoService, UsuarioAutenticadoService usuarioAutenticadoService) {
+        this.anuncioService = anuncioService;
+        this.usuarioService = usuarioService;
+        this.negociacaoService = negociacaoService;
+        this.usuarioAutenticadoService = usuarioAutenticadoService;
+    }
+
+    @GetMapping("/destaque/{uid}")
+    public String destaque(HttpSession sessao, Model model, @PathVariable String uid) {
+        UsuarioOutput usuarioLogado = usuarioAutenticadoService.getUsuarioOutput(sessao);
         if (usuarioLogado != null) {
             model.addAttribute("usuarioLogin", usuarioLogado);
         }
-        Usuario usuarioDestaque = usuarioRepository.findById(id).orElse(null);
+        UsuarioOutput usuarioDestaque = usuarioService.buscarPorUid(uid);
         if (usuarioDestaque == null) {
             return "redirect:/";
         }
-        Long numeroTrocas = negociacaoRepository.contarNegociacoesPorUsuarioETipo(usuarioDestaque, Negociacao.Tipo.TROCA);
-        Long numeroVendas = negociacaoRepository.contarNegociacoesPorUsuarioETipo(usuarioDestaque, Negociacao.Tipo.VENDA);
-        List<UsuarioLivro> usuarioLivros = usuarioLivroRepository.findByUsuario(usuarioDestaque);
-        List<Livro> livrosDestaque = new LinkedList<>();
-
-        for (UsuarioLivro usuarioLivro : usuarioLivros) {
-            livrosDestaque.add(usuarioLivro.getLivro());
-        }
+        Long numeroTrocas = negociacaoService.contarNegociacoesPorUsuarioETipo(uid, Negociacao.TipoNegociacao.TROCA);
+        Long numeroVendas = negociacaoService.contarNegociacoesPorUsuarioETipo(uid, Negociacao.TipoNegociacao.VENDA);
+        List<AnuncioDTO> livrosDestaque = anuncioService.listarAnunciosUsuario(uid);
 
         model.addAttribute("usuarioDestaque", usuarioDestaque);
         model.addAttribute("qtd_trocas", numeroTrocas);

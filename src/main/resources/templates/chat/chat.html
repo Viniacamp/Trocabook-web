@@ -36,9 +36,7 @@
                         <th:block sec:authorize="isAuthenticated()">
                             <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
                             <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                            <form th:action="@{/logout}" method="post" style="display: inline;">
-                                <button type="submit" id="deslogar">Sair</button>
-                            </form>
+                            <button type="button" id="deslogar">Sair</button>
                         </th:block>
                     </th>
                 </tr>
@@ -58,22 +56,28 @@
             <h2>Chat</h2>
             <input type="text" placeholder="Pesquisar conversas">
             <ul class="chat-list">
-                <li class="active"><img th:src="${usuarioNegociante.foto}" alt="User"><span th:text="${usuarioNegociante.nmUsuario}"></span></li>
+                <li class="active">
+                    <img th:src="${usuarioNegociante.fotoPerfil}" alt="User">
+                    <span th:text="${usuarioNegociante.nome}"></span>
+                </li>
             </ul>
         </aside>
 
         <section class="chat-window">
             <div class="chat-info">
-                <p style="text-align: center; color: #888; margin-bottom: 20px;">Lembre-se de trocar mensagens com respeito e cordialidade.<br>Desejamos uma excelente negociação :D</p>
+                <p style="text-align: center; color: #888; margin-bottom: 20px;">
+                    Lembre-se de trocar mensagens com respeito e cordialidade.<br>
+                    Desejamos uma excelente negociação :D
+                </p>
             </div>
 
             <div class="messages" id="messagesContainer">
                 <div th:each="msg : ${mensagens}"
                      th:attr="data-id=${msg.id}, title=${msg.conteudo}"
-                     th:class="'message ' + (${msg.cdUsuarioRemetente == usuarioLogado.cdUsuario} ? 'user' : 'negociador')">
+                     th:class="'message ' + (${msg.uidRemetente == usuarioLogado.id} ? 'user' : 'negociador')">
 
                     <!-- Menu de opções só aparece nas mensagens do usuário logado -->
-                    <div th:if="${msg.cdUsuarioRemetente == usuarioLogado.cdUsuario}" class="menu-opcoes">
+                    <div th:if="${msg.uidRemetente == usuarioLogado.id}" class="menu-opcoes">
                         <i class="fa-solid fa-ellipsis-vertical" onclick="abrirMenu(this)"></i>
                         <div class="menu-dropdown">
                             <button onclick="editarMensagem(this)">Editar</button>
@@ -82,8 +86,8 @@
                     </div>
 
                     <!-- Foto do outro usuário (só aparece nas mensagens recebidas) -->
-                    <img th:if="${msg.cdUsuarioRemetente != usuarioLogado.cdUsuario}"
-                         th:src="${usuarioNegociante.foto}" alt="Negociante">
+                    <img th:if="${msg.uidRemetente != usuarioLogado.id}"
+                         th:src="${usuarioNegociante.fotoPerfil}" alt="Negociante">
 
                     <p th:text="${msg.conteudo}"></p>
                 </div>
@@ -91,9 +95,9 @@
 
 
             <form id="chatForm" class="message-input">
-                <input type="hidden" id="cdUsuarioLivro" th:value="${mensagemDTO.cdUsuarioLivro}">
-                <input type="hidden" id="cdUsuarioRemetente" th:value="${mensagemDTO.cdUsuarioRemetente}">
-                <input type="hidden" id="cdUsuarioDestinatario" th:value="${mensagemDTO.cdUsuarioDestinatario}">
+                <input type="hidden" id="uidAnuncio" th:value="${mensagemDTO.uidAnuncio}">
+                <input type="hidden" id="uidUsuarioRemetente" th:value="${mensagemDTO.uidRemetente}">
+                <input type="hidden" id="uidUsuarioDestinatario" th:value="${mensagemDTO.uidDestinatario}">
                 <input type="text" id="conteudo" placeholder="Mensagem">
                 <button type="submit"><img src="/img/aviao.png" alt="Enviar"></button>
             </form>
@@ -101,68 +105,95 @@
 
         <aside class="book-info">
             <img th:src="${livro.capa}" alt="Capa O Pequeno Príncipe">
-            <p><strong>Título da obra:</strong><br><b><span th:text="${livro.nmLivro}"></span></b></p>
+            <p>
+                <strong>Título da obra:</strong><br>
+                <b><span th:text="${livro.titulo}"></span></b>
+            </p>
             <p><strong>Data de publicação:</strong><br>15 de novembro de 2024</p>
             <p>Livro em ótimo estado, disponibilizo para vendas</p>
         </aside>
     </main>
 
     <script>
-        const cdUsuarioLivro = parseInt(document.getElementById('cdUsuarioLivro').value);
-        const cdUsuarioRemetente = parseInt(document.getElementById('cdUsuarioRemetente').value);
-        const cdUsuarioDestinatario = parseInt(document.getElementById('cdUsuarioDestinatario').value);
+        const uidAnuncio = document.getElementById('uidAnuncio').value;
+        const uidUsuarioRemetente = document.getElementById('uidUsuarioRemetente').value;
+        const uidUsuarioDestinatario = document.getElementById('uidUsuarioDestinatario').value;
         const container = document.getElementById('messagesContainer');
         let ultimaQuantidade = container.children.length;
 
         // Função para renderizar uma mensagem
         function adicionarMensagemNoContainer(msg) {
-                const classe = msg.cdUsuarioRemetente === cdUsuarioRemetente ? 'user' : 'negociador';
-                const div = document.createElement('div');
-                div.className = `message ${classe}`;
-                div.setAttribute('data-id', msg.id || ''); // adiciona o ID para edição/exclusão
+            const classe = msg.uidRemetente === uidUsuarioRemetente ? 'user' : 'negociador';
 
-                // Se for mensagem do outro usuário, mostra a imagem dele
-                const img = msg.cdUsuarioRemetente === cdUsuarioRemetente
-                    ? ''
-                    : `<img src="${document.querySelector('.chat-list img')?.src || '/img/user.png'}" alt="Negociante">`;
+            const div = document.createElement('div');
+            div.className = `message ${classe}`;
+            div.setAttribute('data-id', msg.id || '');
 
-                // Se for mensagem do usuário logado, adiciona o menu de opções
-                const menu = msg.cdUsuarioRemetente === cdUsuarioRemetente
-                    ? `
-                        <div class="menu-opcoes">
-                            <i class="fa-solid fa-ellipsis-vertical" onclick="abrirMenu(this)"></i>
-                            <div class="menu-dropdown">
-                                <button onclick="editarMensagem(this)">Editar</button>
-                                <button onclick="excluirMensagem(this)">Excluir</button>
-                            </div>
-                        </div>
-                      `
-                    : '';
-
-                // Monta o HTML da mensagem
-                div.innerHTML = `
-                    ${menu}
-                    ${img}
-                    <p>${msg.conteudo}</p>
-                `;
-
-                // Adiciona ao container
-                container.appendChild(div);
-                container.scrollTop = container.scrollHeight;
-                ultimaQuantidade++;
+            // Se for mensagem do outro usuário, mostra a imagem dele
+            if (msg.uidRemetente !== uidUsuarioRemetente) {
+                const img = document.createElement('img');
+                img.src = document.querySelector('.chat-list img')?.src || '/img/user.png';
+                img.alt = 'Negociante';
+                div.appendChild(img);
             }
+
+            // Se for mensagem do usuário logado, adiciona o menu de opções
+            if (msg.uidRemetente === uidUsuarioRemetente) {
+                const menuOpcoes = document.createElement('div');
+                menuOpcoes.className = 'menu-opcoes';
+
+                const icon = document.createElement('i');
+                icon.className = 'fa-solid fa-ellipsis-vertical';
+                icon.onclick = function () {
+                    abrirMenu(this);
+                };
+
+                const menuDropdown = document.createElement('div');
+                menuDropdown.className = 'menu-dropdown';
+
+                const botaoEditar = document.createElement('button');
+                botaoEditar.textContent = 'Editar';
+                botaoEditar.onclick = function () {
+                    editarMensagem(this);
+                };
+
+                const botaoExcluir = document.createElement('button');
+                botaoExcluir.textContent = 'Excluir';
+                botaoExcluir.onclick = function () {
+                    excluirMensagem(this);
+                };
+
+                menuDropdown.appendChild(botaoEditar);
+                menuDropdown.appendChild(botaoExcluir);
+
+                menuOpcoes.appendChild(icon);
+                menuOpcoes.appendChild(menuDropdown);
+
+                div.appendChild(menuOpcoes);
+            }
+
+            const p = document.createElement('p');
+            p.textContent = msg.conteudo;
+            div.appendChild(p);
+
+            // Adiciona ao container
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            ultimaQuantidade++;
+        }
 
 
         // Envio de mensagem
         document.querySelector('#chatForm').addEventListener('submit', async function(event) {
             event.preventDefault();
+
             const conteudo = document.getElementById('conteudo').value.trim();
             if (!conteudo) return;
 
             const mensagem = {
-                cdUsuarioLivro,
-                cdUsuarioRemetente,
-                cdUsuarioDestinatario,
+                uidAnuncio,
+                uidRemetente: uidUsuarioRemetente,
+                uidDestinatario: uidUsuarioDestinatario,
                 conteudo
             };
 
@@ -173,15 +204,20 @@
             });
 
             const data = await resposta.json();
+
             if (data.status === 'success') {
                 adicionarMensagemNoContainer(data.data);
                 document.getElementById('conteudo').value = '';
             }
         });
 
+
         // Atualização automática de mensagens (polling)
         async function atualizarMensagens() {
-            const resp = await fetch(`/chat/mensagens/atualizar?usuarioLivro=${cdUsuarioLivro}&remetente=${cdUsuarioRemetente}&destinatario=${cdUsuarioDestinatario}`);
+            const resp = await fetch(
+                `/chat/mensagens/atualizar?anuncio=${encodeURIComponent(uidAnuncio)}&remetente=${encodeURIComponent(uidUsuarioRemetente)}&destinatario=${encodeURIComponent(uidUsuarioDestinatario)}`
+            );
+
             const data = await resp.json();
 
             if (data.status === 'success') {
@@ -192,15 +228,18 @@
             }
         }
 
+
         // Atualiza a cada 4 segundos
         setInterval(atualizarMensagens, 4000);
+
 
         function abrirMenu(icon) {
             const menu = icon.nextElementSibling;
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
 
-        // 🔹 Edição de mensagem
+
+        // Edição de mensagem
         async function editarMensagem(botao) {
             const msgDiv = botao.closest('.message');
             const idMensagem = msgDiv.getAttribute('data-id');
@@ -216,6 +255,7 @@
             });
 
             const data = await resposta.json();
+
             if (data.status === 'success') {
                 p.textContent = novoConteudo;
                 alert('Mensagem alterada com sucesso!');
@@ -224,14 +264,18 @@
             }
         }
 
-        // 🔹 Exclusão de mensagem
+
+        // Exclusão de mensagem
         async function excluirMensagem(botao) {
             const msgDiv = botao.closest('.message');
             const idMensagem = msgDiv.getAttribute('data-id');
 
             if (!confirm("Deseja realmente excluir esta mensagem?")) return;
 
-            const resposta = await fetch(`/chat/mensagens/${idMensagem}`, { method: 'DELETE' });
+            const resposta = await fetch(`/chat/mensagens/${idMensagem}`, {
+                method: 'DELETE'
+            });
+
             const data = await resposta.json();
 
             if (data.status === 'success') {
@@ -246,7 +290,9 @@
     <footer>
         <div class="rodapenovo">
             <a href="/static"><img src="/img/Design%20sem%20nome.svg"></a>
-            <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
+            <a href="/sobreNos">
+                <p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p>
+            </a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
             <small>© 2025 Sistema Trocabook<br>Todos os direitos reservados</small>
         </div>

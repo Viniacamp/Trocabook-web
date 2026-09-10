@@ -1,50 +1,17 @@
 package com.trocabook.Trocabook.model.dto;
 
-public class MensagemDTO {
-    private String id;
-    private int cdUsuarioRemetente;
-    private int cdUsuarioDestinatario;
-    private int cdUsuarioLivro;
-    private String conteudo;
+import java.time.LocalDateTime;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public int getCdUsuarioRemetente() {
-        return cdUsuarioRemetente;
-    }
-
-    public void setCdUsuarioRemetente(int cdUsuarioRemente) {
-        this.cdUsuarioRemetente = cdUsuarioRemente;
-    }
-
-    public int getCdUsuarioDestinatario() {
-        return cdUsuarioDestinatario;
-    }
-
-    public void setCdUsuarioDestinatario(int cdUsuarioDestinatario) {
-        this.cdUsuarioDestinatario = cdUsuarioDestinatario;
-    }
-
-    public String getConteudo() {
-        return conteudo;
-    }
-
-    public void setConteudo(String conteudo) {
-        this.conteudo = conteudo;
-    }
-
-    public int getCdUsuarioLivro() {
-        return cdUsuarioLivro;
-    }
-
-    public void setCdUsuarioLivro(int cdUsuarioLivro) {
-        this.cdUsuarioLivro = cdUsuarioLivro;
+public record MensagemDTO(
+        String id,
+        String uidRemetente,
+        String uidDestinatario,
+        String uidAnuncio,
+        String conteudo,
+        LocalDateTime dataEnvio
+){
+    public MensagemDTO(String uidRemetente, String uidDestinatario, String uidAnuncio){
+        this(null, uidRemetente, uidDestinatario, uidAnuncio, null, null);
     }
 }
 

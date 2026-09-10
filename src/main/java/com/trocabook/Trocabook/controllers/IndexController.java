@@ -1,79 +1,80 @@
 package com.trocabook.Trocabook.controllers;
 
-import com.trocabook.Trocabook.model.Livro;
-import com.trocabook.Trocabook.model.UsuarioLivro;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseOutput;
-import com.trocabook.Trocabook.repository.LivroRepository;
-import com.trocabook.Trocabook.repository.UsuarioLivroRepository;
-import com.trocabook.Trocabook.repository.UsuarioRepository;
+
+import com.trocabook.Trocabook.config.ApplicationInstance;
+import com.trocabook.Trocabook.model.dto.AnuncioDTO;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.service.IAnuncioService;
+import com.trocabook.Trocabook.service.IUsuarioService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import com.trocabook.Trocabook.model.Usuario;
-
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Controller
 public class IndexController {
-	@Autowired
-	private UsuarioRepository usuarioRepository;
 
-	@Autowired
-	private LivroRepository livroRepository;
-    @Autowired
-    private UsuarioLivroRepository usuarioLivroRepository;
+	private final UsuarioAutenticadoService usuarioAutenticadoService;
+	private final IUsuarioService usuarioService;
+	private final IAnuncioService anuncioService;
+	private final ApplicationInstance applicationInstance;
 
-	@Autowired
-	private UsuarioAutenticadoService usuarioAutenticadoService;
+	public IndexController(UsuarioAutenticadoService usuarioAutenticadoService, IUsuarioService usuarioService, IAnuncioService anuncioService, ApplicationInstance applicationInstance) {
+		this.usuarioAutenticadoService = usuarioAutenticadoService;
+		this.usuarioService = usuarioService;
+		this.anuncioService = anuncioService;
+		this.applicationInstance = applicationInstance;
+	}
 
 	@GetMapping("/")
 	public String index(Model model, HttpSession sessao) {
 		try {
-			UsuarioFirebaseOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
+			UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
 
 			model.addAttribute("usuario", usuario);
 		} catch (IllegalStateException ex){
 
 		}
 
-		List<Usuario> destaques =
-				usuarioRepository.findTop6ByOrderByAvaliacaoDesc();
+		List<UsuarioOutput> destaques = usuarioService.buscarMelhoresAvaliados();
+		List<AnuncioDTO> anuncios =
+				anuncioService.listarTodos()
+						.stream()
+						.limit(10)
+						.toList();
 
 		model.addAttribute("destaques", destaques);
+		model.addAttribute("anuncios", anuncios);
+		model.addAttribute(
+				"applicationInstance",
+				applicationInstance.getId()
+		);
 
 		return "index";
 	}
-	
+
 	@PostMapping("/deslogar")
 	public String deslogar(HttpSession sessao) {
+		usuarioAutenticadoService.limparSessao(sessao);
 		sessao.invalidate();
-		return "redirect:/";
+		return "redirect:/login";
 	}
+
 
 	@GetMapping("/pesquisar")
 	@ResponseBody
-	public LinkedList<String[]> pesquisar(@RequestParam(name="titulo", required = false) String nm_livro){
-		List<Livro> livrosBusca =  livroRepository.findByNmLivroContainingIgnoreCase(nm_livro);
-		List<UsuarioLivro> livrosUsuarioLivro = usuarioLivroRepository.findByLivroIn(livrosBusca);
-		LinkedList<String[]> info = new LinkedList<>();
-		for (UsuarioLivro usuarioLivro : livrosUsuarioLivro) {
-			String[] infoLivro = new String[4];
-			infoLivro[0] = usuarioLivro.getLivro().getCapa();
-			infoLivro[1] = usuarioLivro.getLivro().getNmLivro();
-			infoLivro[2] = usuarioLivro.getUsuario().getFoto();
-			infoLivro[3] = Integer.toString(usuarioLivro.getCdUsuarioLivro());
-			info.add(infoLivro);
+	public List<AnuncioDTO> pesquisar(@RequestParam(name="titulo", required = false) String nm_livro){
+		if (nm_livro == null || nm_livro.isBlank()) {
+			return List.of();
 		}
-		return info;
+		return anuncioService
+				.buscarPorTitulo(nm_livro);
 	}
 	
 	

@@ -40,6 +40,53 @@ public class AnuncioRepositoryImpl implements AnuncioRepository {
     }
 
     @Override
+    public List<Anuncio> listarTodos() {
+        try {
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .get()
+                    .get()
+                    .getDocuments();
+
+            return documentos.stream()
+                    .map(d -> d.toObject(Anuncio.class))
+                    .toList();
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException
+                    ("Thread interrompida ao buscar todos os anuncios", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Erro ao buscar todos os anuncios", e);
+        }
+    }
+
+    @Override
+    public List<Anuncio> listarTodosPorTipoNegociacao(Anuncio.TipoNegociacao tipoNegociacao) {
+        try {
+            var documentos =
+                    firestore
+                            .collection(COLECAO)
+                            .whereEqualTo("tipoNegociacao", tipoNegociacao.name())
+                            .get()
+                            .get();
+
+            return documentos
+                    .getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Anuncio.class))
+                    .toList();
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException
+                    ("Thread interrompida ao buscar anuncio por tipo de negociação", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Erro ao buscar anuncio por tipo de negociação", e);
+        }
+    }
+
+    @Override
     public Anuncio buscarPorUid(String uid) {
         try {
             var documento =
@@ -90,6 +137,32 @@ public class AnuncioRepositoryImpl implements AnuncioRepository {
     }
 
     @Override
+    public List<Anuncio> buscarPorUidUsuarioETipoNegociacao(String uidUsuario, Anuncio.TipoNegociacao tipoNegociacao) {
+        try {
+            var documentos =
+                    firestore
+                            .collection(COLECAO)
+                            .whereEqualTo("uidUsuario", uidUsuario)
+                            .whereEqualTo("tipoNegociacao", tipoNegociacao.name())
+                            .get()
+                            .get();
+
+            return documentos
+                    .getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Anuncio.class))
+                    .toList();
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException
+                    ("Thread interrompida ao buscar anuncio por uid de Usuário e tipo de negociação", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Erro ao buscar anuncio por uid de Usuário e tipo de negociação", e);
+        }
+    }
+
+    @Override
     public List<Anuncio> buscarPorUidLivro(String uidLivro) {
         try {
             var documentos =
@@ -111,6 +184,32 @@ public class AnuncioRepositoryImpl implements AnuncioRepository {
                     ("Thread interrompida ao buscar anuncio por uid de Livro", e);
         } catch (ExecutionException e) {
             throw new RuntimeException("Erro ao buscar anuncio por uid de Livro", e);
+        }
+    }
+
+    @Override
+    public List<Anuncio> buscarPorTitulo(String titulo) {
+        try {
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .orderBy("titulo")
+                    .startAt(titulo)
+                    .endAt(titulo + "\uf8ff")
+                    .get()
+                    .get();
+
+            return documentos
+                    .getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Anuncio.class))
+                    .toList();
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException
+                    ("Thread interrompida ao buscar anuncio por titulo", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Erro ao buscar anuncio por titulo", e);
         }
     }
 

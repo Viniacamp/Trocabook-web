@@ -2,7 +2,7 @@ package com.trocabook.Trocabook.security;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.trocabook.Trocabook.service.FirebaseAuthService;
+import com.trocabook.Trocabook.service.impl.FirebaseAuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

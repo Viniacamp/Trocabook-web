@@ -2,7 +2,7 @@ package com.trocabook.Trocabook.controllers;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseInput;
+import com.trocabook.Trocabook.model.dto.UsuarioInput;
 import com.trocabook.Trocabook.service.IUsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> cadastrar(@Valid @RequestBody UsuarioFirebaseInput input) throws FirebaseAuthException {
+    public ResponseEntity<Void> cadastrar(@Valid @RequestBody UsuarioInput input) throws FirebaseAuthException {
         usuarioService.cadastrar(input);
         return ResponseEntity.noContent().build();
     }

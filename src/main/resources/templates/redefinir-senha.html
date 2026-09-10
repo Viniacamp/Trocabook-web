@@ -1,45 +1,136 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            rel="stylesheet"
+            type="text/css"
+            href="/css/style.css">
+
     <title>Redefinir Senha | Trocabook</title>
+
 </head>
+
 <body>
+
 <div class="container">
+
     <style>
-        body { background-color: rgb(236, 236, 236); background-size: cover; }
-        .text-danger { font-size: 0.9em; }
+
+        body {
+            background-color: rgb(236, 236, 236);
+            background-size: cover;
+        }
+
+        .text-danger {
+            font-size: 0.9em;
+        }
+
     </style>
+
     <div class="wrapper">
+
         <div class="loginlogo">
-            <a href="/"><img src="/img/Design sem nome (4).svg" alt="Logo Trocabook"></a>
+
+            <a href="/">
+
+                <img
+                        src="/img/Design sem nome (4).svg"
+                        alt="Logo Trocabook">
+
+            </a>
+
         </div>
-        <form class="login" method="post" th:action="@{/redefinir-senha}" th:object="${passwordResetDto}">
-            <input type="hidden" th:field="*{token}" />
-            <h1><b>Crie uma Nova Senha</b></h1>
 
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <form
+                class="login"
+                id="formRedefinirSenha">
+
+            <h1>
+                <b>Crie uma Nova Senha</b>
+            </h1>
+
+            <div
+                    id="mensagem"
+                    class="alert d-none">
+            </div>
 
             <div class="row mb-3">
-                <label for="senha" class="col-sm-3 col-form-label">Nova Senha:</label>
+
+                <label
+                        for="senha"
+                        class="col-sm-3 col-form-label">
+
+                    Nova Senha:
+
+                </label>
+
                 <div class="col-sm-9">
-                    <input type="password" class="form-control" th:field="*{senha}" id="senha">
-                    <div th:if="${#fields.hasErrors('senha')}" class="text-danger" th:errors="*{senha}"></div>
+
+                    <input
+                            type="password"
+                            class="form-control"
+                            id="senha"
+                            required
+                            minlength="6">
+
                 </div>
+
             </div>
+
             <div class="row mb-3">
-                <label for="confirmaSenha" class="col-sm-3 col-form-label">Confirme a Senha:</label>
+
+                <label
+                        for="confirmaSenha"
+                        class="col-sm-3 col-form-label">
+
+                    Confirme a Senha:
+
+                </label>
+
                 <div class="col-sm-9">
-                    <input type="password" class="form-control" th:field="*{confirmaSenha}" id="confirmaSenha">
-                    <div th:if="${#fields.hasErrors('confirmaSenha')}" class="text-danger" th:errors="*{confirmaSenha}"></div>
+
+                    <input
+                            type="password"
+                            class="form-control"
+                            id="confirmaSenha"
+                            required
+                            minlength="6">
+
                 </div>
+
             </div>
-            <button type="submit" class="btn btn-primary">Salvar Nova Senha</button>
+
+            <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="botaoRedefinir">
+
+                Salvar Nova Senha
+
+            </button>
+
         </form>
+
     </div>
+
 </div>
+
+<script
+        type="module"
+        src="/js/redefinir-senha.js">
+</script>
+
 </body>
+
 </html>

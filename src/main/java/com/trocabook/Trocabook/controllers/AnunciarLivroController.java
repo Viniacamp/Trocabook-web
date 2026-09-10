@@ -1,9 +1,9 @@
 package com.trocabook.Trocabook.controllers;
 
 import com.trocabook.Trocabook.controllers.request.AnunciarLivroRequest;
-import com.trocabook.Trocabook.model.LivroFirebase;
+import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseOutput;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.ILivroService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class AnunciarLivroController {
@@ -42,7 +43,7 @@ public class AnunciarLivroController {
     @PostMapping("/AnunciarLivro")
     public String anunciar(@ModelAttribute("anuncioRequest") AnunciarLivroRequest request, HttpSession session, Model model) throws IOException {
 
-        UsuarioFirebaseOutput usuario = usuarioAutenticadoService.getUsuarioOutput(session);
+        UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(session);
 
         if (usuario == null){
             return "redirect:/";
@@ -81,7 +82,7 @@ public class AnunciarLivroController {
             model.addAttribute("anuncioRequest", request);
             return "anunciar";
         }
-        LivroFirebase livroSalvo = livroService.cadastrar(
+        Livro livroSalvo = livroService.cadastrar(
                 new LivroBuscaOutput(
                         request.googleBooksId(),
                         request.titulo(),
@@ -94,7 +95,7 @@ public class AnunciarLivroController {
                 )
         );
 
-        anuncioService.anunciar(livroSalvo.getId(), usuario.id(), request.tipoNegociacao());
+        anuncioService.anunciar(livroSalvo.getId(), usuario.id(), request.tipoNegociacao().toUpperCase(Locale.ROOT));
 
         return "anuncioSucesso";
     }

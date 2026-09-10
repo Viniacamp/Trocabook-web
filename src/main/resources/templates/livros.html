@@ -35,9 +35,7 @@
                         <th:block sec:authorize="isAuthenticated()">
                             <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
                             <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                            <form th:action="@{/logout}" method="post" style="display: inline;">
-                                <button type="submit" id="deslogar">Sair</button>
-                            </form>
+                            <button type="button" id="deslogar">Sair</button>
                         </th:block>
                         <th:block sec:authorize="!isAuthenticated()">
                             <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
@@ -75,17 +73,20 @@
         </aside>
 
         <section class="livros-grid">
-            <div th:each="vetorUsuarioLivro : ${listaUsuariosLivros}" class="livro-card">
-                <img th:src="${vetorUsuarioLivro[0]}" class="capaLivros">
-                <p th:text="${vetorUsuarioLivro[1]}"></p>
-                <p></p>
+            <div th:each="anuncio : ${listaAnuncios}" class="livro-card">
+
+                <img th:src="${anuncio.capa}" class="capaLivros">
+
+                <p th:text="${anuncio.titulo}"></p>
+
                 <div class="info-usuario">
-                    <a th:href="@{'/destaque/' + ${vetorUsuarioLivro[5]}}">
-                    <img th:src="${vetorUsuarioLivro[2]}" class="PerfilIcon">
-                    <p th:text="${vetorUsuarioLivro[3]}"></p>
+                    <a th:href="@{'/destaque/' + ${anuncio.uidUsuario}}">
+                        <img th:src="${anuncio.fotoPerfil}" class="PerfilIcon">
+                        <span th:text="${anuncio.uidUsuario == uidAnunciante ? 'Você' : anuncio.nomeUsuario}"></span>
                     </a>
                 </div>
-                <a th:href="@{'/chat/conversar?usuarioLivro=' + ${vetorUsuarioLivro[4]} + '&remetente=' + ${#authentication.principal.usuario.cdUsuario}}">
+
+                <a th:href="@{'/chat/conversar?remetente=' + ${uidAnunciante} + '&anuncio=' + ${anuncio.id} + '&destinatario=' + ${anuncio.uidUsuario}}">
                     <button type="button">Negociar</button>
                 </a>
 
@@ -104,4 +105,5 @@
 </div>
 </body>
 <script src="/js/fetch.js"></script>
+<script type="module" src="/js/logout.js"></script>
 </html>

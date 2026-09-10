@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 public class Anuncio implements Serializable {
 
@@ -20,6 +21,8 @@ public class Anuncio implements Serializable {
     private TipoNegociacao tipoNegociacao;
 
     private String titulo;
+
+    private String tituloBusca;
 
     private String fotoPerfil;
 
@@ -39,6 +42,7 @@ public class Anuncio implements Serializable {
         this.nomeUsuario = nomeUsuario;
         this.tipoNegociacao = tipoNegociacao;
         this.titulo = titulo;
+        this.tituloBusca = normalizarTitulo(titulo);
         this.fotoPerfil = fotoPerfil;
         this.capa = capa;
         this.autores = autores;
@@ -91,6 +95,14 @@ public class Anuncio implements Serializable {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public String getTituloBusca() {
+        return tituloBusca;
+    }
+
+    public void setTituloBusca(String tituloBusca) {
+        this.tituloBusca = tituloBusca;
     }
 
     public String getFotoPerfil() {
@@ -155,4 +167,13 @@ public class Anuncio implements Serializable {
                 this.categorias
         );
     }
+
+    private static String normalizarTitulo(String titulo) {
+        if (titulo == null) {
+            return "";
+        }
+
+        return titulo.toLowerCase(Locale.ROOT);
+    }
+
 }

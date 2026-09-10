@@ -1,45 +1,55 @@
-document.getElementById("pesquisa").addEventListener("input", function(){
+document.getElementById("pesquisa").addEventListener("input", function () {
     const titulo = this.value;
-    let div = document.getElementById("resultadosPesquisa");
+    const div = document.getElementById("resultadosPesquisa");
+
     div.innerHTML = "";
-    if (titulo.length >= 1){
+
+    if (titulo.length >= 1) {
         fetch(`/pesquisar?titulo=${encodeURIComponent(titulo)}`)
             .then(res => {
-                if (!res.ok){
+                if (!res.ok) {
                     throw new Error("Falha ao encontrar livro");
                 }
+
                 return res.json();
             })
-            .then(Usuariolivros => {
-                if (Usuariolivros.length === 0){
-                    div.innerHTML += "<p>Nenhum Livro encontrado</p>"
-                }
-                else {
-                    Usuariolivros.forEach(Usuariolivro => {
+            .then(anuncios => {
+
+                if (anuncios.length === 0) {
+                    div.innerHTML = "<p>Nenhum livro encontrado</p>";
+                } else {
+
+                    anuncios.forEach(anuncio => {
+
                         const link = document.createElement("a");
-                        link.href = "/chat/" + Usuariolivro[3];
+
+                        // ID do anúncio
+                        link.href = "/chat/" + anuncio.id;
+
                         const capa = document.createElement("img");
-                        capa.src = Usuariolivro[0];
+                        capa.src = anuncio.capa;
                         capa.className = "livro-capa";
+                        capa.alt = "Capa do livro";
 
                         const texto = document.createElement("p");
-                        texto.innerText = Usuariolivro[1];
+                        texto.innerText = anuncio.titulo;
 
                         const vendedor = document.createElement("img");
-                        vendedor.src = Usuariolivro[2];
+                        vendedor.src = anuncio.fotoPerfil;
                         vendedor.className = "perfil-foto";
-
+                        vendedor.alt = "Foto do usuário";
 
                         link.appendChild(capa);
                         link.appendChild(texto);
                         link.appendChild(vendedor);
-                        div.appendChild(link);
 
-                    })
+                        div.appendChild(link);
+                    });
                 }
             })
             .catch(erro => {
-                div.innerHTML += `<p>Ocorreu um erro ao buscar o livro=${erro.message}</p>`
-            })
+                div.innerHTML =
+                    `<p>Ocorreu um erro ao buscar o livro: ${erro.message}</p>`;
+            });
     }
-})
+});

@@ -1,168 +1,526 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+<html lang="pt-br"
+      xmlns:th="http://thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="/css/style.css">
+
     <title>Cadastro | Trocabook</title>
-    <script th:src="'https://www.google.com/recaptcha/api.js?render=' + ${recaptchaSiteKey}"></script>
+
+    <!-- Google reCAPTCHA -->
+    <script th:src="'https://www.google.com/recaptcha/api.js?render=' + ${recaptchaSiteKey}">
+    </script>
+
 </head>
 
 <body>
+
 <div class="cadastro-container">
-  <div class="cadastro-wrapper">
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+
+    <div class="cadastro-wrapper">
+
+        <!-- VLibras -->
+        <div vw class="enabled">
+
+            <div vw-access-button class="active"></div>
+
+            <div vw-plugin-wrapper>
+
+                <div class="vw-plugin-top-wrapper"></div>
+
+            </div>
+
         </div>
-    </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
-    </script>
+
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+        <script>
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        </script>
+
+
+        <!-- FORMULÁRIO -->
 
         <div class="cadastro-form">
-            <form th:action="@{/cadastro}" id="cadastroForm" method="post" enctype="multipart/form-data" th:object="${usuarioDTO}" novalidate>
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+
+            <form
+                    th:action="@{/cadastro}"
+                    id="cadastroForm"
+                    method="post"
+                    enctype="multipart/form-data"
+                    th:object="${usuarioDTO}"
+                    novalidate>
+
+                <!--
+                    Token CSRF da aplicação web.
+                -->
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}">
+
+
+                <!--
+                    Token do Google reCAPTCHA.
+                -->
+                <input
+                        type="hidden"
+                        id="g-recaptcha-response"
+                        name="g-recaptcha-response">
+
+
+                <!--
+                    Chave pública do reCAPTCHA.
+                    Utilizada pelo cadastro.js.
+                -->
+                <input
+                        type="hidden"
+                        id="recaptchaSiteKey"
+                        th:value="${recaptchaSiteKey}">
+
+
+                <!-- NOME -->
 
                 <div class="form-group">
-                    <label for="nmUsuario">Nome:</label>
-                    <input type="text" th:field="*{nmUsuario}" class="form-control" id="nmUsuario" placeholder="Digite seu nome">
-                    <div th:if="${#fields.hasErrors('nmUsuario')}" th:errors="*{nmUsuario}" class="text-danger"></div>
-                    <div id="nmUsuario-error" class="text-danger client-error" style="display: none;"></div>
+
+                    <label for="nmUsuario">
+                        Nome:
+                    </label>
+
+                    <input
+                            type="text"
+                            th:field="*{nmUsuario}"
+                            class="form-control"
+                            id="nmUsuario"
+                            placeholder="Digite seu nome">
+
+
+                    <!-- Erro vindo do backend -->
+
+                    <div
+                            th:if="${#fields.hasErrors('nmUsuario')}"
+                            th:errors="*{nmUsuario}"
+                            class="text-danger">
+                    </div>
+
+
+                    <!-- Erro da validação JavaScript -->
+
+                    <div
+                            id="nmUsuario-error"
+                            class="text-danger client-error"
+                            style="display: none;">
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    <label for="email">E-mail:</label>
-                    <input type="email" th:field="*{email}" class="form-control" id="email" placeholder="Digite seu e-mail">
-                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
-                    <div id="email-error" class="text-danger client-error" style="display: none;"></div>
-                </div>
+
+                <!-- E-MAIL -->
 
                 <div class="form-group">
-                    <label for="senha">Senha:</label>
+
+                    <label for="email">
+                        E-mail:
+                    </label>
+
+                    <input
+                            type="email"
+                            th:field="*{email}"
+                            class="form-control"
+                            id="email"
+                            placeholder="Digite seu e-mail">
+
+
+                    <!-- Erro vindo do backend -->
+
+                    <div
+                            th:if="${#fields.hasErrors('email')}"
+                            th:errors="*{email}"
+                            class="text-danger">
+                    </div>
+
+
+                    <!-- Erro da validação JavaScript -->
+
+                    <div
+                            id="email-error"
+                            class="text-danger client-error"
+                            style="display: none;">
+                    </div>
+
+                </div>
+
+
+                <!-- SENHA -->
+
+                <div class="form-group">
+
+                    <label for="senha">
+                        Senha:
+                    </label>
+
                     <div class="input-group">
-                        <input type="password" th:field="*{senha}" class="form-control" id="senha" placeholder="Digite sua senha" aria-describedby="passwordHelpBlock">
-                        <div class="input-group-append">
-                            <span class="input-group-text">
-                                <i class="fa fa-eye" id="togglePassword"></i>
-                            </span>
-                        </div>
+
+                        <input
+                                type="password"
+                                th:field="*{senha}"
+                                class="form-control"
+                                id="senha"
+                                placeholder="Digite sua senha"
+                                aria-describedby="passwordHelpBlock">
+
+
+                        <button type="button"
+                                class="input-group-text"
+                                id="togglePassword"
+                                aria-label="Mostrar senha">
+
+                            <i class="fa fa-eye"></i>
+
+                        </button>
+
                     </div>
-                    <div id="senha-server-error" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}" class="text-danger"></div>
-                    <div id="senha-error" class="text-danger client-error" style="display: none;"></div>
-                    <div id="passwordHelpBlock" class="form-text">
+
+
+                    <!-- Erro de senha vindo do backend -->
+
+                    <div
+                            id="senha-server-error"
+                            th:if="${#fields.hasErrors('senha')}"
+                            th:errors="*{senha}"
+                            class="text-danger">
+                    </div>
+
+
+                    <!-- Erro da validação JavaScript -->
+
+                    <div
+                            id="senha-error"
+                            class="text-danger client-error"
+                            style="display: none;">
+                    </div>
+
+
+                    <!-- Regras da senha -->
+
+                    <div
+                            id="passwordHelpBlock"
+                            class="form-text">
+
                         <ul id="password-rules">
-                            <li id="length" class="invalid">Pelo menos 8 caracteres</li>
-                            <li id="lowercase" class="invalid">Pelo menos uma letra minúscula</li>
-                            <li id="uppercase" class="invalid">Pelo menos uma letra maiúscula</li>
-                            <li id="number" class="invalid">Pelo menos um número</li>
-                            <li id="special" class="invalid">Pelo menos um caractere especial (@$!%*?&)</li>
+
+                            <li
+                                    id="length"
+                                    class="invalid">
+                                Pelo menos 8 caracteres
+                            </li>
+
+                            <li
+                                    id="lowercase"
+                                    class="invalid">
+                                Pelo menos uma letra minúscula
+                            </li>
+
+                            <li
+                                    id="uppercase"
+                                    class="invalid">
+                                Pelo menos uma letra maiúscula
+                            </li>
+
+                            <li
+                                    id="number"
+                                    class="invalid">
+                                Pelo menos um número
+                            </li>
+
+                            <li
+                                    id="special"
+                                    class="invalid">
+                                Pelo menos um caractere especial (@$!%*?&)
+                            </li>
+
                         </ul>
+
                     </div>
+
                 </div>
 
+
+                <!-- CPF -->
+
                 <div class="form-group">
-                    <label for="CPF">CPF:</label>
-                    <input type="text" th:field="*{CPF}" class="form-control" id="CPF" name="CPF" placeholder="000.000.000-00">
-                    <div th:if="${#fields.hasErrors('CPF')}" th:errors="*{CPF}" class="text-danger"></div>
-                    <div id="cpf-error" class="text-danger client-error" style="display: none;"></div>
+
+                    <label for="CPF">
+                        CPF:
+                    </label>
+
+                    <input
+                            type="text"
+                            th:field="*{CPF}"
+                            class="form-control"
+                            id="CPF"
+                            placeholder="000.000.000-00">
+
+
+                    <!-- Erro vindo do backend -->
+
+                    <div
+                            th:if="${#fields.hasErrors('CPF')}"
+                            th:errors="*{CPF}"
+                            class="text-danger">
+                    </div>
+
+
+                    <!-- Erro da validação JavaScript -->
+
+                    <div
+                            id="cpf-error"
+                            class="text-danger client-error"
+                            style="display: none;">
+                    </div>
+
                 </div>
+
+
+                <!-- FOTO -->
 
                 <div class="form-group text-center">
-                    <label>Foto:</label><br>
-                    <label for="fotoA" class="file-upload-label">
+
+                    <label>
+                        Foto:
+                    </label>
+
+                    <br>
+
+
+                    <!-- Área de upload -->
+
+                    <label
+                            for="fotoA"
+                            class="file-upload-label">
 
                         <div id="upload-prompt">
-                            <i class="fa fa-upload fa-2x"></i><br>
-                            <span id="file-name">Selecione ou arraste sua foto aqui</span>
+
+                            <i class="fa fa-upload fa-2x"></i>
+
+                            <br>
+
+                            <span id="file-name">
+                                Selecione ou arraste sua foto aqui
+                            </span>
+
                         </div>
 
-                        <div id="preview-container" style="display: none;">
-                            <img id="image-preview" src="#" alt="Prévia da Imagem">
-                            <span id="remove-photo-btn" title="Remover foto"><i class="fa fa-times"></i></span>
+
+                        <!-- Pré-visualização -->
+
+                        <div
+                                id="preview-container"
+                                style="display: none;">
+
+                            <img
+                                    id="image-preview"
+                                    src="#"
+                                    alt="Prévia da Imagem">
+
+
+                            <span
+                                    id="remove-photo-btn"
+                                    title="Remover foto">
+
+                                <i class="fa fa-times"></i>
+
+                            </span>
+
                         </div>
 
                     </label>
-                    <input type="file" id="fotoA" name="fotoA" accept="image/*" class="d-none">
-                    <div th:if="${fotoErro != null}" th:text="${fotoErro}" class="text-danger"></div>
-                    <div id="fotoA-error" class="text-danger client-error" style="display: none;"></div>
+
+
+                    <!-- Input da foto -->
+
+                    <input
+                            type="file"
+                            id="fotoA"
+                            name="fotoA"
+                            accept="image/*"
+                            class="d-none">
+
+
+                    <!-- Erro de foto vindo do backend -->
+
+                    <div
+                            th:if="${fotoErro != null}"
+                            th:text="${fotoErro}"
+                            class="text-danger">
+                    </div>
+
+
+                    <!-- Erro da validação JavaScript -->
+
+                    <div
+                            id="fotoA-error"
+                            class="text-danger client-error"
+                            style="display: none;">
+                    </div>
+
                 </div>
-                <button type="submit" class="btn btn-primary">Cadastrar</button><br><br>
+
+
+                <!-- BOTÃO -->
+
+                <button
+                        type="submit"
+                        id="cadastroButton"
+                        class="btn btn-primary">
+
+                    Cadastrar
+
+                </button>
+
+                <br>
+                <br>
+
             </form>
-        </th>
+
         </div>
-   
-    <div class="cadastro-banner">
-      <a href="/">
-        <img src="img/Design sem nome (7).svg" alt="Logo">
-      </a>
-      <h1>Cadastro de Usuário</h1>
+
+
+        <!-- BANNER -->
+
+        <div class="cadastro-banner">
+
+            <a href="/">
+
+                <img
+                        src="/img/Design sem nome (7).svg"
+                        alt="Logo">
+
+            </a>
+
+
+            <h1>
+                Cadastro de Usuário
+            </h1>
+
+        </div>
+
     </div>
 
-  </div>
+
+    <!-- JQUERY -->
+
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
 
 
- <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- BOOTSTRAP -->
 
- <footer>
-    <div class="rodapenovo">
-        <a href="/"><img src="/img/Design sem nome.svg"></a>
-        <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
-        <a href="/ajuda"><p>Central de ajuda</p></a>
-        <small>© 2025 Sistema Trocabook<br>Todos os direitos reservados</small>
-    </div>
-</footer>
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
 
-<script th:src="@{/js/form-validation.js}"></script>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    document.getElementById('cadastroForm').addEventListener('submit', function(event) {
-        // SEMPRE previna o envio padrão primeiro.
-        event.preventDefault();
+    <!-- JQUERY MASK -->
 
-        // Executa nossa função de validação (que está no form-validation.js).
-        if (validateForm()) {
-            // Se o formulário for válido, prossiga com o reCAPTCHA.
-            const recaptchaSiteKey = /*[[${recaptchaSiteKey}]]*/ 'default_key';
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js">
+    </script>
 
-            grecaptcha.ready(function() {
-                grecaptcha.execute(recaptchaSiteKey, {action: 'cadastro'}).then(function(token) {
-                    // Define o token e então envia o formulário programaticamente.
-                    document.getElementById('g-recaptcha-response').value = token;
-                    document.getElementById('cadastroForm').submit();
-                });
-            });
-        }
-        // Se validateForm() retornar false, nada acontece. O usuário vê os erros na tela.
-    });
-    /*]]>*/
-</script>
 
-<script>
-    $(document).ready(function() {
-        $('#togglePassword').on('click', function() {
-            const passwordField = $('#senha');
-            const fieldType = passwordField.attr('type');
+    <!-- FOOTER -->
 
-            if (fieldType === 'password') {
-                passwordField.attr('type', 'text');
-                $(this).removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                passwordField.attr('type', 'password');
-                $(this).removeClass('fa-eye-slash').addClass('fa-eye');
-            }
-        });
-    });
-</script>
+    <footer>
+
+        <div class="rodapenovo">
+
+            <a href="/">
+                <img src="/img/Design sem nome.svg">
+            </a>
+
+
+            <a href="/sobreNos">
+
+                <p>
+                    Conheça nosso incrível projeto
+                    <br>
+                    de incentivo a reutilização
+                </p>
+
+            </a>
+
+
+            <a href="/ajuda">
+
+                <p>
+                    Central de ajuda
+                </p>
+
+            </a>
+
+
+            <small>
+
+                © 2025 Sistema Trocabook
+
+                <br>
+
+                Todos os direitos reservados
+
+            </small>
+
+        </div>
+
+    </footer>
+
+
+    <!--
+        VALIDAÇÃO DO FORMULÁRIO
+
+        É carregado como módulo porque
+        cadastro.js importa validateForm().
+    -->
+
+    <script
+            type="module"
+            th:src="@{/js/form-validation.js}">
+    </script>
+
+
+    <!--
+        CONTROLE DO CADASTRO
+
+        Responsável por:
+        - verificar autenticação
+        - validar formulário
+        - executar reCAPTCHA
+        - enviar formulário
+    -->
+
+    <script
+            type="module"
+            th:src="@{/js/cadastro.js}">
+    </script>
+
 </div>
+
 </body>
+
 </html>
+

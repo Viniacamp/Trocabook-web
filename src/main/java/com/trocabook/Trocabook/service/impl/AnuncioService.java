@@ -1,9 +1,9 @@
 package com.trocabook.Trocabook.service.impl;
 
 import com.trocabook.Trocabook.model.Anuncio;
-import com.trocabook.Trocabook.model.LivroFirebase;
+import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseOutput;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.repository.AnuncioRepository;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.ILivroService;
@@ -29,15 +29,15 @@ public class AnuncioService implements IAnuncioService {
 
     @Override
     public AnuncioDTO anunciar(String uidLivro, String uidUsuario, String tipoNegociacao) {
-        UsuarioFirebaseOutput usuarioFirebase = usuarioService.logar(uidUsuario);
+        UsuarioOutput usuarioFirebase = usuarioService.buscarPorUid(uidUsuario);
 
         if (usuarioFirebase == null) {
             return null;
         }
 
-        LivroFirebase livroFirebase = livroService.buscarPorUid(uidLivro);
+        Livro livro = livroService.buscarPorUid(uidLivro);
 
-        if (livroFirebase == null){
+        if (livro == null){
             return null;
         }
 
@@ -47,11 +47,11 @@ public class AnuncioService implements IAnuncioService {
                 uidLivro,
                 usuarioFirebase.nome(),
                 Anuncio.TipoNegociacao.valueOf(tipoNegociacao),
-                livroFirebase.getTitulo(),
+                livro.getTitulo(),
                 usuarioFirebase.fotoPerfil(),
-                livroFirebase.getUrlImagem(),
-                livroFirebase.getIdsAutores(),
-                livroFirebase.getIdsCategorias()
+                livro.getUrlImagem(),
+                livro.getIdsAutores(),
+                livro.getIdsCategorias()
 
         );
 
@@ -62,8 +62,54 @@ public class AnuncioService implements IAnuncioService {
     }
 
     @Override
+    public AnuncioDTO buscarPorUid(String uid) {
+        Anuncio anuncio = anuncioRepository.buscarPorUid(uid);
+
+        if (anuncio == null){
+            return null;
+        }
+        return anuncio.paraDto();
+    }
+
+    @Override
+    public List<AnuncioDTO> listarTodos() {
+        return anuncioRepository
+                .listarTodos()
+                .stream()
+                .map(Anuncio::paraDto)
+                .toList();
+    }
+
+    @Override
+    public List<AnuncioDTO> listarTodosPorTipoNegociacao(Anuncio.TipoNegociacao tipoNegociacao) {
+        return anuncioRepository
+                .listarTodosPorTipoNegociacao(tipoNegociacao)
+                .stream()
+                .map(Anuncio::paraDto)
+                .toList();
+    }
+
+    @Override
     public List<AnuncioDTO> listarAnunciosUsuario(String uidUsuario) {
         return anuncioRepository.buscarPorUidUsuario(uidUsuario)
+                .stream()
+                .map(Anuncio::paraDto)
+                .toList();
+    }
+
+    @Override
+    public List<AnuncioDTO> listarAnunciosUsuarioETipo(String uidUsuario, Anuncio.TipoNegociacao tipoNegociacao) {
+        return anuncioRepository
+                .buscarPorUidUsuarioETipoNegociacao(uidUsuario, tipoNegociacao)
+                .stream()
+                .map(Anuncio::paraDto)
+                .toList();
+    }
+
+    @Override
+    public List<AnuncioDTO> buscarPorTitulo(String titulo) {
+        return anuncioRepository
+                .buscarPorTitulo(titulo)
                 .stream()
                 .map(Anuncio::paraDto)
                 .toList();

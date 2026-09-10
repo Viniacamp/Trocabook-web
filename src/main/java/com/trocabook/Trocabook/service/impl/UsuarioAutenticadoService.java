@@ -1,9 +1,9 @@
 package com.trocabook.Trocabook.service.impl;
 
 import com.google.firebase.auth.FirebaseToken;
-import com.trocabook.Trocabook.model.UsuarioFirebase;
-import com.trocabook.Trocabook.model.dto.UsuarioFirebaseOutput;
-import com.trocabook.Trocabook.repository.impl.UsuarioFirebaseRepositoryImpl;
+import com.trocabook.Trocabook.model.Usuario;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.repository.impl.UsuarioRepositoryImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,18 +14,18 @@ public class UsuarioAutenticadoService {
 
     private static final String USUARIO_LOGADO = "usuarioLogado";
 
-    private final UsuarioFirebaseRepositoryImpl usuarioRepository;
+    private final UsuarioRepositoryImpl usuarioRepository;
 
     public UsuarioAutenticadoService(
-            UsuarioFirebaseRepositoryImpl usuarioRepository
+            UsuarioRepositoryImpl usuarioRepository
     ) {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public UsuarioFirebase getUsuario(HttpSession sessao) {
+    public Usuario getUsuario(HttpSession sessao) {
 
-        UsuarioFirebase usuario =
-                (UsuarioFirebase) sessao.getAttribute(USUARIO_LOGADO);
+        Usuario usuario =
+                (Usuario) sessao.getAttribute(USUARIO_LOGADO);
 
         if (usuario != null) {
             return usuario;
@@ -50,7 +50,7 @@ public class UsuarioAutenticadoService {
 
     public void atualizarSessao(
             HttpSession sessao,
-            UsuarioFirebase usuario
+            Usuario usuario
     ) {
         sessao.setAttribute(USUARIO_LOGADO, usuario);
     }
@@ -59,13 +59,13 @@ public class UsuarioAutenticadoService {
         sessao.removeAttribute(USUARIO_LOGADO);
     }
 
-    public UsuarioFirebaseOutput getUsuarioOutput(
+    public UsuarioOutput getUsuarioOutput(
             HttpSession sessao
     ) {
 
-        UsuarioFirebase usuario = getUsuario(sessao);
+        Usuario usuario = getUsuario(sessao);
 
-        return new UsuarioFirebaseOutput(
+        return new UsuarioOutput(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getFotoPerfil()
