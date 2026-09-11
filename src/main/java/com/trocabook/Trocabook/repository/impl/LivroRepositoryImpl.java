@@ -170,7 +170,7 @@ public class LivroRepositoryImpl implements LivroRepository {
             QuerySnapshot resultado =
                     firestore
                             .collection(COLECAO)
-                            .whereEqualTo("googleId", googleBooksId)
+                            .whereEqualTo("googleBooksId", googleBooksId)
                             .limit(1)
                             .get()
                             .get();
