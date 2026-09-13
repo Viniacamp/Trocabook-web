@@ -1,0 +1,120 @@
+import { exigirNaoAutenticado } from "./auth.js";
+import { validateForm } from "./form-validation.js";
+
+/*
+ * Impede que um usuário já autenticado
+ * permaneça na página de cadastro.
+ */
+exigirNaoAutenticado();
+
+/*
+ * Formulário de cadastro
+ */
+const cadastroForm = document.getElementById("cadastroForm");
+
+if (cadastroForm) {
+
+    cadastroForm.addEventListener("submit", function (event) {
+
+        /*
+         * Impede o envio enquanto fazemos
+         * as validações e o reCAPTCHA.
+         */
+        event.preventDefault();
+
+        /*
+         * Executa as validações do formulário.
+         */
+        if (!validateForm()) {
+            return;
+        }
+
+        /*
+         * Executa o reCAPTCHA.
+         */
+        const recaptchaSiteKey =
+            document.getElementById("recaptchaSiteKey").value;
+
+        grecaptcha.ready(function () {
+
+            grecaptcha.execute(
+                recaptchaSiteKey,
+                { action: "cadastro" }
+            ).then(function (token) {
+
+                /*
+                 * Coloca o token no formulário.
+                 */
+                document.getElementById(
+                    "g-recaptcha-response"
+                ).value = token;
+
+                /*
+                 * Envia o formulário para o backend.
+                 */
+                cadastroForm.submit();
+
+            }).catch(function (error) {
+
+                console.error(
+                    "Erro ao executar reCAPTCHA:",
+                    error
+                );
+
+            });
+
+        });
+
+    });
+}
+
+/*
+ * Mostrar / ocultar senha
+ */
+const togglePassword = document.getElementById("togglePassword");
+const passwordField = document.getElementById("senha");
+
+if (togglePassword && passwordField) {
+
+    togglePassword.addEventListener("click", function () {
+
+        const tipoAtual =
+            passwordField.getAttribute("type");
+
+        const icone =
+            togglePassword.querySelector("i");
+
+        if (tipoAtual === "password") {
+
+            passwordField.setAttribute(
+                "type",
+                "text"
+            );
+
+            icone.classList.remove("fa-eye");
+            icone.classList.add("fa-eye-slash");
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Ocultar senha"
+            );
+
+        } else {
+
+            passwordField.setAttribute(
+                "type",
+                "password"
+            );
+
+            icone.classList.remove("fa-eye-slash");
+            icone.classList.add("fa-eye");
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Mostrar senha"
+            );
+        }
+
+    });
+
+}

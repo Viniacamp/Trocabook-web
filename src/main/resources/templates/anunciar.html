@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/anunciarLivroApi.css"/>
+    <title>Criar novo anuncio | Trocabook</title>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho"><tr>
+                <th id="cabecalhoelementos">
+                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar">
+                        <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
+                    </div>
+                    <th:block sec:authorize="isAuthenticated()">
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img src="/img/vendedor4.svg" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuario?.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+                            
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="chat/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
+                    </th:block>
+                </th>
+            </tr>
+            </table>
+        </div>
+    </header>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <div class="paganunciar">
+        <div class="anuncio">
+            <h1>Crie o seu anúncio</h1>
+
+            <div class="busca-livro-container">
+                <input type="text" id="tituloBuscado" placeholder="Digite o título do livro a ser anunciado">
+                <button id="buscarLivro" onclick="buscarLivro()" type="button">Buscar</button>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <!-- Resultados da API -->
+                <div id="resultadosLivros" class="sugestoes-autocomplete"></div>
+            </div>
+            <form th:object="${anuncioRequest}" th:action="@{/AnunciarLivro}" enctype="multipart/form-data" method="post" class="form-anuncio">
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}" />
+
+
+                <div class="livro-detalhes">
+                    <label for="capaLivro" class="label-principal">Capa do Livro:</label>
+                    <img id="capaLivro" class="capaLivro" th:src="${anuncioRequest.urlImagem != null ? anuncioRequest.urlImagem : ''}" style="display:none;">
+                    <input type="hidden" th:field="*{urlImagem}" id="urlImagem">
+                    <label for="titulo">Título:</label>
+                    <!-- Agora é editável -->
+                    <input type="text" id="titulo" th:field="*{titulo}" placeholder="Título do livro" readonly>
+                    <p class="text-danger" th:if="${erroTitulo}" th:text="${erroTitulo}"></p>
+                    <label for="dataPublicacao">Data de Publicação:</label>
+                    <input type="date" id="dataPublicacao" th:field="*{dataPublicacao}" readonly>
+                    <label>Autores:</label>
+                    <div id="autores" class="tags-container">
+                        <div th:each="autor, i : *{autores}">
+                            <input type="hidden" th:field="*{autores[__${i.index}__]}" th:value="${autor}" readonly>
+                            <span th:text="${autor}"></span>
+                        </div>
+                    </div>
+                    <p class="text-danger" th:if="${erroAutor}" th:text="${erroAutor}"></p>
+
+                    <label>Categorias:</label>
+                    <div id="categorias" class="tags-container">
+                        <div th:each="categoria, i : *{categorias}">
+                            <input type="hidden" th:field="*{categorias[__${i.index}__]}" th:value="${categoria}" readonly>
+                            <span th:text="${categoria}"></span>
+                        </div>
+                    </div>
+                    <p class="text-danger" th:if="${erroCategoria}" th:text="${erroCategoria}"></p>
+
+                    <label for="descricao">Descrição:</label>
+                    <textarea id="descricao" name="descricao" placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir"></textarea>
+
+                    <label for="tipoNegociacao">Tipo de negociação:</label>
+                    <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" required>
+                        <option value="">Selecione...</option>
+                        <option value="TROCA">Troca</option>
+                        <option value="VENDA">Venda</option>
+                        <option value="AMBOS">Ambos</option>
+                    </select>
+                    <p class="text-danger" th:if="${erroTipo}" th:text="${erroTipo}"></p>
+
+                    <input type="hidden" th:field="*{lingua}" id="lingua"/>
+
+                    <button type="submit" class="btn-criar">Criar Anúncio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <div class="rodapenovo">
+            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
+            <a href="/ajuda"><p>Central de ajuda</p></a>
+            <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
+        </div>
+    </footer>
+</div>
+
+<script src="/js/menu-logado.js"></script>
+</body>
+<script>
+    const inputBusca = document.getElementById("tituloBuscado");
+    const resultados = document.getElementById("resultadosLivros");
+    const container = document.querySelector(".busca-livro-container");
+    const botaoBuscar = document.getElementById("buscarLivro");
+
+
+    document.addEventListener("click", function (event) {
+        if (
+            container &&
+            resultados &&
+            !container.contains(event.target) &&
+            event.target !== botaoBuscar
+        ) {
+            resultados.style.display = "none";
+        }
+    });
+
+
+    inputBusca.addEventListener("focus", function () {
+        if (resultados && resultados.innerHTML.trim() !== "") {
+            resultados.style.display = "block";
+        }
+    });
+
+
+    botaoBuscar.addEventListener("click", function (event) {
+        event.stopPropagation(); // 🔥 impede o clique de propagar
+    });
+
+    function buscarLivro() {
+        const titulo = document.getElementById("tituloBuscado").value;
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+        const divResultados = document.getElementById("resultadosLivros");
+
+        divResultados.innerHTML = "";
+        divResultados.style.display = "block";
+
+        if (titulo.trim().length === 0) {
+            window.alert("Insira um titulo")
+            return
+        }
+        window.alert("Iniciando Busca, isso pode demorar um pouco aguarde...")
+        fetch("/buscar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify({ titulo })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Erro ao buscar livro");
+                return res.json();
+            })
+            .then(livros => {
+                if (!livros || livros.length === 0) {
+                    divResultados.innerHTML = "<p>Nenhum livro encontrado 😥</p>";
+                    return;
+                }
+
+                livros.forEach(livro => {
+                    const link = document.createElement("a");
+                    link.href = "#";
+                    link.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        preencherCampos(livro);
+                        divResultados.innerHTML = ""; // limpa lista após seleção
+                    });
+
+                    const capa = document.createElement("img");
+                    capa.src = livro.urlImagem || "/img/default-capa.png";
+                    capa.className = "livro-capa";
+
+                    const texto = document.createElement("p");
+                    texto.innerText = livro.titulo;
+
+                    link.appendChild(capa);
+                    link.appendChild(texto);
+                    divResultados.appendChild(link);
+                });
+            })
+            .catch(err => {
+                divResultados.innerHTML = `<p>Erro: ${err.message}</p>`;
+            });
+    }
+
+    function preencherCampos(livro) {
+        console.log(livro)
+        document.getElementById("titulo").value = livro.titulo || "";
+        document.getElementById("capaLivro").src = livro.urlImagem || "";
+        document.getElementById("urlImagem").value = livro.urlImagem || "";
+        document.getElementById("capaLivro").style.display = "block";
+        document.getElementById("dataPublicacao").value = livro.dataPublicacao || "";
+        document.getElementById("lingua").value = livro.lingua || "en";
+
+
+        const autoresDiv = document.getElementById("autores");
+        autoresDiv.innerHTML = "";
+        livro.autores.forEach((autor, i) => {
+            const span = document.createElement("span");
+            span.innerText = autor;
+
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `autores[${i}]`;
+            hiddenInput.value = autor;
+
+            autoresDiv.appendChild(span);
+            autoresDiv.appendChild(hiddenInput);
+        });
+
+
+        const categoriasDiv = document.getElementById("categorias");
+        categoriasDiv.innerHTML = "";
+        livro.categorias.forEach((categoria, i) => {
+            const span = document.createElement("span");
+            span.innerText = categoria;
+
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `categorias[${i}]`;
+            hiddenInput.value = categoria;
+
+            categoriasDiv.appendChild(span);
+            categoriasDiv.appendChild(hiddenInput);
+        });
+    }
+
+</script>
+<script type="module" src="/js/logout.js"></script>
+</html>

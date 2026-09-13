@@ -1,0 +1,1259 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+body {
+    margin: 0 auto;
+    font-family: manrope;
+    background-color: #fafafa;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+/*estilo da pagina (geral)*/
+p{
+    text-align: center;
+}
+table th, td {
+    border-collapse: collapse;
+    text-align: center;
+}
+
+/*estilo do cabeçalho*/
+.cabecalho{
+    width: 100%;
+    background: linear-gradient(267deg, rgb(229, 178, 254) 27.55%, rgb(104, 158, 254) 100.00%);
+    border: none;
+    box-shadow: 0 4px 6px -3px rgba(0, 0, 0, 0.4);
+    padding-left: 13px;
+}
+
+.cabecalho table, th, td{
+    height: 100%;
+}
+
+.cabecalho img{
+    width: 220px;
+    margin-left: -40px;
+    vertical-align: middle;
+}
+
+.cadbutton{
+    float: right;
+}
+
+.cabecalho input{
+    width: 100%; 
+    height: 35px;
+    border: none;
+    border-radius: 6px;
+    font-family: manrope;
+    font-size: 14px;
+    margin-left: -20px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+
+.cabecalho select{
+    border: none;
+    border-radius: 6px;
+    font-family: manrope;
+    padding-left: 5px;
+    margin-right: 5px;
+}
+
+.cabecalho select::after{
+    background-color: rgb(230, 230, 230);
+}
+
+.cabecalho button{
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: manrope;
+    font-size: 16px;
+}
+
+.banner img{
+    width: 100%;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+/*CSS do dropdown do header do ambiente logado*/
+.user-menu-container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.user-menu-btn {
+  margin-left: 35px;
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.user-menu-btn span{
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+img.user-menu-icon {
+    width: 38px;
+    height: 38px;
+}
+
+.arrow {
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: #ffffff;
+  min-width: 170px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1000;
+  margin-top: 6px;
+}
+
+.dropdown-content a,
+.dropdown-content .logout-btn {
+  color: #333333;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.dropdown-content a:hover,
+.dropdown-content .logout-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown-content .logout-btn {
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: #eeeeee;
+  margin: 4px 0;
+}
+
+.show {
+  display: block;
+}
+
+/*itens do dropdown - CÓDIGO DEPRECIADO*/
+.meus-livros4 {
+    text-decoration: none;
+    position: relative;
+    line-height: 20px;
+    font-weight: 600;
+    color: white;
+    display: inline-block;
+    min-width: 113px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.anunciar-livro4 {
+    text-decoration: none;
+    position: relative;
+    line-height: 20px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+/*CSS dos controles do ambiente logado (meus livros e anunciar)*/
+.meus-livros4 {
+    text-decoration: none;
+    position: relative;
+    line-height: 20px;
+    font-weight: 600;
+    color: inherit;
+    display: inline-block;
+    min-width: 100px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.anunciar-livro4 {
+    text-decoration: none;
+    position: relative;
+    line-height: 20px;
+    font-weight: 600;
+    color: inherit;
+    display: inline-block;
+    min-width: 113px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+/*estilo da seção negociadores em destaque (home)*/
+.negociadores{
+    width: 100%;
+    height: 150px;
+    border: white;
+    padding-bottom: 30px;
+}
+
+.negociadores img{
+    padding-left: 22px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.negociadores h1{
+    text-align: center;
+}
+
+/*estilo da seção de listagem de livros (home & pag. de listagem de livros)*/
+.livros h2{
+    margin-left: 18px;
+}
+
+.livros-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    justify-content: flex-start;
+    padding: 20px;
+}
+
+.livro-card {
+    width: 212px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.livro-card p {
+    text-align: center;
+    font-weight: bold;
+    margin: 10px 0 0;
+    min-height: 40px;
+}
+
+.livro-card > p {
+    min-height: 48px;
+    margin: 15px 5px;
+}
+
+.livro-card:hover{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.livro-card button{
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    background-color: #007BFF;
+    font-family: manrope;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.livro-card button:hover{
+    background-color: rgb(6, 96, 148);
+}
+
+.capaLivros {
+    width: 100%;
+    height: 190px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+/*estilo da pagina de cadastro*/
+.cadastro-container{
+    margin-bottom: 5px;
+    max-width: 1700px;
+    margin: 0 auto;
+}
+
+.cadastro h1{
+    text-shadow: 1px 1px 1px #000000;
+    text-align: right;
+    vertical-align: middle;
+    border-collapse: collapse;
+    size: 25px;
+}
+
+.cadastro-wrapper {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 100vh;
+    flex-wrap: nowrap;
+    gap: 0;
+}
+
+.cadastro-form, .cadastro-banner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cadastro-form {
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+label{
+    margin-bottom: 5px;
+}
+
+.cadastro-banner {
+    padding: 40px;
+    padding-bottom: 100px;
+    text-align: center;
+    background: linear-gradient(132deg, rgb(255, 206, 236) 0%, rgb(151, 150, 240) 100%);
+    color: white;
+}
+
+.cadastro-banner img {
+    max-width: 350px;
+    height: auto;
+    margin-bottom: 12px;
+}
+
+.cadastro-banner h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+/* aumenta o espaço entre os campos */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.senha-wrapper {
+    position: relative;
+}
+
+.senha-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* espaço para o ícone */
+}
+
+.input-group-text {
+    height: 100%;
+}
+
+.input-group-append{
+    cursor: pointer;
+}
+
+.senha-wrapper i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    font-size: 16px;
+}
+
+/* Responsividade da página*/
+@media (max-width: 992px) {
+    .cadastro-wrapper {
+        flex-direction: column;
+    }
+    .cadastro-form, .cadastro-banner {
+        flex: unset;
+        width: 100%;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cadastro-form, .cadastro-banner {
+        flex: 1 1 50%; /* cada lado reduz proporcionalmente */
+        padding: 20px;
+    }
+
+    .cadastro-banner img {
+        width: 70px; /* reduz a logo */
+        top: 10px;
+        left: 10px;
+    }
+
+    .cadastro-banner h1 {
+        font-size: 1.4rem;
+        margin-top: 50px;
+    }
+}
+
+/* Para telas muito pequenas (celular) */
+@media (max-width: 480px) {
+    .cadastro-form, .cadastro-banner {
+        flex: 1 1 50%; /* mantém horizontal */
+        font-size: 0.9rem;
+    }
+
+    .cadastro-banner img {
+        width: 50px;
+        top: 5px;
+        left: 5px;
+    }
+
+    .cadastro-banner h1 {
+        font-size: 1.1rem;
+        margin-top: 40px;
+    }
+}
+
+/*estilo da página de login*/
+.login{
+    margin: 0 auto;
+    margin-top: 60px;
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 20px;
+    width: 350px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+}
+
+.login label{
+    color: black;
+}
+
+.login h1{
+    padding-bottom: 20px;
+    text-align: center;
+    color: black;
+}
+
+.login small{
+    font-size: 14px;
+    margin-top: 5px;
+    float: right;
+}
+
+.login small:hover{
+    text-decoration: underline;
+}
+
+.loginlogo{
+    text-align: center;
+}
+
+.loginlogo img{
+    width: 250px;
+    height: 300px;
+    margin-bottom: -140px;
+    margin-top: -60px;
+}
+
+/*pagina de criação de anuncio*/
+.paganunciar{
+    margin: 0 auto;
+    text-align: center;
+}
+
+.paganunciar h1{
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+.paganunciar p{
+    margin-bottom: -8px;
+    text-align: center;
+}
+
+.paganunciar input{
+    width: 55%;
+    height: 35px;
+    margin-top: 15px;
+    padding-left: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    border-style:solid;
+    border-color: #E0E0E0;
+    font-family: manrope;
+    font-size: 16px;
+    padding-left: 10px;
+}
+
+.paganunciar button{
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    background: linear-gradient(267deg, rgb(229, 178, 254) 27.55%, rgb(104, 158, 254) 100.00%);
+    font-family: manrope;
+    font-size: 16px;
+    text-shadow: black 0.1em 0.1em 0.7em;
+    cursor: pointer;
+    padding: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/*estilo da página sobre nós*/
+.sobrenos{
+    text-align: center;
+    padding-left: 200px;
+    padding-right: 200px;
+    padding-top: 20px;
+}
+
+.sobrenos img{
+    width: 500px;
+    height: 500px;
+}
+
+/*estilo do rodapé*/
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rodapenovo{
+    width: 100%;
+    height: 100px;
+    background-color: white;
+    box-shadow: 0 -4px 6px -5px rgba(0, 0, 0, 0.4);
+}
+
+.rodapenovo img{
+    width: 180px;
+    margin-left: -5px;
+    float: left;
+    margin-right: 5px;
+}
+
+.rodapenovo p{
+    float: left;
+    text-align: left;
+    margin: 0 auto;
+    padding-top: 28px;
+    padding-right: 37px;
+    color: #007BFF;
+}
+
+.rodapenovo p:hover{
+    color: rgb(6, 96, 148);
+}
+
+.rodapenovo small{
+    float: right;
+    font-size: 16px;
+    padding-top: 28px;
+    padding-right: 30px;
+}
+
+#exibirLivros {
+    display: flex;
+    flex-direction: row; /* Organiza os itens em coluna */
+    align-items: center; /* Centraliza os itens horizontalmente */
+    justify-content: center; /* Centraliza os itens verticalmente */
+    text-align: center; /* Garante que o texto "Meus Livros" esteja centralizado */
+    padding-top: 20px; /* Espaçamento superior para separar o título dos livros */
+}
+
+.titulo{
+    width: 100%;
+    text-align: center; /* Centraliza o título */
+    margin-bottom: 20px; /* Espaço abaixo do título */
+}
+
+.capa-livro {
+    width: 150px; /* Define a largura */
+    margin: 10px; /* Define o espaçamento */
+    border: 2px solid #ddd; /* Opcional: borda ao redor */
+    border-radius: 8px; /* Opcional: cantos arredondados */
+    transition: transform 0.2s; /* Efeito de transição suave */
+}
+
+
+.capa-livro:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+}
+
+.nenhumLivro {
+    font-size: 18px;
+    color: #808080;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/*estilo da página de negociadores em destaque*/
+
+.responsive-destaques {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.responsive-destaques img {
+    max-width: 100px;
+    height: auto;
+    border-radius: 5px;
+    transition: transform 0.2s;
+}
+
+.responsive-destaques img:hover {
+    transform: scale(1.05);
+}
+
+.container-destaque {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 80px;
+    padding: 20px;
+}
+
+.livros {
+    flex: 0 1 600px;
+    min-width: 300px;
+    text-align: center;
+}
+
+.livros-galeria {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.perfil-destaque {
+    flex: 0 1 280px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-usuario {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.info-usuario span {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.info-usuario a {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.info-usuario a:hover {
+    transform: scale(1.05);
+}
+
+.info-usuario a:hover span {
+    color: #6c63ff;
+}
+
+/*estilo da central de ajuda*/
+.ajudahome{
+    margin: 0 auto;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.ajudahome h1{
+    text-align: center;
+}
+
+.ajudahome input{
+    width: 45%;
+    height: 35px;
+    border-radius: 8px;
+    text-decoration: none;
+    border-style:solid;
+    border-color: #E0E0E0;
+    font-family: manrope;
+    font-size: 16px;
+    padding-left: 10px;
+}
+
+/*estilização do grupo de blocos da pag. de ajuda*/
+.blocos{
+    margin: 0 auto;
+    width: 64%;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.blocos h3, p{
+    color: black;
+    text-align: left;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.blocos p{
+    color: #5F5F5F;
+}
+
+.blocos a{
+    text-decoration: none;
+}
+
+.flex{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: -25px;
+    width: 100%;
+}
+
+.flex > div{
+    position: relative;
+    border-radius: 18px;
+    height: 200px;
+    width: 265px;
+    flex: 1% 1% 100%;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 2px 8px 0 rgba(0, 0, 0, 0.19);
+    background-color: white;
+}
+
+.flex > div:hover{
+    cursor: pointer;
+    box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 6px 0 rgba(0, 0, 0, 0.19);
+}
+
+.categoriaNegociacao{
+    border-radius: 6px;
+    font-family: manrope;
+    padding-left: 5px;
+    margin-right: 5px;
+}
+
+.filtro-lateral {
+    width: 200px;
+    margin-right: 30px;
+}
+
+.info-usuario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: auto;
+}
+
+.PerfilIcon {
+    width: 30px;
+    height: 30px;
+    margin-top: -30px;
+}
+
+.PerfilFotoDestaque {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%; /* Garante o formato circular */
+    object-fit: cover; /* Ajusta a imagem para preencher o círculo */
+    border: 2px solid #fff; /* Adiciona uma borda branca ao redor */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adiciona uma leve sombra para destacar */
+    overflow: hidden; /* Garante que a imagem não ultrapasse o círculo */
+}
+
+.info-usuario p {
+    margin-top: 6px;
+    font-size: 0.9rem;
+}
+
+#tituloMeusLivros {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.filtro-lateral {
+    margin: 0 20px;
+}
+
+.secao-livros {
+    margin: 40px;
+}
+
+.titulo-secao {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.capa-livro {
+    width: 120px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nenhumLivro {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 16px;
+    color: #555;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 30px;
+    height: 30px;
+}
+
+.search-bar {
+    flex-grow: 1;
+    margin: 0 20px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.nav-links a {
+    margin-right: 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links .profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+/*elementos da página do chat*/
+/*propriedades gerais do container*/
+.main-container {
+    display: flex;
+    height: calc(100vh - 60px);
+    padding-top: 5px;
+    padding-bottom: 7px;
+}
+
+/*proproedades do menu lateral*/
+.chat-sidebar {
+    width: 25%;
+    background-color: white;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.chat-sidebar h2 {
+    margin-top: 0;
+}
+
+.chat-sidebar input {
+    width: 93%;
+    height: 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    border-style:solid;
+    border-color: #E0E0E0;
+    font-family: manrope;
+    font-size: 15px;
+    padding-left: 10px;
+}
+
+.chat-list {
+    list-style: none;
+    padding: 0;
+}
+
+.chat-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chat-list li.active,
+.chat-list li:hover {
+    background-color: #e4e4e4;
+}
+
+.chat-list img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.chat-window {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f1f1f1;
+}
+
+.chat-info {
+    text-align: center;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+/*mensagens chat*/
+.messages {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.message {
+    position: relative;
+    max-width: 60%;
+    border-radius: 10px;
+    background-color: white;
+    padding: 10px 35px 10px 10px; /* adiciona espaço à direita pro ícone */
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.message p {
+    word-wrap: break-word;       /* Quebra palavras longas */
+    overflow-wrap: break-word;   /* Alternativa moderna */
+    white-space: pre-wrap;       /* Mantém quebras de linha, mas ainda quebra o texto */
+    padding: 10px;               /* Dá um respiro interno */
+    margin: 0;                   /* Remove margens extras */
+    font-family: manrope;
+    font-size: 15px;
+}
+
+
+.message.user {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+}
+
+.message.negociador {
+    display: flex;
+    align-items: flex-start;
+}
+
+.message.negociador img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+.message-input {
+    display: flex;
+    align-items: center;
+    border-style: solid;
+    border-color: #E0E0E0;
+    font-family: manrope;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.message-input input {
+    font-family: manrope;
+    font-size: 15px;
+    flex-grow: 1;
+    border: none;
+    border-radius: 8px;
+    margin-right: 10px;
+    padding-left: 10px;
+}
+
+.message-input button {
+    background-color: #a385ff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.message-input button img {
+    width: 20px;
+    height: 20px;
+}
+.book-info {
+    width: 25%;
+    background-color: white;
+    padding: 20px;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.book-info img {
+    width: 100px;
+    height: auto;
+    align-self: center;
+}
+
+.book-info h3, .book-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* container do menu */
+.menu-opcoes {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+}
+
+/* ícone de três pontinhos */
+.menu-opcoes i {
+    cursor: pointer;
+    color: #555;
+    font-size: 16px;
+    font-size: 18px;
+    opacity: 1;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.menu-opcoes i:hover {
+    color: #000;
+}
+
+/* dropdown do menu */
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 25px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.menu-dropdown button {
+    display: block;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.menu-dropdown button:hover {
+    background-color: #f2f2f2;
+}
+
+
+
+
+/* Container que mantém input e dropdown alinhados */
+.autocomplete-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    margin-left: 5px;
+}
+
+/* Caixa de sugestões que aparece abaixo da barra de pesquisa */
+.sugestoes-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    z-index: 999;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Cada sugestão dentro do dropdown */
+.sugestoes-autocomplete a {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #eee;
+    background-color: white;
+}
+
+.sugestoes-autocomplete a:hover {
+    background-color: #f9f9f9;
+}
+
+/* Imagem do livro */
+.sugestoes-autocomplete img.livro-capa {
+    height: 60px;
+    width: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-right: 12px;
+    margin-left: 8px;
+}
+
+/* Texto do livro */
+.sugestoes-autocomplete p {
+    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Imagem do perfil do vendedor */
+.sugestoes-autocomplete img.perfil-foto {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 12px;
+}
+
+/* Esconde o bloco de regras por padrão */
+#passwordHelpBlock {
+    display: none;
+}
+/* Classe que será adicionada via JS para mostrar o bloco */
+#passwordHelpBlock.is-visible {
+    display: block;
+}
+
+/* Estilos visuais das regras (permanecem os mesmos) */
+.form-text ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+#password-rules .valid { color: green; }
+#password-rules .valid::before { content: '✓ '; }
+#password-rules .invalid { color: red; }
+#password-rules .invalid::before { content: '✗ '; }
+
+/* /css/style.css */
+
+/* Estilo para a área de upload (o label principal) */
+.file-upload-label {
+    position: relative; /* Essencial para posicionar o botão 'X' dentro dele */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 470px;
+    height: 150px; /* Aumentei um pouco a altura para acomodar a prévia */
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    overflow: hidden; /* Garante que a imagem não vaze para fora */
+}
+
+.file-upload-label:hover, .file-upload-label.is-dragover {
+    border-color: #007bff;
+    background-color: #e2f0ff;
+}
+
+/* Estilo para o prompt inicial (ícone de upload + texto) */
+#upload-prompt .fa-upload {
+    color: #007bff;
+    margin-bottom: 5px;
+}
+#upload-prompt #file-name {
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* Estilo para o container da prévia da imagem */
+#preview-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+#image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Faz a imagem cobrir a área sem distorcer */
+    border-radius: 6px;
+}
+
+/* Estilo para o botão 'X' de remover */
+#remove-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%; /* Deixa o botão redondo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+#remove-photo-btn:hover {
+    background-color: rgba(220, 53, 69, 0.8); /* Vermelho ao passar o mouse */
+}

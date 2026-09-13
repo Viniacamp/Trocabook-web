@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Conversas</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/listarUsuarios.css">
+    <link rel="stylesheet" href="/css/list-mensagens.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 class="titulo-pagina">Suas conversas</h1>
+
+    <div th:if="${mensagemVazia != null}" class="mensagem-vazia">
+        <p th:text="${mensagemVazia}"></p>
+    </div>
+
+    <div th:if="${conversas != null}" class="lista-conversas">
+
+        <div th:each="conversa : ${conversas}">
+
+            <a th:href="@{/chat/conversar(
+                    anuncio=${conversa.uidAnuncio},
+                    remetente=${usuarioLogado.id},
+                    destinatario=${conversa.uidDestinatario}
+                )}">
+
+                <div class="conversa-card">
+
+                    <img
+                            th:src="${conversa.fotoDestinatario}"
+                            alt="Foto do usuário">
+
+                    <div class="conversa-info">
+
+                        <strong
+                                th:text="${conversa.nomeDestinatario}">
+                        </strong>
+
+                        <p>
+
+                            <span
+                                    th:text="${conversa.enviadaPeloUsuarioLogado
+                                    ? 'Você: '
+                                    : conversa.nomeDestinatario + ': '}">
+                            </span>
+
+                            <span
+                                    th:text="${conversa.ultimaMensagem}">
+                            </span>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+
+</html>

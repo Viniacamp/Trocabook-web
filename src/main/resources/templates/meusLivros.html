@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Meus Livros | Trocabook</title>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho">
+                <tr>
+                    <th id="cabecalhoelementos">
+                        <a href="/"><img src="img/Design sem nome (7).svg"></a>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
+                            <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
+                        </div>
+                        <th:block sec:authorize="isAuthenticated()">
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img src="/img/vendedor4.svg" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuario?.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+                            
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="chat/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
+                        </th:block>
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </header>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <h1 id="tituloMeusLivros">Meus Livros</h1>
+
+    <aside class="filtro-lateral">
+        <h3><i class="fas fa-filter"></i> Filtrar por</h3>
+        <form th:action="@{/MeusLivros}" method="get">
+            <select name="filtroAnuncio" class="categoriaNegociacao" onchange="this.form.submit()">
+                <option th:value="todos">-- Todos --</option>
+                <option th:value="TROCA" th:selected="${filtroSelecionadoAnuncio == 'TROCA'}">Troca</option>
+                <option th:value="VENDA" th:selected="${filtroSelecionadoAnuncio == 'VENDA'}">Venda</option>
+                <option th:value="AMBOS" th:selected="${filtroSelecionadoAnuncio == 'AMBOS'}">Ambos</option>
+            </select>
+            <input type="hidden"
+                   name="filtroT/V"
+                   th:value="${filtroSelecionadoTroVen}">
+        </form>
+    </aside>
+
+
+    <p class="titulo-secao">Livros anunciados:</p>
+
+    <div class="secao-livros">
+
+        <div th:if="${anuncios == null || anuncios.isEmpty()}">
+            <p class="nenhumLivro">
+                Nenhum Livro Anunciado na Plataforma
+            </p>
+        </div>
+
+        <div class="livros-grid"
+             th:if="${anuncios != null && !anuncios.isEmpty()}">
+
+            <div th:each="anuncio : ${anuncios}">
+                <img th:src="${anuncio.capa}"
+                     class="capa-livro"
+                     alt="Capa do livro"/>
+            </div>
+
+        </div>
+
+    </div>
+
+    <aside class="filtro-lateral">
+        <h3><i class="fas fa-filter"></i> Filtrar por</h3>
+        <form th:action="@{/MeusLivros}" method="get">
+            <select name="filtroT/V" class="categoriaNegociacao" onchange="this.form.submit()">
+                <option th:value="todos">-- Todos --</option>
+                <option th:value="TROCA" th:selected="${filtroSelecionadoTroVen == 'TROCA'}">Troca</option>
+                <option th:value="VENDA" th:selected="${filtroSelecionadoTroVen == 'VENDA'}">Venda</option>
+                <option th:value="AMBOS" th:selected="${filtroSelecionadoTroVen == 'AMBOS'}">Ambos</option>
+            </select>
+            <input type="hidden"
+                   name="filtroAnuncio"
+                   th:value="${filtroSelecionadoAnuncio}">
+        </form>
+    </aside>
+
+    <p class="titulo-secao">Livros que você trocou/vendeu:</p>
+
+    <div class="secao-livros">
+
+        <div th:if="${negociacoes == null || negociacoes.isEmpty()}">
+            <p class="nenhumLivro">
+                Nenhum Livro Negociado na Plataforma
+            </p>
+        </div>
+
+        <div class="livros-grid"
+             th:if="${negociacoes != null && !negociacoes.isEmpty()}">
+
+            <div th:each="negociacao : ${negociacoes}">
+                <img th:src="${negociacao.capa}"
+                     class="capa-livro"
+                     alt="Capa do livro"/>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="rodapenovo">
+            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo à reutilização</p></a>
+            <a href="/ajuda"><p>Central de ajuda</p></a>
+            <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
+        </div>
+    </footer>
+</div>
+</body>
+<script src="/js/fetch.js"></script>
+<script type="module" src="/js/logout.js"></script>
+<script src="/js/menu-logado.js"></script>
+</html>

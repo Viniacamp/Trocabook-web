@@ -1,0 +1,106 @@
+/* ================================
+   ESTILO - LISTAGEM DE CONVERSAS
+   ================================ */
+
+.titulo-pagina {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+    font-size: 26px;
+    color: #333;
+}
+
+/* Container geral */
+.lista-conversas {
+    display: flex;
+    flex-wrap: wrap;            /* ✅ Cards lado a lado */
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Remove sublinhado do link e mantém o estilo ao redor */
+.lista-conversas a {
+    text-decoration: none;      /* ✅ Remove sublinhado */
+    color: inherit;             /* ✅ Mantém cor padrão do texto */
+}
+
+/* Cada card de conversa */
+.conversa-card {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 12px 18px;
+    width: 340px;
+    height: 110px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.conversa-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+    background-color: #f8f8f8;
+}
+
+/* Imagem do perfil */
+.conversa-card img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;       /* ✅ Garante circular */
+    object-fit: cover;        /* ✅ Sem distorção */
+    border: 2px solid #007bff;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+/* Informações da conversa */
+.conversa-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    overflow: hidden;         /* ✅ Importante para o ellipsis funcionar */
+}
+
+/* Nome do destinatário */
+.conversa-info strong {
+    font-size: 17px;
+    color: #333;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  /* ✅ Corta nome longo */
+    display: block;
+}
+
+/* Última mensagem */
+.conversa-info p {
+    margin: 0;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.4;
+    display: -webkit-box;             /* ✅ Necessário pro line-clamp */
+    -webkit-line-clamp: 2;            /* ✅ Mostra até 2 linhas */
+    -webkit-box-orient: vertical;     /* ✅ Define direção */
+    overflow: hidden;
+    text-overflow: ellipsis;          /* ✅ Mostra "..." */
+    white-space: normal;
+}
+
+.mensagem-vazia {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    margin-top: 40px;
+}
+
+
+@media (max-width: 768px) {
+    .conversa-card {
+        width: 90%;
+    }
+}

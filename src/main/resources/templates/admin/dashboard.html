@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/dashboard.css"/>
+    <title>Dashboard | Área do Administrador</title>
+</head>
+<body>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Total Usuários</th>
+            <th>Total Livros</th>
+            <th>Total Negociações</th>
+        </tr>
+        </thead>
+        <tbody id="corpoTabela">
+        </tbody>
+    </table>
+    <button onclick="baixarDashboardExcel()">Baixar Excel do Dashboard</button>
+</div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("http://localhost:8181/api/admin/dashboard")
+            .then(res => {
+                if (!res.ok){
+                    throw new Error("Erro ao carregar dashboards")
+                }
+                return res.json()
+            })
+            .then(dashboards => {
+                const corpo = document.querySelector("#corpoTabela");
+                corpo.innerHTML = "";
+                dashboards.forEach(d => {
+                    const linha = document.createElement("tr");
+
+                    const data = document.createElement("td");
+                    data.textContent = d.dataCriacao;
+
+                    const totalUsuarios = document.createElement("td");
+                    totalUsuarios.textContent = d.totalUsuarios;
+
+                    const totalLivros = document.createElement("td");
+                    totalLivros.textContent = d.totalLivros;
+
+                    const totalNegociacoes = document.createElement("td");
+                    totalNegociacoes.textContent = d.totalNegociacao;
+
+                    data.setAttribute("data-label", "Data");
+                    totalUsuarios.setAttribute("data-label", "Total Usuários");
+                    totalLivros.setAttribute("data-label", "Total Livros");
+                    totalNegociacoes.setAttribute("data-label", "Total Negociações");
+
+
+                    linha.appendChild(data);
+                    linha.appendChild(totalUsuarios);
+                    linha.appendChild(totalLivros);
+                    linha.appendChild(totalNegociacoes);
+
+                    corpo.appendChild(linha);
+                });
+            })
+            .catch(error => console.error(error));
+    });
+    function baixarDashboardExcel() {
+        fetch("http://localhost:8181/api/admin/excel")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao baixar o Excel");
+                }
+                return response.blob(); // pega o arquivo como blob
+            })
+            .then(blob => {
+                // cria uma URL temporária para download
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "dashboard.xlsx"; // nome do arquivo
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url); // libera a memória
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Falha ao baixar o Excel");
+            });
+    }
+
+</script>
+</html>

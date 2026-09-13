@@ -1,0 +1,204 @@
+/* ============================= */
+/* 🔍 BUSCA DE LIVROS (mantida) */
+/* ============================= */
+.busca-livro-container {
+    position: relative;
+    width: 45%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.busca-livro-container input[type="text"] {
+    width: 100%;
+    height: 35px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.busca-livro-container button {
+    background: linear-gradient(90deg, #a16eff, #64b5f6);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.busca-livro-container button:hover {
+    transform: scale(1.05);
+}
+
+#resultadosLivros {
+    position: absolute;
+    top: 75px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    z-index: 999;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#resultadosLivros a {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #eee;
+    background-color: white;
+}
+
+#resultadosLivros a:hover {
+    background-color: #f9f9f9;
+}
+
+#resultadosLivros img.livro-capa {
+    height: 60px;
+    width: 40px;
+    object-fit: contain;
+    align-items: center;
+    border-radius: 4px;
+    margin-right: 12px;
+    margin-left: 8px;
+}
+
+#resultadosLivros p {
+    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================= */
+/* 📘 DETALHES DO LIVRO          */
+/* ============================= */
+.livro-detalhes {
+    margin-top: 20px;
+    margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    padding-top: 10px;
+    padding-left: 25px;
+    padding-right: 45px;
+    border-radius: 10px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.livro-detalhes label {
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    align-self: flex-start;
+    font-size: 15px;
+}
+
+.livro-detalhes input[type="text"],
+.livro-detalhes select,
+.livro-detalhes textarea {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease;
+}
+
+.livro-detalhes input[type="text"]:focus,
+.livro-detalhes select:focus,
+.livro-detalhes textarea:focus {
+    border-color: #7e57c2;
+    outline: none;
+}
+
+.livro-detalhes input:read-only {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  border: 1px solid #ced4da;
+}
+
+.livro-detalhes textarea {
+    font-family: manrope;
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Capa do livro */
+.capaLivro {
+    width: 180px;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
+}
+
+.capaLivro:hover {
+    transform: scale(1.02);
+}
+
+/* Botão de envio */
+.livro-detalhes button {
+    background: linear-gradient(90deg, #7e57c2, #64b5f6);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+/* ============================= */
+/* 👤 AUTORES E CATEGORIAS       */
+/* ============================= */
+#autores, #categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+#autores span, #categorias span {
+    background-color: #e0d7f7;
+    color: #4a3c91;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 16px;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ============================= */
+/* 📝 DESCRIÇÃO DO LIVRO         */
+/* ============================= */
+#descricaoLivro {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 15px;
+    margin-top: 10px;
+    resize: vertical;
+}

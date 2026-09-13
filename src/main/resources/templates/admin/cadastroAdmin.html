@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro | Área do Administrador</title>
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/cadastroAdmin.css">
+</head>
+<body>
+    <h1>Cadastrar novo Administrador</h1>
+    <div class="flex">
+        <form id="CadForm">
+            <input type="text" placeholder="informe seu nome" name="nome" id="nomeAdmin">
+            <input type="email" placeholder="informe seu email" name="email" id="CadEmailAdmin">
+            <input type="password" placeholder="defina sua senha" name="senha" id="CadSenhaAdmin">
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+</body>
+<script>
+    document.querySelector("#CadForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        fetch("http://localhost:8181/api/admin/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                nome: document.querySelector("#nomeAdmin").value,
+                email: document.querySelector("#CadEmailAdmin").value,
+                senha: document.querySelector("#CadSenhaAdmin").value
+            })
+        })
+            .then(res => {
+                if (!res.ok){
+                    throw new Error("Erro ao cadastrar Admin")
+                }
+                return res.json()
+            })
+            .then(Admin => {
+                window.location.href = "/loginAdmin"
+            })
+    })
+</script>
+</html>

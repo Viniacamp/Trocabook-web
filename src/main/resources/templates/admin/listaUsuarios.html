@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuários Cadastrados | Área do Administrador</title>
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/listarUsuarios.css">
+</head>
+<body>
+    <h1>Usuários Cadastrados na Plataforma</h1>
+    <div id="lista">
+        <!--não deletar a div-->
+    </div>
+
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        fetch("/dados/listar")
+            .then(res => {
+                if (!res.ok){
+                    throw new Error("Erro ao listar")
+                }
+                return res.json()
+            })
+            .then(listaUsuarios => {
+                const divLista = document.querySelector("#lista")
+                listaUsuarios.forEach(usuario => {
+                    const divUsuario = document.createElement("div")
+
+                    const img = document.createElement("img")
+                    img.src = usuario.foto;
+                    img.className = "PerfilIcone"
+
+                    const nome = document.createElement("p")
+                    nome.innerHTML = usuario.nome;
+
+                    const link = document.createElement("a")
+                    link.href = "/alterarUsuario/" + usuario.id
+                    link.text = "alterar"
+
+                    const button = document.createElement("button")
+                    button.textContent = "deletar"
+                    button.className = "botaoDeletar";
+
+                    button.addEventListener("click", function() {
+                        fetch("http://localhost:8181/api/admin/excluir", {
+                            method: "POST",
+                            headers: {
+                                "Content-type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                operacao: "EXCLUSAO",
+                                cdUsuario: usuario.id,
+                                adminResponsavelId: JSON.parse(localStorage.getItem("admin")).id
+
+                            })
+                        })
+                            .then(res => {
+                                if (!res.ok){
+                                    throw new Error("Erro ao deletar usuário");
+                                }
+                                return res.json()
+
+                            })
+                            .then(data => {
+                                window.alert(data.message);
+                                window.location.href = "/listaUsuarios-pagina"
+                            })
+                    })
+
+                    divUsuario.appendChild(img);
+                    divUsuario.appendChild(nome);
+                    divUsuario.appendChild(link);
+                    divUsuario.appendChild(button);
+
+                    divLista.appendChild(divUsuario);
+
+
+                })
+            })
+
+
+    })
+
+</script>
+</html>

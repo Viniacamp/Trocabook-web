@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+    <title>Central de Ajuda | Trocabook</title>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho"><tr>
+                <th id="cabecalhoelementos">
+                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
+                        <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
+                    </div>
+
+                    <th:block sec:authorize="isAuthenticated()">
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img src="/img/vendedor4.svg" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+                            
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="chat/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
+                    </th:block>
+                </th></tr>
+                <tr>
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <th>
+                            <a class="cadbutton" href="/cadastro" id="cadastrobotao">Cadastre-se</a>
+                        </th>
+                    </th:block>
+                </tr>
+            </table>
+        </div>
+    </header>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <div class="ajudahome">
+        <h1>Bem-vindo a central de ajuda da Trocabook</h1>
+        <input type="text" placeholder="Como podemos ajudar?">
+        <div class="blocos">
+            <section class="flex">
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso incrível projeto!</h3>
+                        <p>Descubra Como Nosso Projeto se alinha com os Objetivos de Desenvolvimento Sustentável (ODS)</p>
+                    </a>
+                </div>
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso sistema de troca e venda</h3>
+                        <p>Entenda Como Funciona Nosso Sistema de Troca e Venda de Livros</p>
+                    </a>
+                </div>
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Segurança da plataforma</h3>
+                        <p>Sua Segurança em Primeiro Lugar: Nossas Medidas de Proteção na Plataforma</p>
+                    </a>
+                </div>
+            </section>
+            <section class="flex">
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Política Trocabook</h3>
+                        <p>Nossa Política Trocabook: Compromisso com a Sustentabilidade e a Transparência</p>
+                    </a>
+                </div>
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso incrível projeto!</h3>
+                        <p>lorem ipsum</p>
+                    </a>
+                </div>
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso incrível projeto!</h3>
+                        <p>lorem ipsum</p>
+                    </a>
+                </div>
+            </section>
+            <section class="flex">
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso incrível projeto!</h3>
+                        <p>lorem ipsum</p>
+                    </a>
+                </div>
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso incrível projeto!</h3>
+                        <p>lorem ipsum</p>
+                    </a>
+                </div>
+                <div class="ajudahome">
+                    <a href="">
+                        <h3>Conheça nosso incrível projeto!</h3>
+                        <p>lorem ipsum</p>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+    <footer>
+        <div class="rodapenovo">
+            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
+            <a href="/ajuda"><p>Central de ajuda</p></a>
+            <small>© 2025 Sistema Trocabook<br>Todos os direitos reservados</small>
+        </div>
+    </footer>
+</div>
+</body>
+<script src="/js/fetch.js"></script>
+<script type="module" src="/js/logout.js"></script>
+<script src="/js/menu-logado.js"></script>
+</html>

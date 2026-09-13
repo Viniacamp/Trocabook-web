@@ -1,0 +1,89 @@
+/* Zera margens e define uma fonte base */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Nome do usuário */
+span {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* Formulário */
+#alterarForm {
+    background: #fff;
+    margin-top: 20px;
+    padding: 35px;                 /* aumentei o padding interno */
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px;             /* aumentei a largura máxima do card */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;                    /* mais espaço entre os inputs */
+}
+
+
+/* Inputs */
+#alterarForm input[type="number"],
+#alterarForm input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 80%;                /* limite de largura */
+    margin: 0 auto;            /* centraliza dentro do card */
+    transition: border-color 0.3s;
+}
+
+
+#alterarForm input[type="number"]:focus,
+#alterarForm input[type="text"]:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+#alterarForm label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+
+/* Botão */
+#alterarForm button {
+    background: #4CAF50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#alterarForm button:hover {
+    background: #45a049;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .PerfilIcone {
+        width: 100px;
+        height: 100px;
+    }
+    span {
+        font-size: 1.2rem;
+    }
+    #alterarForm {
+        width: 90%;
+        padding: 15px;
+    }
+}

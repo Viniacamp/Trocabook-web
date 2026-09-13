@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Redefinição de Senha</title>
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+</head>
+<body style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333333; background-color: #f4f4f4; margin: 0; padding: 0;">
+<div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border: 1px solid #dddddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+
+    <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid #dddddd; margin-bottom: 20px;">
+
+        <img src="https://i.imgur.com/mlc12p0.png" alt="Logo Trocabook" style="max-width: 150px; height: auto; margin-bottom: 10px;">
+
+        <h2 style="color: #6C5CE7; font-size: 24px; margin: 0;">Solicitação de Redefinição de Senha</h2>
+    </div>
+
+    <div style="padding: 0 10px;">
+        <p style="margin-bottom: 15px;">Olá, <strong th:text="${nomeUsuario}">[Nome do Usuário]</strong>!</p>
+        <p style="margin-bottom: 15px;">Recebemos uma solicitação para redefinir a senha da sua conta na Trocabook. Para continuar, clique no botão abaixo:</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a th:href="${resetUrl}" style="display: inline-block; background-color: #9da5fe; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold; border: none; cursor: pointer;">Redefinir Minha Senha</a>
+        </div>
+
+        <p style="margin-bottom: 15px;">Se você não solicitou a redefinição de senha, por favor, ignore este e-mail. Este link é válido por 1 hora.</p>
+        <p style="margin-bottom: 15px;">Obrigado,<br/>Equipe Trocabook</p>
+    </div>
+
+    <div style="text-align: center; font-size: 12px; color: #777; padding-top: 20px; margin-top: 20px; border-top: 1px solid #dddddd;">
+        <p>&copy; 2025 Trocabook. Todos os direitos reservados.</p>
+    </div>
+</div>
+</body>
+</html>

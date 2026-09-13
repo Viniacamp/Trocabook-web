@@ -1,0 +1,64 @@
+body{
+    background-color: #f5f5f5;
+    font-family: Calibri
+}
+
+h1{
+    text-align:center; 
+    margin-top:30px;
+}
+
+.home-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+/* Cada card */
+.home-card {
+    background-color: white;
+    width: 250px;
+    height: 180px;
+    border-radius: 18px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.home-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* Título do card */
+.home-card h3 {
+    margin-bottom: 10px;
+    color: #2575fc;
+    font-size: 24px;
+}
+
+/* Descrição do card */
+.home-card p {
+    color: #5F5F5F;
+    font-size: 14px;
+}
+
+/* Link cobrindo todo o card */
+.home-card a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}

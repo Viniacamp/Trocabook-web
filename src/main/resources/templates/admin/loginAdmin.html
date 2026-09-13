@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Área do Administrador</title>
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/loginAdmin.css">
+  
+</head>
+<body>
+    <h1>Área do Administrador | Trocabook<br>Login</h1>
+    <div class="flex">
+        <form id="formLogin">
+            <input placeholder="digite seu email" type="email" name="email" id="emailAdmin">
+            <input placeholder="digite sua senha" type="password" name="senha" id="senhaAdmin">
+            <button id="entrar" type="submit">Entrar</button>
+        </form>
+    </div>
+</body>
+<script>
+    document.querySelector("#formLogin").addEventListener("submit", function (e) {
+        e.preventDefault()
+        fetch("http://localhost:8181/api/admin/login", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify(
+                {
+                    email: document.querySelector("#emailAdmin").value,
+                    senha: document.querySelector("#senhaAdmin").value
+                }
+            )
+
+        })
+            .then(res => {
+                if (!res.ok){
+                    throw new Error("Erro ao logar")
+                }
+                return res.json()
+            })
+            .then(Admin => {
+                localStorage.setItem("admin", JSON.stringify({id: Admin.id, nome: Admin.nome}))
+                window.location.href= "/adminHome"
+
+            })
+    })
+</script>
+</html>

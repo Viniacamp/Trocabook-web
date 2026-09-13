@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alteração de Usuário | Área do Administrador</title>
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/listarUsuarios.css">
+    <link rel="stylesheet" type="text/css" href="/css/alterar.css">
+</head>
+<body>
+    <img th:src="${usuario.foto}" class="PerfilIcone">
+    <span th:text="${usuario.nmUsuario}"><p></p></span>
+    <form id="alterarForm" th:object="${usuario}">
+        <label for="avaliacao">Avaliação:</label>
+        <input th:field="*{avaliacao}" type="number" id="avaliacao" min="0" max="5" step="any" placeholder="Avaliação">
+
+        <label for="status">Status:</label>
+        <input th:field="*{status}" type="text" id="status" maxlength="1" placeholder="Status (A/I)">
+
+        <button type="submit">Alterar</button>
+    </form>
+</body>
+<script>
+    document.querySelector("#alterarForm").addEventListener("submit", function(e){
+        e.preventDefault()
+        const caminho = window.location.pathname
+        const partes = caminho.split("/")
+        const idUsuario = partes[partes.length-1];
+        fetch("http://localhost:8181/api/admin/alterar/" + idUsuario, {
+            method: "PUT",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                usuarioDTO: {
+                    avaliacao: document.querySelector("#avaliacao").value,
+                    status: document.querySelector("#status").value
+                },
+                logAdminDTO: {
+                    operacao: "ALTERACAO",
+                    cdUsuario: idUsuario,
+                    adminResponsavelId: JSON.parse(localStorage.getItem("admin")).id
+                }
+
+            })
+        })
+            .then(res => {
+                if (!res.ok){
+                    throw new Error("Erro ao alterar usuario")
+                }
+                console.log(res);
+                return res.json()
+            })
+            .then(Usuario => {
+                window.alert("Usuario Alterado");
+                window.location.href="/listaUsuarios-pagina"
+            })
+    })
+</script>
+</html>
