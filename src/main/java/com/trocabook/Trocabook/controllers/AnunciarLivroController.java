@@ -18,7 +18,6 @@ import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.ILivroService;
-import com.trocabook.Trocabook.service.IUsuarioService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 
 import jakarta.servlet.http.HttpSession;
@@ -27,23 +26,24 @@ import jakarta.servlet.http.HttpSession;
 public class AnunciarLivroController {
 
     private final ILivroService livroService;
-    private final IUsuarioService usuarioService;
     private final IAnuncioService anuncioService;
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
-    public AnunciarLivroController(ILivroService livroService, IUsuarioService usuarioService, IAnuncioService anuncioService, UsuarioAutenticadoService usuarioAutenticadoService) {
+    public AnunciarLivroController(ILivroService livroService, IAnuncioService anuncioService, UsuarioAutenticadoService usuarioAutenticadoService) {
         this.livroService = livroService;
-        this.usuarioService = usuarioService;
         this.anuncioService = anuncioService;
         this.usuarioAutenticadoService = usuarioAutenticadoService;
     }
 
     @GetMapping("/AnunciarLivro")
     public String anunciarLivroApi(Model model, HttpSession sessao) {
-        if (usuarioAutenticadoService.getUsuarioOutput(sessao) == null){
+        UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
+        if (usuario == null){
             return "redirect:/";
         }
         model.addAttribute("anuncioRequest", new AnunciarLivroRequest());
+        model.addAttribute("usuario", usuario);
+
         return "anunciar";
     }
 

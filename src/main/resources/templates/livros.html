@@ -26,8 +26,8 @@
                         <th:block sec:authorize="isAuthenticated()">
                         <div class="user-menu-container">
                             <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img src="/img/vendedor4.svg" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuario?.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
                                 <span class="arrow">▼</span>
                             </button>
                             
@@ -85,11 +85,11 @@
                 <div class="info-usuario">
                     <a th:href="@{'/destaque/' + ${anuncio.uidUsuario}}">
                         <img th:src="${anuncio.fotoPerfil}" class="PerfilIcon">
-                        <span th:text="${anuncio.uidUsuario == uidAnunciante ? 'Você' : anuncio.nomeUsuario}"></span>
+                        <span th:text="${anuncio.uidUsuario == usuario.id ? 'Você' : anuncio.nomeUsuario}"></span>
                     </a>
                 </div>
 
-                <a th:href="@{'/chat/conversar?remetente=' + ${uidAnunciante} + '&anuncio=' + ${anuncio.id} + '&destinatario=' + ${anuncio.uidUsuario}}">
+                <a th:href="@{'/chat/conversar?remetente=' + ${usuario.id} + '&anuncio=' + ${anuncio.id} + '&destinatario=' + ${anuncio.uidUsuario}}">
                     <button type="button">Negociar</button>
                 </a>
 
