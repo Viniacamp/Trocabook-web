@@ -1,62 +1,34 @@
 package com.trocabook.Trocabook.model;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Autor implements Serializable {
+    private String id;
 
-@Entity
-public class Autor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cdAutor;
-
-    private String nmAutor;
-
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
-    private List<LivroAutor> livroAutor;
+    private String nome;
 
     public Autor() {
 
     }
 
-    public Autor(String nmAutor) {
-        this.nmAutor = nmAutor;
+    public Autor(String id, String nome) {
+        this.id = id;
+        this.nome = nome;
     }
 
-    public Autor(Autor outroAutor) {
-        if (outroAutor == null) {
-            return;
-        }
-        this.cdAutor = outroAutor.cdAutor;
-        this.nmAutor = outroAutor.nmAutor;
-
-        // Usa a mesma lógica segura que você já criou nos seus setters/getters
-        // para copiar a lista
-        this.livroAutor = outroAutor.livroAutor == null ? null : new ArrayList<>(outroAutor.livroAutor);
+    public String getId() {
+        return id;
     }
 
-    public int getCdAutor() {
-        return cdAutor;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setCdAutor(int cdAutor) {
-        this.cdAutor = cdAutor;
+    public String getNome() {
+        return nome;
     }
 
-    public String getNmAutor() {
-        return nmAutor;
-    }
-
-    public void setNmAutor(String nmAutor) {
-        this.nmAutor = nmAutor;
-    }
-
-    public List<LivroAutor> getLivroAutor() {
-        return this.livroAutor == null ? null: new ArrayList<>(this.livroAutor);
-    }
-
-    public void setLivroAutor(List<LivroAutor> livroAutor) {
-        this.livroAutor = livroAutor == null ? null: new ArrayList<>(livroAutor);
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 }

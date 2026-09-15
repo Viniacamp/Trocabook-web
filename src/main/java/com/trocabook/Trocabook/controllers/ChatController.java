@@ -1,19 +1,17 @@
 package com.trocabook.Trocabook.controllers;
 
-import com.trocabook.Trocabook.config.UserDetailsImpl;
+
 import com.trocabook.Trocabook.controllers.response.ChatResponse;
-import com.trocabook.Trocabook.model.Usuario;
 
-import com.trocabook.Trocabook.model.UsuarioLivro;
 
-import com.trocabook.Trocabook.model.dto.ConteudoDTO;
-import com.trocabook.Trocabook.model.dto.ConversaDTO;
-import com.trocabook.Trocabook.model.dto.MensagemDTO;
-import com.trocabook.Trocabook.repository.UsuarioLivroRepository;
-import com.trocabook.Trocabook.repository.UsuarioRepository;
-import com.trocabook.Trocabook.service.IChatService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+
+import com.trocabook.Trocabook.model.dto.*;
+import com.trocabook.Trocabook.service.IAnuncioService;
+import com.trocabook.Trocabook.service.IConversaService;
+import com.trocabook.Trocabook.service.IUsuarioService;
+import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,99 +26,104 @@ import java.util.List;
 @RequestMapping("/chat")
 public class ChatController {
 
-    private final UsuarioLivroRepository usuarioLivroRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final IChatService chatService;
+    private final IConversaService conversaService;
+    private final IUsuarioService usuarioService;
+    private final IAnuncioService anuncioService;
+    private final UsuarioAutenticadoService usuarioAutenticadoService;
 
-    @Autowired
-    public ChatController(UsuarioLivroRepository usuarioLivroRepository, IChatService chatService, UsuarioRepository usuarioRepository) {
-        this.usuarioLivroRepository = usuarioLivroRepository;
-        this.chatService = chatService;
-        this.usuarioRepository = usuarioRepository;
+    public ChatController(
+            IConversaService conversaService,
+            IUsuarioService usuarioService,
+            IAnuncioService anuncioService,
+            UsuarioAutenticadoService usuarioAutenticadoService) {
+
+        this.conversaService = conversaService;
+        this.usuarioService = usuarioService;
+        this.anuncioService = anuncioService;
+        this.usuarioAutenticadoService = usuarioAutenticadoService;
     }
 
     @GetMapping("/conversar")
     public String conversar(
-            @RequestParam("usuarioLivro") int cdUsuarioLivro,
-            @RequestParam("remetente") int cdUsuarioRemetente,
-            @RequestParam(name = "destinatario", required = false) Integer cdUsuarioDestinatario,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam("anuncio") String uidAnuncio,
+            @RequestParam("remetente") String uidUsuarioRemetente,
+            @RequestParam(name = "destinatario", required = false) String uidUsuarioDestinatario,
+            HttpSession sessao,
             Model model
     ) {
-        Usuario usuarioLogado = userDetails.getUsuario();
+        UsuarioOutput usuarioLogado = usuarioAutenticadoService.getUsuarioOutput(sessao);
 
-        if (cdUsuarioRemetente != usuarioLogado.getCdUsuario()) {
+        if (usuarioLogado == null) {
+            return "redirect:/";
+        }
+
+
+        if (!uidUsuarioRemetente.equals(usuarioLogado.id())) {
             throw new SecurityException("Tentativa de acesso indevido a conversa de outro usuário");
         }
 
-        UsuarioLivro usuarioLivro = usuarioLivroRepository.findByCdUsuarioLivro(cdUsuarioLivro);
+        AnuncioDTO anuncio = anuncioService.buscarPorUid(uidAnuncio);
 
 
-        if (cdUsuarioDestinatario == null) {
-            cdUsuarioDestinatario = usuarioLivro.getUsuario().getCdUsuario();
+        if (uidUsuarioDestinatario == null) {
+            uidUsuarioDestinatario = anuncio.uidUsuario();
         }
 
 
-        ChatResponse<List<MensagemDTO>> mensagens = chatService.listarMensagensEntreUsuarios(
-                usuarioLivro.getCdUsuarioLivro(),
-                cdUsuarioDestinatario,
-                cdUsuarioRemetente
-        );
+        List<MensagemDTO> mensagens = conversaService.listarMensagens(uidUsuarioRemetente, uidUsuarioDestinatario, uidAnuncio);
 
-        if (mensagens == null || mensagens.getData() == null) {
-            mensagens = new ChatResponse<>(List.of(), "success");
-        }
 
-        Usuario usuarioNegociante;
+        UsuarioOutput usuarioNegociante;
 
-        if (cdUsuarioDestinatario == usuarioLivro.getUsuario().getCdUsuario()) {
-            usuarioNegociante = usuarioLivro.getUsuario();
+        if (uidUsuarioDestinatario.equals(anuncio.uidUsuario())) {
+            usuarioNegociante = new UsuarioOutput(anuncio.uidUsuario(), anuncio.nomeUsuario(), anuncio.fotoPerfil());
         } else {
-            usuarioNegociante = usuarioRepository.findById(cdUsuarioDestinatario).get();
+            usuarioNegociante = usuarioService.buscarPorUid(uidUsuarioDestinatario);
         }
 
 
 
-        MensagemDTO mensagemDTO = new MensagemDTO();
-        mensagemDTO.setCdUsuarioDestinatario(cdUsuarioDestinatario);
-        mensagemDTO.setCdUsuarioLivro(usuarioLivro.getCdUsuarioLivro());
-        mensagemDTO.setCdUsuarioRemetente(cdUsuarioRemetente);
+        MensagemDTO mensagemDTO = new MensagemDTO(uidUsuarioRemetente, uidUsuarioDestinatario, uidAnuncio);
 
         model.addAttribute("mensagemDTO", mensagemDTO);
         model.addAttribute("usuarioLogado", usuarioLogado);
         model.addAttribute("usuarioNegociante", usuarioNegociante);
-        model.addAttribute("livro", usuarioLivro.getLivro());
-        model.addAttribute("mensagens", mensagens.getData());
+        model.addAttribute("livro", anuncio);
+        model.addAttribute("mensagens", mensagens);
 
         return "/chat/chat";
     }
 
     @GetMapping("/list-mensagens")
-    public String listMensagens(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Usuario usuarioLogado = userDetails.getUsuario();
-        ChatResponse<List<MensagemDTO>> mensagens = chatService.listarMensagensPorUsuarioDataEnvioDecrescente(usuarioLogado.getCdUsuario());
+    public String listMensagens(Model model, HttpSession sessao) {
+        UsuarioOutput usuarioLogado = usuarioAutenticadoService.getUsuarioOutput(sessao);
 
-        if (mensagens == null || mensagens.getData().isEmpty()) {
-            model.addAttribute("mensagemVazia", "Nenhuma conversa iniciada");
-        } else {
-
-            model.addAttribute("usuarioLogado", usuarioLogado);
-            model.addAttribute("conversas", chatService.listarMensagensPorUsuarioConverter(mensagens.getData(), usuarioLogado.getCdUsuario()));
+        if (usuarioLogado == null){
+            return "redirect:/";
         }
+        List<ConversaDTO> conversas = conversaService.listarConversas(usuarioLogado.id());
+
+        if (conversas.isEmpty()) {
+            model.addAttribute("mensagemVazia", "Nenhuma conversa iniciada");
+        }
+
+        model.addAttribute("usuarioLogado", usuarioLogado);
+        model.addAttribute("conversas", conversas);
 
         return "/chat/list-mensagens";
     }
 
     @PutMapping("/mensagens/{id}")
     @ResponseBody
-    public ChatResponse<MensagemDTO> alterarMensagem(@PathVariable String id, @RequestBody ConteudoDTO conteudo){
-        return chatService.alterarMensagem(id, conteudo.getConteudo());
+    public ChatResponse<MensagemDTO> alterarMensagem(@PathVariable String id, @RequestBody AtualizarMensagemDTO conteudo){
+        return new ChatResponse<>(conversaService.atualizarMensagem(id, conteudo), "sucesso");
     }
 
     @DeleteMapping("/mensagens/{id}")
     @ResponseBody
     public ChatResponse<Void> excluirMensagem(@PathVariable String id){
-        return chatService.excluirMensagem(id);
+        conversaService.excluirMensagem(id);
+        return new ChatResponse<>(null, "sucesso");
     }
 
 
@@ -129,26 +131,19 @@ public class ChatController {
     @PostMapping("/mensagens")
     @ResponseBody
     public ChatResponse<MensagemDTO> salvarMensagemAjax(@RequestBody MensagemDTO mensagemDTO) {
-        return chatService.enviarMensagem(mensagemDTO);
+        return new ChatResponse<>(conversaService.enviarMensagem(mensagemDTO), "sucesso");
     }
 
     // 🔹 Atualização automática (polling)
     @GetMapping("/mensagens/atualizar")
     @ResponseBody
     public ChatResponse<List<MensagemDTO>> atualizarMensagens(
-            @RequestParam("usuarioLivro") int cdUsuarioLivro,
-            @RequestParam("remetente") int cdUsuarioRemetente,
-            @RequestParam("destinatario") int cdUsuarioDestinatario
+            @RequestParam("anuncio") String uidAnuncio,
+            @RequestParam("remetente") String uidUsuarioRemetente,
+            @RequestParam("destinatario") String uidUsuarioDestinatario
     ) {
-        ChatResponse<List<MensagemDTO>> mensagens = chatService.listarMensagensEntreUsuarios(
-                cdUsuarioLivro,
-                cdUsuarioDestinatario,
-                cdUsuarioRemetente
-        );
-        if (mensagens == null || mensagens.getData() == null) {
-            mensagens = new ChatResponse<>(List.of(), "success");
-        }
+        List<MensagemDTO> mensagens = conversaService.listarMensagens(uidUsuarioRemetente, uidUsuarioDestinatario, uidAnuncio);
 
-        return mensagens;
+        return new ChatResponse<>(mensagens, "sucesso");
     }
 }

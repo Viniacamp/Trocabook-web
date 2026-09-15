@@ -1,129 +1,300 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+<html lang="pt-br"
+      xmlns:th="http://thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <title>Login | Trocabook</title>
-  <script th:src="'https://www.google.com/recaptcha/api.js?render=' + ${recaptchaSiteKey}"></script>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <title>Login | Trocabook</title>
+
+    <!-- reCAPTCHA -->
+    <script th:src="'https://www.google.com/recaptcha/api.js?render=' + ${recaptchaSiteKey}"></script>
+
 </head>
 
 <body>
+
 <div class="container">
-  <div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
-    </div>
-  </div>
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-  <script>
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
-  </script>
-  <style>
-    body {
-      background-color:rgb(236, 236, 236);
-      background-size: cover;
-    }
-  </style>
-  <div class="wrapper">
-    <div class="loginlogo">
-      <a href="/"><img src="/img/Design sem nome (4).svg"></a>
-    </div>
-      <form class="login" id="loginForm" method="post" th:action="@{/login}">
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
 
-          <h1><b>Login</b></h1>
+    <!-- VLibras -->
+    <div vw class="enabled">
 
-          <div th:if="${param.error}" class="alert alert-danger" role="alert">
-              Usuário ou senha inválidos.
-          </div>
-          <div class="row mb-3">
-              <label for="email" class="col-sm-2 col-form-label">Email:</label>
-              <div class="col-sm-10">
-                  <input type="email" class="form-control" id="email" name="username" th:value="${session.SPRING_SECURITY_LAST_USERNAME}">
-              </div>
-          </div>
-          <div class="row mb-3">
-              <label for="senha" class="col-sm-2 col-form-label">Senha:</label>
-              <div class="col-sm-10">
-            <div class="input-group">
-                <input type="password" class="form-control" id="senha" name="password">
-              <div class="input-group-append">
-                            <span class="input-group-text">
-                                <i class="fa fa-eye" id="togglePassword" style="cursor: pointer;"></i>
-                            </span>
-              </div>
+        <div vw-access-button class="active"></div>
+
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+
+    </div>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+
+    <style>
+        body {
+            background-color: rgb(236, 236, 236);
+            background-size: cover;
+        }
+    </style>
+
+
+    <div class="wrapper">
+
+        <!-- Logo -->
+        <div class="loginlogo">
+
+            <a href="/">
+                <img src="/img/Design sem nome (4).svg"
+                     alt="Logo Trocabook">
+            </a>
+
+        </div>
+
+
+        <!-- Formulário de Login -->
+        <form class="login"
+              id="loginForm">
+
+            <!--
+                Chave pública do reCAPTCHA.
+                O login.js utiliza este valor.
+            -->
+            <input type="hidden"
+                   id="recaptchaSiteKey"
+                   th:value="${recaptchaSiteKey}">
+
+            <!--
+                Token gerado pelo reCAPTCHA.
+            -->
+            <input type="hidden"
+                   id="g-recaptcha-response"
+                   name="g-recaptcha-response">
+
+
+            <h1>
+                <b>Login</b>
+            </h1>
+
+
+            <!-- Mensagem de erro -->
+            <div id="login-error"
+                 class="alert alert-danger"
+                 role="alert"
+                 style="display: none;">
             </div>
-              <a href="/esqueci-senha"><small>esqueceu a senha?</small></a>
-          </div>
-        </div>
-      <div class="row mb-3">
-        <div class="col-sm-10 offset-sm-2">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="gridCheck1">
-            <label class="form-check-label" for="gridCheck1">
-              Lembre-se de mim
-            </label>
-            <label>Ainda não tem cadastro? <br><a href="/cadastro">cadastre-se agora!</a></label>
-          </div>
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary">Fazer login</button>
-    </form>
-    <br><br><br>
-    <footer>
-      <div class="rodapenovo">
-        <a href="/"><img src="/img/Design sem nome.svg"></a>
-        <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
-        <a href="/ajuda"><p>Central de ajuda</p></a>
-        <small>© 2025 Sistema Trocabook<br>Todos os direitos reservados</small>
-      </div>
-    </footer>
-  </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script th:if="${mensagem}" th:inline="javascript">
-  alert([[${mensagem}]])
-</script>
 
-<script th:inline="javascript">
-  /*<![CDATA[*/
-  document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+            <!-- E-mail -->
+            <div class="row mb-3">
 
-    const recaptchaSiteKey = /*[[${recaptchaSiteKey}]]*/ 'default_key';
+                <label for="email"
+                       class="col-sm-2 col-form-label">
+                    Email:
+                </label>
 
-    grecaptcha.ready(function() {
-      grecaptcha.execute(recaptchaSiteKey, {action: 'login'}).then(function(token) {
-        document.getElementById('g-recaptcha-response').value = token;
-        document.getElementById('loginForm').submit();
-      });
-    });
-  });
-  /*]]>*/
-</script>
+                <div class="col-sm-10">
 
-<script>
-  $(document).ready(function() {
-    $('#togglePassword').on('click', function() {
-      const passwordField = $('#senha');
-      const fieldType = passwordField.attr('type');
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           placeholder="Digite seu e-mail"
+                           autocomplete="email"
+                           required>
 
-      if (fieldType === 'password') {
-        passwordField.attr('type', 'text');
-        $(this).removeClass('fa-eye').addClass('fa-eye-slash');
-      } else {
-        passwordField.attr('type', 'password');
-        $(this).removeClass('fa-eye-slash').addClass('fa-eye');
-      }
-    });
-  });
-</script>
+                </div>
+
+            </div>
+
+
+            <!-- Senha -->
+            <div class="row mb-3">
+
+                <label for="senha"
+                       class="col-sm-2 col-form-label">
+                    Senha:
+                </label>
+
+                <div class="col-sm-10">
+
+                    <div class="input-group">
+
+                        <input type="password"
+                               class="form-control"
+                               id="senha"
+                               name="senha"
+                               placeholder="Digite sua senha"
+                               autocomplete="current-password"
+                               required>
+
+                        <button type="button"
+                                class="input-group-text"
+                                id="togglePassword"
+                                aria-label="Mostrar senha">
+
+                            <i class="fa fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <div id="senha-error"
+                         class="text-danger"
+                         style="display: none;">
+                    </div>
+
+
+                    <a href="/esqueci-senha">
+                        <small>Esqueceu a senha?</small>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Opções -->
+            <div class="row mb-3">
+
+                <div class="col-sm-10 offset-sm-2">
+
+                    <div class="form-check">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="gridCheck1">
+
+                        <label class="form-check-label"
+                               for="gridCheck1">
+                            Lembre-se de mim
+                        </label>
+
+
+                        <label>
+
+                            Ainda não tem cadastro?
+
+                            <br>
+
+                            <a href="/cadastro">
+                                Cadastre-se agora!
+                            </a>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Botão -->
+            <button type="submit"
+                    id="loginButton"
+                    class="btn btn-primary">
+
+                Fazer login
+
+            </button>
+
+        </form>
+
+
+        <br>
+        <br>
+        <br>
+
+
+        <!-- Footer -->
+        <footer>
+
+            <div class="rodapenovo">
+
+                <a href="/">
+                    <img src="/img/Design sem nome.svg"
+                         alt="Trocabook">
+                </a>
+
+
+                <a href="/sobreNos">
+
+                    <p>
+                        Conheça nosso incrível projeto
+                        <br>
+                        de incentivo a reutilização
+                    </p>
+
+                </a>
+
+
+                <a href="/ajuda">
+
+                    <p>
+                        Central de ajuda
+                    </p>
+
+                </a>
+
+
+                <small>
+
+                    © 2025 Sistema Trocabook
+                    <br>
+                    Todos os direitos reservados
+
+                </small>
+
+            </div>
+
+        </footer>
+
+    </div>
+
 </div>
+
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous">
+</script>
+
+
+<!--
+    JavaScript responsável pelo login Firebase.
+    type="module" permite utilizar import/export.
+-->
+<script type="module"
+        th:src="@{/js/login.js}">
+</script>
+
 </body>
+
 </html>
+

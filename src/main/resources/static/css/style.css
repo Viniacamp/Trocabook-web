@@ -156,6 +156,11 @@ table th, td {
     min-height: 40px;
 }
 
+.livro-card > p {
+    min-height: 48px;
+    margin: 15px 5px;
+}
+
 .livro-card:hover{
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
@@ -561,21 +566,25 @@ label{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
+    gap: 80px;
     padding: 20px;
 }
 
 .livros {
-    flex: 1;
+    flex: 0 1 600px;
     min-width: 300px;
+    text-align: center;
 }
 
 .livros-galeria {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .perfil-destaque {
-    flex: 1;
+    flex: 0 1 280px;
     min-width: 280px;
     display: flex;
     flex-direction: column;
@@ -585,6 +594,27 @@ label{
 .info-usuario {
     margin-top: 15px;
     text-align: center;
+}
+
+.info-usuario span {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.info-usuario a {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.info-usuario a:hover {
+    transform: scale(1.05);
+}
+
+.info-usuario a:hover span {
+    color: #6c63ff;
 }
 
 /*estilo da central de ajuda*/

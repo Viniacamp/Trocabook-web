@@ -39,9 +39,7 @@
                         <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
                         <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
 
-                        <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" id="deslogar">Sair</button>
-                        </form>
+                        <button type="button" id="deslogar">Sair</button>
                     </th:block>
 
                     <th:block sec:authorize="!isAuthenticated()">
@@ -147,4 +145,5 @@
 </div>
 </body>
 <script src="/js/fetch.js"></script>
+<script type="module" src="/js/logout.js"></script>
 </html>

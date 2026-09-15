@@ -1,157 +1,227 @@
 package com.trocabook.Trocabook.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import com.trocabook.Trocabook.model.dto.UsuarioInput;
+import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
-@Entity
-public class Usuario {
-    @Valid
+public class Usuario implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cdUsuario;
+    private String id;
 
     @NotBlank(message = "Preencha o Nome")
-    @Pattern(regexp = "^[A-Za-záàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ ]+$", message = "O nome deve conter apenas letras e espaços.")
-    @Column(nullable = false)
-    private String nmUsuario;
+    @Pattern(
+            regexp = "^[A-Za-záàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ ]+$",
+            message = "O nome deve conter apenas letras e espaços."
+    )
+    private String nome;
 
     @CPF(message = "CPF inválido")
-    @Column(nullable = false, unique = true, updatable = false)
-    private String CPF;
+    private String cpf;
 
     @NotBlank(message = "Preencha o E-mail")
     @Email(message = "Preencha com um E-mail válido")
-    @Column(nullable = false, unique = true)
-    private String email;
+    private String emailPrincipal;
 
-    @Column(nullable = false)
-    private String senha;
+    @Email(message = "E-mail de recuperação inválido")
+    private String emailRecuperacao;
 
-    private String foto;
+    private String fotoPerfil;
 
-    @NotNull
-    @Column(nullable = false)
-    private char status;
+    private String genero;
+
+
+    private String nascimento;
+
+    @NotBlank(message = "Preencha o RG")
+    private String rg;
+
+    @NotBlank(message = "Preencha o telefone")
+    private String telefone;
+
+    private String status;
 
     @Max(5)
-    @Column(nullable = false)
     private double avaliacao;
 
-    @Column(name = "reset_password_token")
-    private String resetPasswordToken;
-
-    @Column(name = "reset_password_token_expiry_date")
-    private LocalDateTime resetPasswordTokenExpiryDate;
-
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<UsuarioLivro> usuarioLivros;
-
-    @OneToMany(mappedBy = "usuarioAnunciante", cascade = CascadeType.ALL)
-    private List<Negociacao> negociacoesAnunciante;
-
-    @OneToMany(mappedBy = "usuarioInteressado", cascade = CascadeType.ALL)
-    private List<Negociacao> negociacoesInteressado;
-
-    // --- CONSTRUTORES ADICIONADOS ---
-
-    /**
-     * Construtor padrão (vazio).
-     * Necessário para o funcionamento do JPA/Hibernate.
-     */
     public Usuario() {
     }
 
-    /**
-     * CONSTRUTOR DE CÓPIA (A SOLUÇÃO)
-     * Cria uma cópia defensiva de outro objeto Usuario.
-     * Isso permite que a classe Negociacao armazene cópias seguras.
-     */
+    public Usuario(String id, String nome, String cpf,
+                   String emailPrincipal, String emailRecuperacao,
+                   String fotoPerfil, String genero, String nascimento,
+                   String rg, String telefone, String status,
+                   double avaliacao) {
+
+        this.id = id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.emailPrincipal = emailPrincipal;
+        this.emailRecuperacao = emailRecuperacao;
+        this.fotoPerfil = fotoPerfil;
+        this.genero = genero;
+        this.nascimento = nascimento;
+        this.rg = rg;
+        this.telefone = telefone;
+        this.status = status;
+        this.avaliacao = avaliacao;
+    }
+
+    public Usuario(String nome, String cpf, String emailPrincipal, String emailRecuperacao, String fotoPerfil, String genero, String nascimento, String rg, String telefone) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.emailPrincipal = emailPrincipal;
+        this.emailRecuperacao = emailRecuperacao;
+        this.fotoPerfil = fotoPerfil;
+        this.genero = genero;
+        this.nascimento = nascimento;
+        this.rg = rg;
+        this.telefone = telefone;
+    }
+
     public Usuario(Usuario outroUsuario) {
+
         if (outroUsuario == null) {
             return;
         }
 
-        // 1. Copia de campos primitivos e imutáveis
-        // (int, String, char, double, LocalDateTime são todos seguros)
-        this.cdUsuario = outroUsuario.cdUsuario;
-        this.nmUsuario = outroUsuario.nmUsuario;
-        this.CPF = outroUsuario.CPF;
-        this.email = outroUsuario.email;
-        this.senha = outroUsuario.senha; // A senha também é copiada
-        this.foto = outroUsuario.foto;
+        this.id = outroUsuario.id;
+        this.nome = outroUsuario.nome;
+        this.cpf = outroUsuario.cpf;
+        this.emailPrincipal = outroUsuario.emailPrincipal;
+        this.emailRecuperacao = outroUsuario.emailRecuperacao;
+        this.fotoPerfil = outroUsuario.fotoPerfil;
+        this.genero = outroUsuario.genero;
+        this.nascimento = outroUsuario.nascimento;
+        this.rg = outroUsuario.rg;
+        this.telefone = outroUsuario.telefone;
         this.status = outroUsuario.status;
         this.avaliacao = outroUsuario.avaliacao;
-        this.resetPasswordToken = outroUsuario.resetPasswordToken;
-        this.resetPasswordTokenExpiryDate = outroUsuario.resetPasswordTokenExpiryDate;
-
-        // 2. Cópia defensiva de campos mutáveis (as Listas)
-        // (Usando a mesma lógica segura que você já aplicou nos getters/setters)
-        this.usuarioLivros = (outroUsuario.usuarioLivros == null) ? null : new ArrayList<>(outroUsuario.usuarioLivros);
-        this.negociacoesAnunciante = (outroUsuario.negociacoesAnunciante == null) ? null : new ArrayList<>(outroUsuario.negociacoesAnunciante);
-        this.negociacoesInteressado = (outroUsuario.negociacoesInteressado == null) ? null : new ArrayList<>(outroUsuario.negociacoesInteressado);
     }
 
-    // --- Getters e Setters (Seu código original, que já estava correto) ---
 
-    public List<Negociacao> getNegociacoesAnunciante() {
-        return this.negociacoesAnunciante == null ? null : new ArrayList<>(this.negociacoesAnunciante);
-    }
-    public void setNegociacoesAnunciante(List<Negociacao> negociacoesAnunciante) {
-        this.negociacoesAnunciante = negociacoesAnunciante == null ? null : new ArrayList<>(negociacoesAnunciante);
-    }
-    public List<Negociacao> getNegociacoesInteressado() {
-        return this.negociacoesInteressado == null ? null : new ArrayList<>(this.negociacoesInteressado);
-    }
-    public void setNegociacoesInteressado(List<Negociacao> negociacoesInteressado) {
-        this.negociacoesInteressado = negociacoesInteressado == null ? null : new ArrayList<>(negociacoesInteressado);
-    }
-    public List<UsuarioLivro> getUsuarioLivros() {
-        return this.usuarioLivros == null ? null : new ArrayList<>(this.usuarioLivros);
-    }
-    public void setUsuarioLivros(List<UsuarioLivro> usuarioLivros) {
-        this.usuarioLivros = usuarioLivros == null ? null : new ArrayList<>(usuarioLivros);
+
+    public String getId() {
+        return id;
     }
 
-    // --- Outros Getters e Setters (imutáveis) ---
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getNmUsuario() { return nmUsuario; }
-    public void setNmUsuario(String nmUsuario) { this.nmUsuario = nmUsuario; }
-    public String getCPF() { return CPF; }
-    public void setCPF(String cPF) { CPF = cPF; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
-    public String getFoto() { return foto; }
-    public void setFoto(String foto) { this.foto = foto; }
-    public char getStatus() { return status; }
-    public void setStatus(char status) { this.status = status; }
-    public int getCdUsuario() { return cdUsuario; }
-    public void setCdUsuario(int cdUsuario) { this.cdUsuario = cdUsuario; }
-    public double getAvaliacao() { return avaliacao; }
-    public void setAvaliacao(double avaliacao) { this.avaliacao = avaliacao; }
+    public String getNome() {
+        return nome;
+    }
 
-    public String getResetPasswordToken() {
-        return resetPasswordToken;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
-    public void setResetPasswordToken(String resetPasswordToken) {
-        this.resetPasswordToken = resetPasswordToken;
+
+    public String getCpf() {
+        return cpf;
     }
-    public LocalDateTime getResetPasswordTokenExpiryDate() {
-        return resetPasswordTokenExpiryDate; // Seguro, LocalDateTime é IMUTÁVEL
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
-    public void setResetPasswordTokenExpiryDate(LocalDateTime resetPasswordTokenExpiryDate) {
-        this.resetPasswordTokenExpiryDate = resetPasswordTokenExpiryDate; // Seguro
+
+    public String getEmailPrincipal() {
+        return emailPrincipal;
     }
+
+    public void setEmailPrincipal(String emailPrincipal) {
+        this.emailPrincipal = emailPrincipal;
+    }
+
+    public String getEmailRecuperacao() {
+        return emailRecuperacao;
+    }
+
+    public void setEmailRecuperacao(String emailRecuperacao) {
+        this.emailRecuperacao = emailRecuperacao;
+    }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    public String getNascimento() {
+        return nascimento;
+    }
+
+    public void setNascimento(String nascimento) {
+        this.nascimento = nascimento;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public double getAvaliacao() {
+        return avaliacao;
+    }
+
+    public void setAvaliacao(double avaliacao) {
+        this.avaliacao = avaliacao;
+    }
+
+
+    public static Usuario from(UsuarioInput input){
+        return new Usuario(
+                input.nome(),
+                input.cpf(),
+                input.emailPrincipal(),
+                input.emailRecuperacao(),
+                input.fotoPerfil(),
+                input.genero(),
+                input.nascimento() != null ? input.nascimento().toString() : null,
+                input.rg(),
+                input.telefone()
+        );
+    }
+
+    public UsuarioOutput paraOutput(){
+        return new UsuarioOutput(
+                this.getId(),
+                this.getNome(),
+                this.getFotoPerfil()
+        );
+    }
+
+
+
 }

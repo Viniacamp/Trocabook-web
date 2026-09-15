@@ -1,170 +1,113 @@
 package com.trocabook.Trocabook.model;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
+
+import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.trocabook.Trocabook.model.dto.LivroDTO;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+public class Livro implements Serializable {
+    private String id;
+    private String googleBooksId;
+    private String titulo;
+    private List<String> idsAutores;
+    private List<String> idsCategorias;
+    private String publicadora;
+    private String dataPublicacao;
+    private String urlImagem;
 
-@Entity
-public class Livro {
-    @Valid
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cdLivro;
-
-    @NotBlank(message = "Preencha o Título")
-    @Column(nullable = false)
-    private String nmLivro;
-
-    @Column(nullable = false)
-    private Integer anoPublicacao;
-
-    @Column(nullable = false)
-    private String capa;
-
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataPublicacao;
-
-    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL)
-    private List<LivroAutor> livroAutor;
-
-    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL)
-    private List<LivroCategoria> livroCategoria;
-
-    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL)
-    private List<UsuarioLivro> usuarioLivros;
-
-    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL)
-    private List<Negociacao> negociacoes;
-
-
-
-    public Livro(LivroDTO livroDTO){
-        this.nmLivro = livroDTO.getTitulo();
-        this.capa = livroDTO.getThumbnailUrl();
-        this.anoPublicacao = 1980;
-        this.dataPublicacao = livroDTO.getDataPublicacao();
-
-    }
-
-    // --- CONSTRUTORES ---
-
-    /**
-     * Construtor padrão (vazio).
-     * Bom para JPA, Jackson e outras bibliotecas.
-     */
     public Livro() {
     }
 
-    /**
-     * CONSTRUTOR DE CÓPIA (A SOLUÇÃO)
-     * Cria uma cópia defensiva de outro objeto Livro.
-     */
-    public Livro(Livro outroLivro) {
-        if (outroLivro == null) {
-            return;
-        }
-
-        // Copia de campos imutáveis/primitivos
-        this.cdLivro = outroLivro.cdLivro;
-        this.nmLivro = outroLivro.nmLivro;
-        this.anoPublicacao = outroLivro.anoPublicacao;
-        this.capa = outroLivro.capa;
-        this.dataPublicacao = outroLivro.dataPublicacao;
-
-        // Copia defensiva das listas (objetos mutáveis)
-        this.livroAutor = (outroLivro.livroAutor == null) ? null : new ArrayList<>(outroLivro.livroAutor);
-        this.livroCategoria = (outroLivro.livroCategoria == null) ? null : new ArrayList<>(outroLivro.livroCategoria);
-        this.usuarioLivros = (outroLivro.usuarioLivros == null) ? null : new ArrayList<>(outroLivro.usuarioLivros);
-        this.negociacoes = (outroLivro.negociacoes == null) ? null : new ArrayList<>(outroLivro.negociacoes);
+    public Livro(String id, String googleBooksId, String titulo, List<String> idsAutores, List<String> idsCategorias, String publicadora, String dataPublicacao, String urlImagem) {
+        this.id = id;
+        this.googleBooksId = googleBooksId;
+        this.titulo = titulo;
+        this.idsAutores = idsAutores;
+        this.idsCategorias = idsCategorias;
+        this.publicadora = publicadora;
+        this.dataPublicacao = dataPublicacao;
+        this.urlImagem = urlImagem;
     }
 
-
-    // --- Getters e Setters Corrigidos para as Listas ---
-
-    public List<UsuarioLivro> getUsuarioLivros() {
-        return this.usuarioLivros == null ? null : new ArrayList<>(this.usuarioLivros);
+    public String getId() {
+        return id;
     }
 
-    public void setUsuarioLivros(List<UsuarioLivro> usuarioLivros) {
-        this.usuarioLivros = usuarioLivros == null ? null : new ArrayList<>(usuarioLivros);
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public List<Negociacao> getNegociacoes() {
-        return this.negociacoes == null ? null : new ArrayList<>(this.negociacoes);
+    public String getGoogleBooksId() {
+        return googleBooksId;
     }
 
-    public void setNegociacoes(List<Negociacao> negociacoes) {
-        this.negociacoes = negociacoes == null ? null : new ArrayList<>(negociacoes);
+    public void setGoogleBooksId(String googleBooksId) {
+        this.googleBooksId = googleBooksId;
     }
 
-    public List<LivroCategoria> getLivroCategoria() {
-        return this.livroCategoria == null ? null : new ArrayList<>(this.livroCategoria);
+    public String getTitulo() {
+        return titulo;
     }
 
-    public void setLivroCategoria(List<LivroCategoria> livroCategoria) {
-        this.livroCategoria = livroCategoria == null ? null : new ArrayList<>(livroCategoria);
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
-    public List<LivroAutor> getLivroAutor() {
-        return this.livroAutor == null ? null : new ArrayList<>(this.livroAutor);
+    public List<String> getIdsAutores() {
+        return idsAutores;
     }
 
-    public void setLivroAutor(List<LivroAutor> livroAutor) {
-        this.livroAutor = livroAutor == null ? null : new ArrayList<>(livroAutor);
+    public void setIdsAutores(List<String> idsAutores) {
+        this.idsAutores = idsAutores;
     }
 
-    // --- Outros Getters e Setters ---
-
-    public int getCdLivro() {
-        return cdLivro;
-    }
-    public void setCdLivro(int cdLivro) {
-        this.cdLivro = cdLivro;
-    }
-    public String getNmLivro() {
-        return nmLivro;
-    }
-    public void setNmLivro(String nmLivro) {
-        this.nmLivro = nmLivro;
-    }
-    public Integer getAnoPublicacao() {
-        return anoPublicacao;
-    }
-    public void setAnoPublicacao(Integer anoPublicacao) {
-        this.anoPublicacao = anoPublicacao;
-    }
-    public String getCapa() {
-        return capa;
-    }
-    public void setCapa(String capa) {
-        this.capa = capa;
+    public List<String> getIdsCategorias() {
+        return idsCategorias;
     }
 
-
-    public LocalDate getDataPublicacao() {
-        return dataPublicacao; // Seguro, LocalDate é IMUTÁVEL
+    public void setIdsCategorias(List<String> idsCategorias) {
+        this.idsCategorias = idsCategorias;
     }
 
-    public void setDataPublicacao(LocalDate dataPublicacao) {
-        this.dataPublicacao = dataPublicacao; // Seguro, LocalDate é IMUTÁVEL
+    public String getPublicadora() {
+        return publicadora;
     }
 
+    public void setPublicadora(String publicadora) {
+        this.publicadora = publicadora;
+    }
 
-    // O método setCapa(MultipartFile capa) foi removido.
+    public String getDataPublicacao() {
+        return dataPublicacao;
+    }
 
+    public void setDataPublicacao(String dataPublicacao) {
+        this.dataPublicacao = dataPublicacao;
+    }
 
+    public String getUrlImagem() {
+        return urlImagem;
+    }
+
+    public void setUrlImagem(String urlImagem) {
+        this.urlImagem = urlImagem;
+    }
+
+    public static Livro from(
+            LivroBuscaOutput livro,
+            List<String> idsAutores,
+            List<String> idsCategorias
+    ) {
+        Livro entidade = new Livro();
+
+        entidade.googleBooksId = livro.googleBooksId();
+        entidade.titulo = livro.titulo();
+        entidade.idsAutores = idsAutores;
+        entidade.idsCategorias = idsCategorias;
+        entidade.publicadora = livro.publicadora();
+        entidade.dataPublicacao = livro.dataPublicacao();
+        entidade.urlImagem = livro.urlImagem();
+
+        return entidade;
+    }
 }

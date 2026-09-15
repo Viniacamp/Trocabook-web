@@ -1,15 +1,13 @@
 package com.trocabook.Trocabook.controllers;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import com.trocabook.Trocabook.model.dto.UsuarioCadastroDTO;
-import com.trocabook.Trocabook.model.Usuario;
-import com.trocabook.Trocabook.repository.UsuarioRepository;
-import com.trocabook.Trocabook.service.FileStorageServiceUsuario; // 1. Importar o serviço de arquivos
-import com.trocabook.Trocabook.service.RecaptchaService;
-import jakarta.servlet.http.HttpSession;
+import com.trocabook.Trocabook.model.dto.UsuarioInput;
+import com.trocabook.Trocabook.service.impl.FileStorageServiceUsuario;
+import com.trocabook.Trocabook.service.IUsuarioService;
+import com.trocabook.Trocabook.service.impl.RecaptchaService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,79 +23,158 @@ import java.io.IOException;
 @Controller
 public class CadastroController {
 
-    @Autowired
-    private UsuarioRepository ur;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RecaptchaService recaptchaService;
-
-    // --- PASSO 1: INJETAR O SERVIÇO DE ARQUIVOS ---
-    @Autowired
-    private FileStorageServiceUsuario fileStorageService;
+    private final IUsuarioService usuarioService;
+    private final RecaptchaService recaptchaService;
+    private final FileStorageServiceUsuario fileStorageService;
 
     @Value("${google.recaptcha.key.site}")
     private String recaptchaSiteKey;
 
+    public CadastroController(
+            IUsuarioService usuarioService,
+            RecaptchaService recaptchaService,
+            FileStorageServiceUsuario fileStorageService
+    ) {
+        this.usuarioService = usuarioService;
+        this.recaptchaService = recaptchaService;
+        this.fileStorageService = fileStorageService;
+    }
+
     @GetMapping("/cadastro")
-    public String cadastro(Model model, HttpSession sessao) {
-        Usuario usuarioLogado = (Usuario) sessao.getAttribute("usuarioLogado");
-        if (usuarioLogado != null) {
-            return "redirect:/";
-        }
-        model.addAttribute("usuarioDTO", new UsuarioCadastroDTO());
-        model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+    public String cadastro(Model model) {
+
+        model.addAttribute(
+                "usuarioDTO",
+                new UsuarioCadastroDTO()
+        );
+
+        model.addAttribute(
+                "recaptchaSiteKey",
+                recaptchaSiteKey
+        );
+
         return "cadastro";
     }
 
     @PostMapping("/cadastro")
-    public String cadastrar(@RequestParam("fotoA") MultipartFile foto,
-                            @RequestParam("g-recaptcha-response") String recaptchaToken,
-                            @Valid @ModelAttribute("usuarioDTO") UsuarioCadastroDTO usuarioDTO,
-                            BindingResult result,
-                            Model model,
-                            RedirectAttributes attributes) throws IOException {
+    public String cadastrar(
+            @RequestParam("fotoA") MultipartFile foto,
+            @RequestParam("g-recaptcha-response") String recaptchaToken,
+            @Valid @ModelAttribute("usuarioDTO") UsuarioCadastroDTO usuarioDTO,
+            BindingResult result,
+            Model model,
+            RedirectAttributes attributes
+    ) throws IOException, FirebaseAuthException {
 
-        boolean isRecaptchaValid = recaptchaService.verifyRecaptcha(recaptchaToken);
-        if (!isRecaptchaValid) {
-            attributes.addFlashAttribute("recaptchaError", "Falha na verificação reCAPTCHA. Tente novamente.");
+        /*
+         * 1. Validação do reCAPTCHA
+         */
+        boolean recaptchaValido =
+                recaptchaService.verifyRecaptcha(recaptchaToken);
+
+        if (!recaptchaValido) {
+
+            attributes.addFlashAttribute(
+                    "recaptchaError",
+                    "Falha na verificação reCAPTCHA. Tente novamente."
+            );
+
             return "redirect:/cadastro";
         }
 
+
+        /*
+         * 2. Validação da foto
+         */
         if (foto.isEmpty()) {
-            model.addAttribute("fotoErro", "Selecione uma foto válida");
+
+            model.addAttribute(
+                    "fotoErro",
+                    "Selecione uma foto válida"
+            );
+
             result.reject("fotoA");
         }
-        if (ur.findByEmail(usuarioDTO.getEmail()) != null) {
-            result.rejectValue("email", "email.exists", "O Email inserido já está cadastrado no sistema");
+
+
+        /*
+         * 3. Verificação de e-mail
+         */
+        if (usuarioService.existeComEmail(usuarioDTO.getEmail())) {
+
+            result.rejectValue(
+                    "email",
+                    "email.exists",
+                    "O Email inserido já está cadastrado no sistema"
+            );
         }
-        if (ur.findByCPF(usuarioDTO.getCPF()) != null) {
-            result.rejectValue("CPF", "cpf.exists", "O CPF inserido já está cadastrado no sistema");
+
+
+        /*
+         * 4. Verificação de CPF
+         */
+        if (usuarioService.existeComCpf(usuarioDTO.getCPF())) {
+
+            result.rejectValue(
+                    "CPF",
+                    "cpf.exists",
+                    "O CPF inserido já está cadastrado no sistema"
+            );
         }
+
+
+        /*
+         * 5. Retorna para o formulário caso existam erros
+         */
         if (result.hasErrors()) {
-            model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+
+            model.addAttribute(
+                    "recaptchaSiteKey",
+                    recaptchaSiteKey
+            );
+
             return "cadastro";
         }
 
-        Usuario novoUsuario = new Usuario();
-        novoUsuario.setNmUsuario(usuarioDTO.getNmUsuario());
-        novoUsuario.setEmail(usuarioDTO.getEmail());
-        novoUsuario.setCPF(usuarioDTO.getCPF());
 
-        String senhaCriptografada = passwordEncoder.encode(usuarioDTO.getSenha());
-        novoUsuario.setSenha(senhaCriptografada);
+        /*
+         * 6. Salva a foto localmente
+         */
+        String caminhoDaFoto =
+                fileStorageService.armazenarArquivoUsuario(foto);
 
-        // --- PASSO 2: USAR O SERVIÇO PARA SALVAR A FOTO ---
-        // Primeiro, salvamos o arquivo e obtemos o caminho (String) de volta.
-        String caminhoDaFoto = fileStorageService.armazenarArquivoUsuario(foto);
-        // Agora, usamos essa String para definir a foto no usuário.
-        novoUsuario.setFoto(caminhoDaFoto);
 
-        novoUsuario.setStatus('A');
-        ur.save(novoUsuario);
+        /*
+         * 7. Cria o objeto de entrada para o Firebase
+         *
+         * Os campos que ainda não existem no formulário
+         * são enviados como null.
+         */
+        UsuarioInput input =
+                new UsuarioInput(
+                        usuarioDTO.getNmUsuario(),
+                        usuarioDTO.getCPF(),
+                        usuarioDTO.getEmail(),
+                        null,
+                        usuarioDTO.getSenha(),
+                        caminhoDaFoto,
+                        null,
+                        null,
+                        null,
+                        null
+                );
 
+
+        /*
+         * 8. Cadastro no Firebase Authentication + Firestore
+         */
+        usuarioService.cadastrar(input);
+
+
+        /*
+         * 9. Cadastro concluído
+         */
         return "redirect:/login";
     }
 }
+

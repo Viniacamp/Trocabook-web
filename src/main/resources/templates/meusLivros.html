@@ -35,9 +35,7 @@
                         <th:block sec:authorize="isAuthenticated()">
                             <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
                             <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                            <form th:action="@{/logout}" method="post" style="display: inline;">
-                                <button type="submit" id="deslogar">Sair</button>
-                            </form>
+                            <button type="button" id="deslogar">Sair</button>
                         </th:block>
                     </th>
                 </tr>
@@ -66,21 +64,34 @@
                 <option th:value="VENDA" th:selected="${filtroSelecionadoAnuncio == 'VENDA'}">Venda</option>
                 <option th:value="AMBOS" th:selected="${filtroSelecionadoAnuncio == 'AMBOS'}">Ambos</option>
             </select>
-            <input type="hidden" name="filtroT/V" th:value="*{filtroSelecionadoTroVen}">
+            <input type="hidden"
+                   name="filtroT/V"
+                   th:value="${filtroSelecionadoTroVen}">
         </form>
     </aside>
 
 
     <p class="titulo-secao">Livros anunciados:</p>
+
     <div class="secao-livros">
-        <div th:if="${livrosAnuncio.size() <= 0 || livrosAnuncio == null}">
-            <p class="nenhumLivro">Nenhum Livro Anunciado na Plataforma</p>
+
+        <div th:if="${anuncios == null || anuncios.isEmpty()}">
+            <p class="nenhumLivro">
+                Nenhum Livro Anunciado na Plataforma
+            </p>
         </div>
-        <div class="livros-grid" th:if="${livrosAnuncio != null}">
-            <div th:each="livroAnuncio : ${livrosAnuncio}">
-                <img th:src="${livroAnuncio.capa}" class="capa-livro" alt="Capa do livro"/>
+
+        <div class="livros-grid"
+             th:if="${anuncios != null && !anuncios.isEmpty()}">
+
+            <div th:each="anuncio : ${anuncios}">
+                <img th:src="${anuncio.capa}"
+                     class="capa-livro"
+                     alt="Capa do livro"/>
             </div>
+
         </div>
+
     </div>
 
     <aside class="filtro-lateral">
@@ -92,19 +103,33 @@
                 <option th:value="VENDA" th:selected="${filtroSelecionadoTroVen == 'VENDA'}">Venda</option>
                 <option th:value="AMBOS" th:selected="${filtroSelecionadoTroVen == 'AMBOS'}">Ambos</option>
             </select>
-            <input type="hidden" name="filtroAnuncio" th:value="*{filtroSelecionadoAnuncio}">
+            <input type="hidden"
+                   name="filtroAnuncio"
+                   th:value="${filtroSelecionadoAnuncio}">
         </form>
     </aside>
+
     <p class="titulo-secao">Livros que você trocou/vendeu:</p>
+
     <div class="secao-livros">
-        <div th:if="${livrosNegociacao.size() <= 0 || livrosNegociacao == null}">
-            <p class="nenhumLivro">Nenhum Livro Negociado na Plataforma</p>
+
+        <div th:if="${negociacoes == null || negociacoes.isEmpty()}">
+            <p class="nenhumLivro">
+                Nenhum Livro Negociado na Plataforma
+            </p>
         </div>
-        <div class="livros-grid" th:if="${livrosNegociacao != null}">
-            <div th:each="livroNegociacao : ${livrosNegociacao}">
-                <img th:src="${livroNegociacao.capa}" class="capa-livro" alt="Capa do livro"/>
+
+        <div class="livros-grid"
+             th:if="${negociacoes != null && !negociacoes.isEmpty()}">
+
+            <div th:each="negociacao : ${negociacoes}">
+                <img th:src="${negociacao.capa}"
+                     class="capa-livro"
+                     alt="Capa do livro"/>
             </div>
+
         </div>
+
     </div>
 
     <footer>
@@ -118,4 +143,5 @@
 </div>
 </body>
 <script src="/js/fetch.js"></script>
+<script type="module" src="/js/logout.js"></script>
 </html>
