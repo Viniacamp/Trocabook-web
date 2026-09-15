@@ -116,6 +116,7 @@
                     <p class="text-danger" th:if="${erroTipo}" th:text="${erroTipo}"></p>
 
                     <input type="hidden" th:field="*{lingua}" id="lingua"/>
+                    <input type="hidden" th:field="*{googleBooksId}" id="googleBooksId"/>
 
                     <button type="submit" class="btn-criar">Criar Anúncio</button>
                 </div>
@@ -229,6 +230,7 @@
         document.getElementById("capaLivro").style.display = "block";
         document.getElementById("dataPublicacao").value = livro.dataPublicacao || "";
         document.getElementById("lingua").value = livro.lingua || "en";
+        document.getElementById("googleBooksId").value = livro.googleBooksId || "";
 
 
         const autoresDiv = document.getElementById("autores");
