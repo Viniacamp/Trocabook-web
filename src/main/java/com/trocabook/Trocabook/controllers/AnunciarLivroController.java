@@ -1,5 +1,17 @@
 package com.trocabook.Trocabook.controllers;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.trocabook.Trocabook.controllers.request.AnunciarLivroRequest;
 import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
@@ -7,19 +19,11 @@ import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.ILivroService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
+
 import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 @Controller
 public class AnunciarLivroController {
-
 
     private final ILivroService livroService;
     private final IAnuncioService anuncioService;
@@ -33,10 +37,13 @@ public class AnunciarLivroController {
 
     @GetMapping("/AnunciarLivro")
     public String anunciarLivroApi(Model model, HttpSession sessao) {
-        if (usuarioAutenticadoService.getUsuarioOutput(sessao) == null){
+        UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
+        if (usuario == null){
             return "redirect:/";
         }
         model.addAttribute("anuncioRequest", new AnunciarLivroRequest());
+        model.addAttribute("usuario", usuario);
+
         return "anunciar";
     }
 

@@ -66,6 +66,7 @@
     height: 60px;
     width: 40px;
     object-fit: contain;
+    align-items: center;
     border-radius: 4px;
     margin-right: 12px;
     margin-left: 8px;
@@ -86,12 +87,14 @@
 /* 📘 DETALHES DO LIVRO          */
 /* ============================= */
 .livro-detalhes {
-    margin-top: 30px;
+    margin-top: 20px;
+    margin-bottom: 60px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background: #fafafa;
-    padding: 25px;
+    background: #ffffff;
+    padding-top: 10px;
+    padding-left: 25px;
+    padding-right: 45px;
     border-radius: 10px;
     width: 60%;
     margin-left: auto;
@@ -126,7 +129,15 @@
     outline: none;
 }
 
+.livro-detalhes input:read-only {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  border: 1px solid #ced4da;
+}
+
 .livro-detalhes textarea {
+    font-family: manrope;
     resize: vertical;
     min-height: 80px;
 }
@@ -155,11 +166,6 @@
     font-weight: bold;
     cursor: pointer;
     margin-top: 15px;
-    transition: transform 0.2s ease;
-}
-
-.livro-detalhes button:hover {
-    transform: scale(1.05);
 }
 
 /* ============================= */

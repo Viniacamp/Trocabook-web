@@ -1,21 +1,23 @@
 package com.trocabook.Trocabook.controllers;
 
 
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.trocabook.Trocabook.config.ApplicationInstance;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.IUsuarioService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class IndexController {
@@ -76,7 +78,6 @@ public class IndexController {
 		return anuncioService
 				.buscarPorTitulo(nm_livro);
 	}
-	
 	
 
 }

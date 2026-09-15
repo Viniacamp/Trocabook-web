@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
     <link rel="stylesheet" type="text/css" href="/css/anunciarLivroApi.css"/>
     <title>Criar novo anuncio | Trocabook</title>
@@ -17,25 +18,25 @@
                 <th id="cabecalhoelementos">
                     <a href="/"><img src="/img/Design sem nome (7).svg"></a>
                     <div class="autocomplete-wrapper">
-                        <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar">
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                     </div>
-
-                    <select id="inputCategoria" class="form-control" style="width: 200px; height:37px; margin-left: 15px;">
-                        <option selected>Categoria...</option>
-                        <option>Ação</option>
-                        <option>Romance</option>
-                        <option>Literatura</option>
-                        <option>Lógica de Programação</option>
-                        <option>Direito</option>
-                        <option>Suspense</option>
-                        <option>Ficção Científica</option>
-                    </select>
-
                     <th:block sec:authorize="isAuthenticated()">
-                        <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                        <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                        <button type="button" id="deslogar">Sair</button>
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+                            
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="chat/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
                     </th:block>
 
                     <th:block sec:authorize="!isAuthenticated()">
@@ -75,7 +76,6 @@
 
 
                 <div class="livro-detalhes">
-
                     <label for="capaLivro" class="label-principal">Capa do Livro:</label>
                     <img id="capaLivro" class="capaLivro" th:src="${anuncioRequest.urlImagem != null ? anuncioRequest.urlImagem : ''}" style="display:none;">
                     <input type="hidden" th:field="*{urlImagem}" id="urlImagem">
@@ -107,7 +107,7 @@
                     <textarea id="descricao" name="descricao" placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir"></textarea>
 
                     <label for="tipoNegociacao">Tipo de negociação:</label>
-                    <select id="tipoNegociacao" th:field="*{tipoNegociacao}" required>
+                    <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" required>
                         <option value="">Selecione...</option>
                         <option value="TROCA">Troca</option>
                         <option value="VENDA">Venda</option>
@@ -116,30 +116,24 @@
                     <p class="text-danger" th:if="${erroTipo}" th:text="${erroTipo}"></p>
 
                     <input type="hidden" th:field="*{lingua}" id="lingua"/>
+                    <input type="hidden" th:field="*{googleBooksId}" id="googleBooksId"/>
 
                     <button type="submit" class="btn-criar">Criar Anúncio</button>
                 </div>
-
-
             </form>
-
-
-
         </div>
     </div>
-
-
-
-
     <footer>
         <div class="rodapenovo">
             <a href="/"><img src="/img/Design sem nome.svg"></a>
             <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
-            <small>© 2025 Sistema Trocabook<br>Todos os direitos reservados</small>
+            <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
         </div>
     </footer>
 </div>
+
+<script src="/js/menu-logado.js"></script>
 </body>
 <script>
     const inputBusca = document.getElementById("tituloBuscado");
@@ -236,6 +230,7 @@
         document.getElementById("capaLivro").style.display = "block";
         document.getElementById("dataPublicacao").value = livro.dataPublicacao || "";
         document.getElementById("lingua").value = livro.lingua || "en";
+        document.getElementById("googleBooksId").value = livro.googleBooksId || "";
 
 
         const autoresDiv = document.getElementById("autores");

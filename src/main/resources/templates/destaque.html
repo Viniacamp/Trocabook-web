@@ -6,9 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
-
     <title>Negociadores em Destaque | Trocabook</title>
 </head>
 
@@ -39,62 +38,28 @@
                                     class="sugestoes-autocomplete">
                             </div>
                         </div>
-
-                        <select
-                                id="inputCategoria"
-                                class="form-control"
-                                style="width: 200px; height:37px; margin-left: 15px;">
-
-                            <option selected>Categoria...</option>
-                            <option>Ação</option>
-                            <option>Romance</option>
-                            <option>Literatura</option>
-                            <option>Lógica de Programação</option>
-                            <option>Direito</option>
-                            <option>Suspense</option>
-                            <option>Ficção Científica</option>
-
-                        </select>
-
                         <th:block sec:authorize="isAuthenticated()">
-
-                            <a
-                                    class="anunciar-livro4"
-                                    href="/AnunciarLivro">
-                                Anunciar Livro
-                            </a>
-
-                            <a
-                                    class="meus-livros4"
-                                    href="/MeusLivros">
-                                Meus Livros
-                            </a>
-
-                            <button type="button" id="deslogar">Sair</button>
-
+                            <th:block sec:authorize="isAuthenticated()">
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img th:src="${usuarioLogin.fotoPerfil}" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuarioLogin.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+                            
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="chat/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
                         </th:block>
 
                         <th:block sec:authorize="!isAuthenticated()">
-
-                            <a
-                                    href="/login"
-                                    id="loginbotao">
-
-                                <button
-                                        type="submit"
-                                        style="width: 150px; height:37px;">
-                                    Fazer login
-                                </button>
-
-                            </a>
-
-                            <a
-                                    class="cadbutton"
-                                    href="/cadastro"
-                                    id="cadastrobotao">
-                                Cadastre-se
-                            </a>
-
+                        
+                        </div>
+                    </th:block>
                         </th:block>
 
                     </th>
@@ -216,7 +181,7 @@
             </a>
 
             <small>
-                © 2025 Sistema Trocabook
+                © 2026 Sistema Trocabook
                 <br>
                 Todos os direitos reservados
             </small>
@@ -229,6 +194,8 @@
 
 </body>
 
+
+<script src="/js/menu-logado.js"></script>
 <script src="/js/fetch.js"></script>
 <script type="module" src="/js/logout.js"></script>
 </html>

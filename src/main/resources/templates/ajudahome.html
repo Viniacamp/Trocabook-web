@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
     <title>Central de Ajuda | Trocabook</title>
 </head>
@@ -20,26 +21,22 @@
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                     </div>
 
-                    <select id="inputCategoria" class="form-control" style="width: 200px; height:37px; margin-left: 15px;">
-                        <option selected>Categoria...</option>
-                        <option>Ação</option>
-                        <option>Romance</option>
-                        <option>Literatura</option>
-                        <option>Lógica de Programação</option>
-                        <option>Direito</option>
-                        <option>Suspense</option>
-                        <option>Ficção Científica</option>
-                    </select>
-
                     <th:block sec:authorize="isAuthenticated()">
-                        <span style="color: white; margin-right: 15px; font-weight: bold;">
-                            Olá, <span th:text="${#authentication.principal.usuario.nmUsuario}"></span>
-                        </span>
-
-                        <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                        <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-
-                        <button type="button" id="deslogar">Sair</button>
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img src="/img/vendedor4.svg" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+                            
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="chat/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
                     </th:block>
 
                     <th:block sec:authorize="!isAuthenticated()">
@@ -146,4 +143,5 @@
 </body>
 <script src="/js/fetch.js"></script>
 <script type="module" src="/js/logout.js"></script>
+<script src="/js/menu-logado.js"></script>
 </html>

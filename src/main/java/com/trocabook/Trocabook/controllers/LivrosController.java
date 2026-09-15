@@ -42,7 +42,7 @@ public class LivrosController {
             listaAnuncios = anuncioService.listarTodos();
         }
 
-        model.addAttribute("uidAnunciante", usuarioOutput.id());
+        model.addAttribute("usuario", usuarioOutput);
         model.addAttribute("filtroLivros", filtroLivros);
         model.addAttribute("listaAnuncios", listaAnuncios);
 
