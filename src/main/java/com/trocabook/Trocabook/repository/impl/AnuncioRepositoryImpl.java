@@ -192,7 +192,7 @@ public class AnuncioRepositoryImpl implements AnuncioRepository {
         try {
             var documentos = firestore
                     .collection(COLECAO)
-                    .orderBy("titulo")
+                    .orderBy("tituloBusca")
                     .startAt(titulo)
                     .endAt(titulo + "\uf8ff")
                     .get()

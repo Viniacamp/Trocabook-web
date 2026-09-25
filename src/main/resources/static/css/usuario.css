@@ -1,0 +1,352 @@
+/* ==========================================================================
+   TROCA BOOK - MÓDULO DE USUÁRIO (usuario.css)
+   Autenticação, Cadastro, Login, Perfil e Validações
+   ========================================================================== */
+
+/* --- 1. PÁGINA DE CADASTRO --- */
+.cadastro-container {
+    margin-bottom: 5px;
+    max-width: 1700px;
+    margin: 0 auto;
+}
+
+.cadastro h1 {
+    text-shadow: 1px 1px 1px #000000;
+    text-align: right;
+    vertical-align: middle;
+    border-collapse: collapse;
+    font-size: 25px;
+}
+
+.cadastro-wrapper {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 100vh;
+    flex-wrap: nowrap;
+    gap: 0;
+}
+
+.cadastro-form,
+.cadastro-banner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cadastro-form {
+    padding: 40px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+.cadastro-banner {
+    padding: 40px;
+    padding-bottom: 100px;
+    text-align: center;
+    background: var(--gradient-banner-cadastro, linear-gradient(132deg, rgb(255, 206, 236) 0%, rgb(151, 150, 240) 100%));
+    color: #ffffff;
+}
+
+.cadastro-banner img {
+    max-width: 350px;
+    height: auto;
+    margin-bottom: 12px;
+}
+
+.cadastro-banner h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.senha-wrapper {
+    position: relative;
+}
+
+.senha-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* Espaço para o ícone */
+}
+
+.input-group-text {
+    height: 100%;
+}
+
+.input-group-append {
+    cursor: pointer;
+}
+
+.senha-wrapper i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555555;
+    font-size: 16px;
+}
+
+/* Responsividade da página de cadastro */
+@media (max-width: 992px) {
+    .cadastro-wrapper {
+        flex-direction: column;
+    }
+    .cadastro-form,
+    .cadastro-banner {
+        flex: unset;
+        width: 100%;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cadastro-form,
+    .cadastro-banner {
+        flex: 1 1 50%;
+        padding: 20px;
+    }
+
+    .cadastro-banner img {
+        width: 70px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .cadastro-banner h1 {
+        font-size: 1.4rem;
+        margin-top: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cadastro-form,
+    .cadastro-banner {
+        flex: 1 1 50%;
+        font-size: 0.9rem;
+    }
+
+    .cadastro-banner img {
+        width: 50px;
+        top: 5px;
+        left: 5px;
+    }
+
+    .cadastro-banner h1 {
+        font-size: 1.1rem;
+        margin-top: 40px;
+    }
+}
+
+/* --- 2. PÁGINA DE LOGIN & RECUPERAÇÃO --- */
+.login {
+    margin: 0 auto;
+    margin-top: 60px;
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 20px;
+    width: 350px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-md, 5px);
+}
+
+.login label {
+    color: #000000;
+}
+
+.login h1 {
+    padding-bottom: 20px;
+    text-align: center;
+    color: #000000;
+}
+
+.login small {
+    font-size: 14px;
+    margin-top: 5px;
+    float: right;
+}
+
+.login small:hover {
+    text-decoration: underline;
+}
+
+.loginlogo {
+    text-align: center;
+}
+
+.loginlogo img {
+    width: 250px;
+    height: 300px;
+    margin-bottom: -140px;
+    margin-top: -60px;
+}
+
+/* --- 3. REGRAS E VALIDAÇÃO DE SENHA --- */
+#passwordHelpBlock {
+    display: none;
+}
+
+#passwordHelpBlock.is-visible {
+    display: block;
+}
+
+.form-text ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+
+#password-rules .valid {
+    color: var(--color-success, green);
+}
+
+#password-rules .valid::before {
+    content: '✓ ';
+}
+
+#password-rules .invalid {
+    color: var(--color-danger, red);
+}
+
+#password-rules .invalid::before {
+    content: '✗ ';
+}
+
+/* --- 4. UPLOAD DE FOTO DE PERFIL / ARQUIVOS --- */
+.file-upload-label {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 470px;
+    height: 150px;
+    border: 2px dashed #cccccc;
+    border-radius: var(--radius-lg, 8px);
+    background-color: #f9f9f9;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.file-upload-label:hover,
+.file-upload-label.is-dragover {
+    border-color: var(--color-primary, #007bff);
+    background-color: #e2f0ff;
+}
+
+#upload-prompt .fa-upload {
+    color: var(--color-primary, #007bff);
+    margin-bottom: 5px;
+}
+
+#upload-prompt #file-name {
+    font-size: 0.9em;
+    color: #555555;
+}
+
+#preview-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-md, 6px);
+}
+
+#remove-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+#remove-photo-btn:hover {
+    background-color: var(--color-danger-hover, rgba(220, 53, 69, 0.8));
+}
+
+/* --- 5. PERFIL DE USUÁRIO & DESTAQUES --- */
+.perfil-destaque {
+    flex: 0 1 280px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.PerfilFotoDestaque {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.PerfilIcon {
+    width: 30px;
+    height: 30px;
+    margin-top: -30px;
+}
+
+.info-usuario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: auto;
+    text-align: center;
+}
+
+.info-usuario span {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.info-usuario a {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.info-usuario a:hover {
+    transform: scale(1.05);
+}
+
+.info-usuario a:hover span {
+    color: var(--color-secondary, #6c63ff);
+}
+
+.info-usuario p {
+    margin-top: 6px;
+    font-size: 0.9rem;
+}

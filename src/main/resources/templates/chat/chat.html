@@ -1,307 +1,2047 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+<html lang="pt-br"
+      xmlns:th="http://thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
-    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon"
+          type="image/png"
+          href="/img/logo-trocabook.png"/>
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="/css/style.css"/>
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="/css/chat.css"/>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <title>Chat | Trocabook</title>
+
 </head>
+
+
 <body>
+
 <div class="container">
+
+    <!-- ===================================================== -->
+    <!-- CABEÇALHO                                             -->
+    <!-- ===================================================== -->
+
     <header>
+
         <div class="wrapper">
+
             <table class="cabecalho">
+
                 <tr>
+
                     <th id="cabecalhoelementos">
-                        <a href="/"><img src="/img/Design%20sem%20nome%20(7).svg"></a>
+
+                        <a href="/">
+                            <img src="/img/Design%20sem%20nome%20(7).svg">
+                        </a>
+
+
                         <div class="autocomplete-wrapper">
-                            <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
-                            <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
+
+                            <input
+                                    type="text"
+                                    style="width: 100%; height: 35px;"
+                                    id="pesquisa"
+                                    placeholder="Pesquisar">
+
+                            <div
+                                    id="resultadosPesquisa"
+                                    class="sugestoes-autocomplete">
+                            </div>
+
                         </div>
 
+
+                        <!-- ===================================== -->
+                        <!-- MENU DO USUÁRIO                       -->
+                        <!-- ===================================== -->
+
                         <th:block sec:authorize="isAuthenticated()">
+
                             <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuarioLogado.fotoPerfil}" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuarioLogado.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
-                            </button>
-                            
-                            <div id="userDropdown" class="dropdown-content">
-                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                                <a href="chat/chat">Chat</a>
-                                <hr class="divider">
-                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+
+                                <button
+                                        id="userMenuBtn"
+                                        class="user-menu-btn"
+                                        onclick="toggleMenu()">
+
+                                    <img
+                                            th:src="${usuarioLogado.fotoPerfil}"
+                                            class="user-menu-icon">
+
+                                    <span>
+
+                                        Olá,
+
+                                        <span
+                                                th:text="${usuarioLogado.nome}"
+                                                style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);">
+                                        </span>
+
+                                    </span>
+
+                                    <span class="arrow">
+                                        ▼
+                                    </span>
+
+                                </button>
+
+
+                                <div
+                                        id="userDropdown"
+                                        class="dropdown-content">
+
+                                    <a
+                                            class="anunciar-livro4"
+                                            href="/AnunciarLivro">
+                                        Anunciar Livro
+                                    </a>
+
+                                    <a
+                                            class="meus-livros4"
+                                            href="/MeusLivros">
+                                        Meus Livros
+                                    </a>
+
+                                    <a href="/chat">
+                                        Chat
+                                    </a>
+
+                                    <hr class="divider">
+
+                                    <button
+                                            type="submit"
+                                            id="deslogar"
+                                            class="logout-btn">
+                                        Sair
+                                    </button>
+
+                                </div>
+
                             </div>
-                        </div>
+
                         </th:block>
+
                     </th>
+
                 </tr>
+
             </table>
+
         </div>
+
     </header>
+
+
+    <!-- ===================================================== -->
+    <!-- VLibras                                               -->
+    <!-- ===================================================== -->
 
     <div vw class="enabled">
     </div>
+
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
     <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+        new window.VLibras.Widget(
+            'https://vlibras.gov.br/app'
+        );
+
     </script>
+
+
+    <!-- ===================================================== -->
+    <!-- CHAT                                                   -->
+    <!-- ===================================================== -->
 
     <main class="main-container">
-        <aside class="chat-sidebar">
-            <h2>Chat</h2>
-            <input type="text" placeholder="Pesquisar conversas">
-            <ul class="chat-list">
-                <li class="active">
-                    <img th:src="${usuarioNegociante.fotoPerfil}" alt="User">
-                    <span th:text="${usuarioNegociante.nome}"></span>
-                </li>
-            </ul>
-        </aside>
 
-        <section class="chat-window">
-            <div class="chat-info">
-                <p style="text-align: center; color: #888; margin-bottom: 20px;">
-                    Lembre-se de trocar mensagens com respeito e cordialidade.<br>
-                    Desejamos uma excelente negociação :D
-                </p>
+
+        <!-- ================================================= -->
+        <!-- BARRA LATERAL                                     -->
+        <!-- ================================================= -->
+
+        <aside class="chat-sidebar">
+
+            <h2>
+                Chat
+            </h2>
+
+
+            <!-- Pesquisa de conversas -->
+
+            <div class="chat-search">
+
+                <input
+                        type="text"
+                        id="pesquisaConversas"
+                        placeholder="Pesquisar conversas">
+
             </div>
 
-            <div class="messages" id="messagesContainer">
-                <div th:each="msg : ${mensagens}"
-                     th:attr="data-id=${msg.id}, title=${msg.conteudo}"
-                     th:class="'message ' + (${msg.uidRemetente == usuarioLogado.id} ? 'user' : 'negociador')">
 
-                    <!-- Menu de opções só aparece nas mensagens do usuário logado -->
-                    <div th:if="${msg.uidRemetente == usuarioLogado.id}" class="menu-opcoes">
-                        <i class="fa-solid fa-ellipsis-vertical" onclick="abrirMenu(this)"></i>
-                        <div class="menu-dropdown">
-                            <button onclick="editarMensagem(this)">Editar</button>
-                            <button onclick="excluirMensagem(this)">Excluir</button>
-                        </div>
+            <!-- Lista de conversas -->
+
+            <ul
+                    class="chat-list"
+                    id="chatList">
+
+
+                <!-- ========================================= -->
+                <!-- CADA CONVERSA                              -->
+                <!-- ========================================= -->
+
+                <li
+                        th:each="conversa : ${conversas}"
+                        class="chat-item"
+
+                        th:attr="
+                            data-anuncio=${conversa.uidAnuncio},
+                            data-destinatario=${conversa.uidDestinatario}
+                        ">
+
+
+                    <img
+                            th:src="${conversa.fotoDestinatario}"
+                            alt="Usuário"
+                            class="chat-avatar">
+
+
+                    <div class="chat-item-info">
+
+                        <strong
+                                th:text="${conversa.nomeDestinatario}">
+                        </strong>
+
+
+
+
+                        <span
+                                th:text="${conversa.ultimaMensagem}">
+                        </span>
+
                     </div>
 
-                    <!-- Foto do outro usuário (só aparece nas mensagens recebidas) -->
-                    <img th:if="${msg.uidRemetente != usuarioLogado.id}"
-                         th:src="${usuarioNegociante.fotoPerfil}" alt="Negociante">
 
-                    <p th:text="${msg.conteudo}"></p>
+                </li>
+
+
+                <!-- ========================================= -->
+                <!-- NENHUMA CONVERSA                           -->
+                <!-- ========================================= -->
+
+                <li
+                        th:if="${#lists.isEmpty(conversas)}"
+                        class="chat-empty-list">
+
+                    <p>
+                        Nenhuma conversa iniciada.
+                    </p>
+
+                </li>
+
+            </ul>
+
+        </aside>
+
+
+        <!-- ================================================= -->
+        <!-- ÁREA CENTRAL DO CHAT                               -->
+        <!-- ================================================= -->
+
+        <section
+                class="chat-window"
+                id="chatWindow">
+
+
+            <!-- ============================================= -->
+            <!-- ESTADO INICIAL                                 -->
+            <!-- ============================================= -->
+
+            <div
+                    id="chatPlaceholder"
+                    class="chat-placeholder">
+
+                <div class="chat-placeholder-content">
+
+                    <i class="fa-solid fa-comments"></i>
+
+                    <h2>
+                        Seu chat
+                    </h2>
+
+                    <p>
+                        Selecione uma conversa para começar.
+                    </p>
+
                 </div>
+
             </div>
 
 
-            <form id="chatForm" class="message-input">
-                <input type="hidden" id="uidAnuncio" th:value="${mensagemDTO.uidAnuncio}">
-                <input type="hidden" id="uidUsuarioRemetente" th:value="${mensagemDTO.uidRemetente}">
-                <input type="hidden" id="uidUsuarioDestinatario" th:value="${mensagemDTO.uidDestinatario}">
-                <input type="text" id="conteudo" placeholder="Mensagem">
-                <button type="submit"><img src="/img/aviao.png" alt="Enviar"></button>
+            <!-- ============================================= -->
+            <!-- CABEÇALHO DA CONVERSA                          -->
+            <!-- ============================================= -->
+
+            <div
+                    id="chatHeader"
+                    class="chat-header"
+                    style="display: none;">
+
+                <div class="chat-header-user">
+
+                    <img
+                            id="chatUsuarioFoto"
+                            src="/img/user.png"
+                            alt="Foto do usuário">
+
+                    <div class="chat-header-info">
+
+                        <strong id="chatUsuarioNome">
+                        </strong>
+
+                        <span>
+                            Negociação de livro
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ============================================= -->
+            <!-- AVISO                                           -->
+            <!-- ============================================= -->
+
+            <div
+                    id="chatAviso"
+                    class="chat-info"
+                    style="display: none;">
+
+                <i class="fa-solid fa-handshake"></i>
+
+                <span>
+                    Lembre-se de trocar mensagens com respeito e cordialidade.
+                    Desejamos uma excelente negociação.
+                </span>
+
+            </div>
+
+
+            <!-- ============================================= -->
+            <!-- MENSAGENS                                       -->
+            <!-- ============================================= -->
+
+            <div
+                    class="messages"
+                    id="messagesContainer"
+                    style="display: none;">
+
+            </div>
+
+
+            <!-- ============================================= -->
+            <!-- FORMULÁRIO                                      -->
+            <!-- ============================================= -->
+
+            <form
+                    id="chatForm"
+                    class="message-input"
+                    style="display: none;">
+
+                <input
+                        type="hidden"
+                        id="uidAnuncio">
+
+                <input
+                        type="hidden"
+                        id="uidUsuarioRemetente"
+                        th:value="${usuarioLogado.id}">
+
+                <input
+                        type="hidden"
+                        id="uidUsuarioDestinatario">
+
+
+                <input
+                        type="text"
+                        id="conteudo"
+                        placeholder="Mensagem"
+                        autocomplete="off">
+
+
+                <button type="submit">
+
+                    <img
+                            src="/img/aviao.png"
+                            alt="Enviar">
+
+                </button>
+
             </form>
+
         </section>
 
-        <aside class="book-info">
-            <img th:src="${livro.capa}" alt="Capa O Pequeno Príncipe">
+
+        <!-- ================================================= -->
+        <!-- INFORMAÇÕES DO LIVRO                               -->
+        <!-- ================================================= -->
+
+        <aside
+                class="book-info"
+                id="bookInfo"
+                style="display: none;">
+
+
+            <img
+                    id="bookCapa"
+                    src=""
+                    alt="Capa do livro">
+
+
             <p>
-                <strong>Título da obra:</strong><br>
-                <b><span th:text="${livro.titulo}"></span></b>
+
+                <strong>
+                    Título da obra:
+                </strong>
+
+                <br>
+
+                <b id="bookTitulo">
+                </b>
+
             </p>
-            <p><strong>Data de publicação:</strong><br>15 de novembro de 2024</p>
-            <p>Livro em ótimo estado, disponibilizo para vendas</p>
+
+
         </aside>
+
     </main>
 
-    <script>
-        const uidAnuncio = document.getElementById('uidAnuncio').value;
-        const uidUsuarioRemetente = document.getElementById('uidUsuarioRemetente').value;
-        const uidUsuarioDestinatario = document.getElementById('uidUsuarioDestinatario').value;
-        const container = document.getElementById('messagesContainer');
-        let ultimaQuantidade = container.children.length;
 
-        // Função para renderizar uma mensagem
-        function adicionarMensagemNoContainer(msg) {
-            const classe = msg.uidRemetente === uidUsuarioRemetente ? 'user' : 'negociador';
+    <!-- ===================================================== -->
+    <!-- JAVASCRIPT DO CHAT                                    -->
+    <!-- ===================================================== -->
 
-            const div = document.createElement('div');
-            div.className = `message ${classe}`;
-            div.setAttribute('data-id', msg.id || '');
 
-            // Se for mensagem do outro usuário, mostra a imagem dele
-            if (msg.uidRemetente !== uidUsuarioRemetente) {
-                const img = document.createElement('img');
-                img.src = document.querySelector('.chat-list img')?.src || '/img/user.png';
-                img.alt = 'Negociante';
-                div.appendChild(img);
+    <script th:inline="javascript">
+        const anuncioInicial = /*[[${anuncioInicial}]]*/ null;
+        const destinatarioInicial = /*[[${destinatarioInicial}]]*/ null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Inicia o polling da lista de conversas
+            iniciarAtualizacaoConversas();
+
+            // Abre uma conversa automaticamente quando
+            // o usuário veio pelo botão "Negociar"
+            if (anuncioInicial && destinatarioInicial) {
+
+                abrirConversa(
+                    anuncioInicial,
+                    destinatarioInicial
+                );
+
             }
 
-            // Se for mensagem do usuário logado, adiciona o menu de opções
-            if (msg.uidRemetente === uidUsuarioRemetente) {
-                const menuOpcoes = document.createElement('div');
-                menuOpcoes.className = 'menu-opcoes';
-
-                const icon = document.createElement('i');
-                icon.className = 'fa-solid fa-ellipsis-vertical';
-                icon.onclick = function () {
-                    abrirMenu(this);
-                };
-
-                const menuDropdown = document.createElement('div');
-                menuDropdown.className = 'menu-dropdown';
-
-                const botaoEditar = document.createElement('button');
-                botaoEditar.textContent = 'Editar';
-                botaoEditar.onclick = function () {
-                    editarMensagem(this);
-                };
-
-                const botaoExcluir = document.createElement('button');
-                botaoExcluir.textContent = 'Excluir';
-                botaoExcluir.onclick = function () {
-                    excluirMensagem(this);
-                };
-
-                menuDropdown.appendChild(botaoEditar);
-                menuDropdown.appendChild(botaoExcluir);
-
-                menuOpcoes.appendChild(icon);
-                menuOpcoes.appendChild(menuDropdown);
-
-                div.appendChild(menuOpcoes);
-            }
-
-            const p = document.createElement('p');
-            p.textContent = msg.conteudo;
-            div.appendChild(p);
-
-            // Adiciona ao container
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-            ultimaQuantidade++;
-        }
-
-
-        // Envio de mensagem
-        document.querySelector('#chatForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const conteudo = document.getElementById('conteudo').value.trim();
-            if (!conteudo) return;
-
-            const mensagem = {
-                uidAnuncio,
-                uidRemetente: uidUsuarioRemetente,
-                uidDestinatario: uidUsuarioDestinatario,
-                conteudo
-            };
-
-            const resposta = await fetch('/chat/mensagens', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(mensagem)
-            });
-
-            const data = await resposta.json();
-
-            if (data.status === 'success') {
-                adicionarMensagemNoContainer(data.data);
-                document.getElementById('conteudo').value = '';
-            }
         });
 
+        /* =====================================================
+           USUÁRIO LOGADO
+           ===================================================== */
 
-        // Atualização automática de mensagens (polling)
-        async function atualizarMensagens() {
-            const resp = await fetch(
-                `/chat/mensagens/atualizar?anuncio=${encodeURIComponent(uidAnuncio)}&remetente=${encodeURIComponent(uidUsuarioRemetente)}&destinatario=${encodeURIComponent(uidUsuarioDestinatario)}`
+        const uidUsuarioLogado =
+            document.getElementById(
+                'uidUsuarioRemetente'
+            ).value;
+
+
+        /* =====================================================
+           ESTADO DA CONVERSA ATUAL
+           ===================================================== */
+
+        let conversaAtual = {
+
+            uidAnuncio: null,
+
+            uidDestinatario: null
+
+        };
+
+
+        let ultimaQuantidade = 0;
+
+        let intervaloMensagens = null;
+        let intervaloConversas = null;
+        let assinaturaConversas = '';
+
+
+        /* =====================================================
+           ELEMENTOS
+           ===================================================== */
+
+        const chatList =
+            document.getElementById(
+                'chatList'
             );
 
-            const data = await resp.json();
 
-            if (data.status === 'success') {
-                if (data.data.length > ultimaQuantidade) {
-                    const novas = data.data.slice(ultimaQuantidade);
-                    novas.forEach(adicionarMensagemNoContainer);
+        const chatPlaceholder =
+            document.getElementById(
+                'chatPlaceholder'
+            );
+
+
+        const chatHeader =
+            document.getElementById(
+                'chatHeader'
+            );
+
+
+        const chatAviso =
+            document.getElementById(
+                'chatAviso'
+            );
+
+
+        const messagesContainer =
+            document.getElementById(
+                'messagesContainer'
+            );
+
+
+        const chatForm =
+            document.getElementById(
+                'chatForm'
+            );
+
+
+        const bookInfo =
+            document.getElementById(
+                'bookInfo'
+            );
+
+
+        /* =====================================================
+           ELEMENTOS DO HEADER
+           ===================================================== */
+
+        const chatUsuarioFoto =
+            document.getElementById(
+                'chatUsuarioFoto'
+            );
+
+
+        const chatUsuarioNome =
+            document.getElementById(
+                'chatUsuarioNome'
+            );
+
+
+
+
+
+        /* =====================================================
+           ELEMENTOS DO LIVRO
+           ===================================================== */
+
+        const bookCapa =
+            document.getElementById(
+                'bookCapa'
+            );
+
+
+        const bookTitulo =
+            document.getElementById(
+                'bookTitulo'
+            );
+
+
+        /* =====================================================
+           HIDDEN INPUTS
+           ===================================================== */
+
+        const uidAnuncioInput =
+            document.getElementById(
+                'uidAnuncio'
+            );
+
+
+        const uidDestinatarioInput =
+            document.getElementById(
+                'uidUsuarioDestinatario'
+            );
+
+
+        /* =====================================================
+           ABRIR CONVERSA
+           ===================================================== */
+
+        async function abrirConversa(
+            uidAnuncio,
+            uidDestinatario,
+            elemento = null
+        ) {
+
+            try {
+
+                pararAtualizacaoMensagens();
+
+
+                conversaAtual.uidAnuncio =
+                    uidAnuncio;
+
+
+                conversaAtual.uidDestinatario =
+                    uidDestinatario;
+
+
+                uidAnuncioInput.value =
+                    uidAnuncio;
+
+
+                uidDestinatarioInput.value =
+                    uidDestinatario;
+
+
+                /* ---------------------------------------------
+                   Destaca conversa selecionada
+                   --------------------------------------------- */
+
+                document
+                    .querySelectorAll('.chat-item')
+                    .forEach(item => {
+
+                        item.classList.remove(
+                            'active'
+                        );
+
+                    });
+
+
+                if (elemento) {
+
+                    elemento.classList.add(
+                        'active'
+                    );
+
                 }
+
+
+                /* ---------------------------------------------
+                   Mostra carregamento
+                   --------------------------------------------- */
+
+                messagesContainer.innerHTML = '';
+
+                messagesContainer.style.display =
+                    'flex';
+
+
+                chatPlaceholder.style.display =
+                    'none';
+
+
+                chatHeader.style.display =
+                    'flex';
+
+
+                chatAviso.style.display =
+                    'block';
+
+
+                chatForm.style.display =
+                    'flex';
+
+
+                bookInfo.style.display =
+                    'block';
+
+
+                /* ---------------------------------------------
+                   Busca dados da conversa
+                   --------------------------------------------- */
+
+                const resposta =
+                    await fetch(
+                        `/chat/conversar/dados` +
+                        `?anuncio=${encodeURIComponent(uidAnuncio)}` +
+                        `&destinatario=${encodeURIComponent(uidDestinatario)}`
+                    );
+
+
+                if (!resposta.ok) {
+
+                    throw new Error(
+                        'Erro ao carregar conversa.'
+                    );
+
+                }
+
+
+                const data =
+                    await resposta.json();
+
+
+                if (data.status !== 'success') {
+
+                    throw new Error(
+                        data.message ||
+                        'Não foi possível carregar a conversa.'
+                    );
+
+                }
+
+
+                const conversa =
+                    data.data;
+
+
+                /* ---------------------------------------------
+                   Dados do usuário
+                   --------------------------------------------- */
+
+                if (conversa.usuarioNegociante) {
+
+                    chatUsuarioNome.textContent =
+                        conversa.usuarioNegociante.nome
+                        || 'Usuário';
+
+
+                    chatUsuarioFoto.src =
+                        conversa.usuarioNegociante.fotoPerfil
+                        || '/img/user.png';
+
+                }
+
+
+                /* ---------------------------------------------
+                   Dados do livro
+                   --------------------------------------------- */
+
+                if (conversa.anuncio) {
+
+                    bookTitulo.textContent =
+                        conversa.anuncio.titulo
+                        || 'Livro';
+
+
+                    bookCapa.src =
+                        conversa.anuncio.capa
+                        || '/img/capa-padrao.png';
+
+
+
+
+                }
+
+
+                /* ---------------------------------------------
+                   Mensagens
+                   --------------------------------------------- */
+
+                const mensagens =
+                    conversa.mensagens || [];
+
+
+                renderizarMensagens(
+                    mensagens
+                );
+
+
+                ultimaQuantidade =
+                    mensagens.length;
+
+
+                /* ---------------------------------------------
+                   Inicia atualização automática
+                   --------------------------------------------- */
+
+                iniciarAtualizacaoMensagens();
+
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao abrir conversa:',
+                    erro
+                );
+
+
+                messagesContainer.innerHTML = `
+
+                    <div class="chat-error">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <p>
+                            Não foi possível carregar esta conversa.
+                        </p>
+
+                    </div>
+
+                `;
+
             }
+
         }
 
 
-        // Atualiza a cada 4 segundos
-        setInterval(atualizarMensagens, 4000);
+        /* =====================================================
+           CLIQUE NAS CONVERSAS
+           ===================================================== */
 
+        document
+            .querySelectorAll('.chat-item')
+            .forEach(item => {
+
+                item.addEventListener(
+                    'click',
+                    function () {
+
+                        const uidAnuncio =
+                            this.dataset.anuncio;
+
+
+                        const uidDestinatario =
+                            this.dataset.destinatario;
+
+
+                        abrirConversa(
+                            uidAnuncio,
+                            uidDestinatario,
+                            this
+                        );
+
+                    }
+                );
+
+            });
+
+
+        /* =====================================================
+           RENDERIZAR TODAS AS MENSAGENS
+           ===================================================== */
+
+        function renderizarMensagens(
+            mensagens
+        ) {
+
+            messagesContainer.innerHTML = '';
+
+
+            mensagens.forEach(
+                mensagem => {
+
+                    adicionarMensagemNoContainer(
+                        mensagem,
+                        false
+                    );
+
+                }
+            );
+
+
+            messagesContainer.scrollTop =
+                messagesContainer.scrollHeight;
+
+        }
+
+
+        /* =====================================================
+           ADICIONAR MENSAGEM
+           ===================================================== */
+
+        function adicionarMensagemNoContainer(msg) {
+
+            const souEu =
+                msg.uidRemetente === uidUsuarioLogado;
+
+
+            const div =
+                document.createElement('div');
+
+            div.className =
+                `message ${souEu ? 'user' : 'negociador'}`;
+
+            div.setAttribute(
+                'data-id',
+                msg.id || ''
+            );
+
+
+            /* =====================================================
+               AVATAR DA MENSAGEM RECEBIDA
+               ===================================================== */
+
+            if (!souEu) {
+
+                const img =
+                    document.createElement('img');
+
+                img.src =
+                    chatUsuarioFoto.src ||
+                    '/img/user.png';
+
+                img.alt =
+                    'Foto do usuário';
+
+                img.className =
+                    'message-avatar';
+
+                div.appendChild(img);
+
+            }
+
+
+            /* =====================================================
+               BALÃO
+               ===================================================== */
+
+            const balao =
+                document.createElement('div');
+
+            balao.className =
+                'message-balao';
+
+
+            const p =
+                document.createElement('p');
+
+            p.textContent =
+                msg.conteudo || '';
+
+
+            balao.appendChild(p);
+
+
+            /* =====================================================
+               MENU DA MENSAGEM DO USUÁRIO
+               ===================================================== */
+
+            if (souEu) {
+
+                const menuOpcoes =
+                    document.createElement('div');
+
+                menuOpcoes.className =
+                    'menu-opcoes';
+
+
+                const icon =
+                    document.createElement('i');
+
+                icon.className =
+                    'fa-solid fa-ellipsis-vertical';
+
+
+                icon.onclick =
+                    function () {
+
+                        abrirMenu(this);
+
+                    };
+
+
+                const menuDropdown =
+                    document.createElement('div');
+
+                menuDropdown.className =
+                    'menu-dropdown';
+
+
+                const botaoEditar =
+                    document.createElement('button');
+
+                botaoEditar.type =
+                    'button';
+
+                botaoEditar.textContent =
+                    'Editar';
+
+
+                botaoEditar.onclick =
+                    function () {
+
+                        editarMensagem(this);
+
+                    };
+
+
+                const botaoExcluir =
+                    document.createElement('button');
+
+                botaoExcluir.type =
+                    'button';
+
+                botaoExcluir.textContent =
+                    'Excluir';
+
+
+                botaoExcluir.onclick =
+                    function () {
+
+                        excluirMensagem(this);
+
+                    };
+
+
+                menuDropdown.appendChild(
+                    botaoEditar
+                );
+
+                menuDropdown.appendChild(
+                    botaoExcluir
+                );
+
+
+                menuOpcoes.appendChild(
+                    icon
+                );
+
+                menuOpcoes.appendChild(
+                    menuDropdown
+                );
+
+
+                balao.appendChild(
+                    menuOpcoes
+                );
+
+            }
+
+
+            /* =====================================================
+               ADICIONA NO CONTAINER CORRETO
+               ===================================================== */
+
+            div.appendChild(
+                balao
+            );
+
+            messagesContainer.appendChild(
+                div
+            );
+
+
+            messagesContainer.scrollTop =
+                messagesContainer.scrollHeight;
+
+        }
+
+
+        /* =====================================================
+           ENVIO DE MENSAGEM
+           ===================================================== */
+
+        chatForm.addEventListener(
+            'submit',
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (
+                    !conversaAtual.uidAnuncio ||
+                    !conversaAtual.uidDestinatario
+                ) {
+
+                    return;
+
+                }
+
+
+                const input =
+                    document.getElementById(
+                        'conteudo'
+                    );
+
+
+                const conteudo =
+                    input.value.trim();
+
+
+                if (!conteudo) {
+
+                    return;
+
+                }
+
+
+                const mensagem = {
+
+                    uidAnuncio:
+                    conversaAtual.uidAnuncio,
+
+                    uidRemetente:
+                    uidUsuarioLogado,
+
+                    uidDestinatario:
+                    conversaAtual.uidDestinatario,
+
+                    conteudo:
+                    conteudo
+
+                };
+
+
+                try {
+
+                    const resposta =
+                        await fetch(
+                            '/chat/mensagens',
+                            {
+
+                                method:
+                                    'POST',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json'
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        mensagem
+                                    )
+
+                            }
+                        );
+
+
+                    if (!resposta.ok) {
+
+                        throw new Error(
+                            'Erro ao enviar mensagem.'
+                        );
+
+                    }
+
+
+                    const data =
+                        await resposta.json();
+
+
+                    if (
+                        data.status ===
+                        'success'
+                    ) {
+
+                        adicionarMensagemNoContainer(
+                            data.data
+                        );
+
+
+                        ultimaQuantidade++;
+
+                        input.value = '';
+
+
+                        input.focus();
+
+                    } else {
+
+                        alert(
+                            'Erro ao enviar mensagem.'
+                        );
+
+                    }
+
+                } catch (erro) {
+
+                    console.error(
+                        'Erro ao enviar mensagem:',
+                        erro
+                    );
+
+
+                    alert(
+                        'Não foi possível enviar a mensagem.'
+                    );
+
+                }
+
+            }
+        );
+
+        /* =====================================================
+   POLLING DA LISTA DE CONVERSAS
+   ===================================================== */
+
+        function iniciarAtualizacaoConversas() {
+
+            pararAtualizacaoConversas();
+
+            intervaloConversas =
+                setInterval(
+                    atualizarConversas,
+                    4000
+                );
+
+        }
+
+
+        /* =====================================================
+           PARAR POLLING DAS CONVERSAS
+           ===================================================== */
+
+        function pararAtualizacaoConversas() {
+
+            if (intervaloConversas) {
+
+                clearInterval(
+                    intervaloConversas
+                );
+
+                intervaloConversas = null;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           ATUALIZAR LISTA DE CONVERSAS
+           ===================================================== */
+
+        async function atualizarConversas() {
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        '/chat/conversas/atualizar'
+                    );
+
+
+                if (!resposta.ok) {
+
+                    return;
+
+                }
+
+
+                const data =
+                    await resposta.json();
+
+
+                if (
+                    data.status !==
+                    'success'
+                ) {
+
+                    return;
+
+                }
+
+
+                const conversas =
+                    data.data || [];
+
+
+                /*
+                 * Cria uma assinatura simples da lista.
+                 *
+                 * Dessa forma, a tela só será reconstruída
+                 * quando realmente houver alguma alteração.
+                 */
+
+                const novaAssinatura =
+                    JSON.stringify(
+                        conversas.map(conversa => ({
+                            anuncio:
+                            conversa.uidAnuncio,
+
+                            destinatario:
+                            conversa.uidDestinatario,
+
+                            nome:
+                            conversa.nomeDestinatario,
+
+                            foto:
+                            conversa.fotoDestinatario,
+
+                            mensagem:
+                            conversa.ultimaMensagem
+                        }))
+                    );
+
+
+                /*
+                 * Se nada mudou, não altera o DOM.
+                 */
+
+                if (
+                    novaAssinatura ===
+                    assinaturaConversas
+                ) {
+
+                    return;
+
+                }
+
+
+                assinaturaConversas =
+                    novaAssinatura;
+
+
+                /*
+                 * Atualiza a barra lateral.
+                 */
+
+                renderizarListaConversas(
+                    conversas
+                );
+
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao atualizar conversas:',
+                    erro
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RENDERIZAR LISTA DE CONVERSAS
+           ===================================================== */
+
+        function renderizarListaConversas(
+            conversas
+        ) {
+
+            chatList.innerHTML = '';
+
+
+            /*
+             * Nenhuma conversa
+             */
+
+            if (
+                conversas.length === 0
+            ) {
+
+                chatList.innerHTML = `
+
+            <li class="chat-empty-list">
+
+                <p>
+                    Nenhuma conversa iniciada.
+                </p>
+
+            </li>
+
+        `;
+
+                return;
+
+            }
+
+
+            /*
+             * Cria cada conversa
+             */
+
+            conversas.forEach(
+                conversa => {
+
+                    const item =
+                        document.createElement(
+                            'li'
+                        );
+
+
+                    item.className =
+                        'chat-item';
+
+
+                    item.dataset.anuncio =
+                        conversa.uidAnuncio;
+
+
+                    item.dataset.destinatario =
+                        conversa.uidDestinatario;
+
+
+                    /*
+                     * Foto
+                     */
+
+                    const foto =
+                        document.createElement(
+                            'img'
+                        );
+
+
+                    foto.src =
+                        conversa.fotoDestinatario
+                        || '/img/user.png';
+
+
+                    foto.alt =
+                        'Usuário';
+
+
+                    foto.className =
+                        'chat-avatar';
+
+
+                    /*
+                     * Informações
+                     */
+
+                    const info =
+                        document.createElement(
+                            'div'
+                        );
+
+
+                    info.className =
+                        'chat-item-info';
+
+
+                    const nome =
+                        document.createElement(
+                            'strong'
+                        );
+
+
+                    nome.textContent =
+                        conversa.nomeDestinatario
+                        || 'Usuário';
+
+
+                    const ultimaMensagem =
+                        document.createElement(
+                            'span'
+                        );
+
+
+                    ultimaMensagem.textContent =
+                        conversa.ultimaMensagem
+                        || '';
+
+
+                    info.appendChild(
+                        nome
+                    );
+
+
+                    info.appendChild(
+                        ultimaMensagem
+                    );
+
+
+                    /*
+                     * Monta o item
+                     */
+
+                    item.appendChild(
+                        foto
+                    );
+
+
+                    item.appendChild(
+                        info
+                    );
+
+
+                    /*
+                     * Clique na conversa
+                     */
+
+                    item.addEventListener(
+                        'click',
+                        function () {
+
+                            abrirConversa(
+                                this.dataset.anuncio,
+                                this.dataset.destinatario,
+                                this
+                            );
+
+                        }
+                    );
+
+
+                    chatList.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+
+            /*
+             * Mantém a conversa atualmente aberta
+             * destacada depois da atualização.
+             */
+
+            destacarConversaAtual();
+
+        }
+
+
+        /* =====================================================
+           DESTACAR CONVERSA ATUAL
+           ===================================================== */
+
+        function destacarConversaAtual() {
+
+            if (
+                !conversaAtual.uidAnuncio ||
+                !conversaAtual.uidDestinatario
+            ) {
+
+                return;
+
+            }
+
+
+            document
+                .querySelectorAll(
+                    '.chat-item'
+                )
+                .forEach(
+                    item => {
+
+                        const mesmaConversa =
+                            item.dataset.anuncio ===
+                            conversaAtual.uidAnuncio
+                            &&
+                            item.dataset.destinatario ===
+                            conversaAtual.uidDestinatario;
+
+
+                        item.classList.toggle(
+                            'active',
+                            mesmaConversa
+                        );
+
+                    }
+                );
+
+        }
+
+
+        /* =====================================================
+           POLLING
+           ===================================================== */
+
+        function iniciarAtualizacaoMensagens() {
+
+            pararAtualizacaoMensagens();
+
+
+            intervaloMensagens =
+                setInterval(
+                    atualizarMensagens,
+                    4000
+                );
+
+        }
+
+
+        function pararAtualizacaoMensagens() {
+
+            if (
+                intervaloMensagens
+            ) {
+
+                clearInterval(
+                    intervaloMensagens
+                );
+
+
+                intervaloMensagens =
+                    null;
+
+            }
+
+        }
+
+
+        async function atualizarMensagens() {
+
+            if (
+                !conversaAtual.uidAnuncio ||
+                !conversaAtual.uidDestinatario
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const resposta =
+                    await fetch(
+
+                        `/chat/mensagens/atualizar` +
+                        `?anuncio=${encodeURIComponent(conversaAtual.uidAnuncio)}` +
+                        `&remetente=${encodeURIComponent(uidUsuarioLogado)}` +
+                        `&destinatario=${encodeURIComponent(conversaAtual.uidDestinatario)}`
+
+                    );
+
+
+                if (!resposta.ok) {
+
+                    return;
+
+                }
+
+
+                const data =
+                    await resposta.json();
+
+
+                if (
+                    data.status !==
+                    'success'
+                ) {
+
+                    return;
+
+                }
+
+
+                const mensagens =
+                    data.data || [];
+
+
+                /*
+                 * Se não existem novas mensagens,
+                 * não fazemos nada.
+                 */
+
+                if (
+                    mensagens.length <=
+                    ultimaQuantidade
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * Adiciona somente as novas mensagens.
+                 */
+
+                const novas =
+                    mensagens.slice(
+                        ultimaQuantidade
+                    );
+
+
+                novas.forEach(
+                    mensagem => {
+
+                        adicionarMensagemNoContainer(
+                            mensagem
+                        );
+
+                    }
+                );
+
+
+                ultimaQuantidade =
+                    mensagens.length;
+
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro no polling:',
+                    erro
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           MENU DA MENSAGEM
+           ===================================================== */
 
         function abrirMenu(icon) {
-            const menu = icon.nextElementSibling;
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+
+            const menu =
+                icon.nextElementSibling;
+
+
+            document
+                .querySelectorAll('.menu-dropdown')
+                .forEach(outroMenu => {
+
+                    if (
+                        outroMenu !== menu
+                    ) {
+
+                        outroMenu.style.display =
+                            'none';
+
+                    }
+
+                });
+
+
+            menu.style.display =
+                menu.style.display === 'block'
+                    ? 'none'
+                    : 'block';
+
         }
 
 
-        // Edição de mensagem
-        async function editarMensagem(botao) {
-            const msgDiv = botao.closest('.message');
-            const idMensagem = msgDiv.getAttribute('data-id');
-            const p = msgDiv.querySelector('p');
+        /* =====================================================
+           EDITAR MENSAGEM
+           ===================================================== */
 
-            const novoConteudo = prompt("Editar mensagem:", p.textContent);
-            if (novoConteudo === null || novoConteudo.trim() === "") return;
+        async function editarMensagem(
+            botao
+        ) {
 
-            const resposta = await fetch(`/chat/mensagens/${idMensagem}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({conteudo: novoConteudo})
-            });
+            const msgDiv =
+                botao.closest(
+                    '.message'
+                );
 
-            const data = await resposta.json();
 
-            if (data.status === 'success') {
-                p.textContent = novoConteudo;
-                alert('Mensagem alterada com sucesso!');
-            } else {
-                alert('Erro ao alterar mensagem.');
+            const idMensagem =
+                msgDiv.getAttribute(
+                    'data-id'
+                );
+
+
+            const p =
+                msgDiv.querySelector(
+                    'p'
+                );
+
+
+            const novoConteudo =
+                prompt(
+                    'Editar mensagem:',
+                    p.textContent
+                );
+
+
+            if (
+                novoConteudo === null ||
+                novoConteudo.trim() === ''
+            ) {
+
+                return;
+
             }
-        }
 
 
-        // Exclusão de mensagem
-        async function excluirMensagem(botao) {
-            const msgDiv = botao.closest('.message');
-            const idMensagem = msgDiv.getAttribute('data-id');
+            try {
 
-            if (!confirm("Deseja realmente excluir esta mensagem?")) return;
+                const resposta =
+                    await fetch(
+                        `/chat/mensagens/${idMensagem}`,
+                        {
 
-            const resposta = await fetch(`/chat/mensagens/${idMensagem}`, {
-                method: 'DELETE'
-            });
+                            method:
+                                'PUT',
 
-            const data = await resposta.json();
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
 
-            if (data.status === 'success') {
-                msgDiv.remove();
-            } else {
-                alert('Erro ao excluir mensagem.');
+                            body:
+                                JSON.stringify({
+                                    conteudo:
+                                    novoConteudo
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await resposta.json();
+
+
+                if (
+                    data.status ===
+                    'success'
+                ) {
+
+                    p.textContent =
+                        novoConteudo;
+
+
+                    abrirMenu(
+                        msgDiv.querySelector(
+                            '.menu-opcoes i'
+                        )
+                    );
+
+                } else {
+
+                    alert(
+                        'Erro ao alterar mensagem.'
+                    );
+
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao editar mensagem:',
+                    erro
+                );
+
+
+                alert(
+                    'Não foi possível alterar a mensagem.'
+                );
+
             }
+
         }
+
+
+        /* =====================================================
+           EXCLUIR MENSAGEM
+           ===================================================== */
+
+        async function excluirMensagem(
+            botao
+        ) {
+
+            const msgDiv =
+                botao.closest(
+                    '.message'
+                );
+
+
+            const idMensagem =
+                msgDiv.getAttribute(
+                    'data-id'
+                );
+
+
+            if (
+                !confirm(
+                    'Deseja realmente excluir esta mensagem?'
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        `/chat/mensagens/${idMensagem}`,
+                        {
+                            method:
+                                'DELETE'
+                        }
+                    );
+
+
+                const data =
+                    await resposta.json();
+
+
+                if (
+                    data.status ===
+                    'success'
+                ) {
+
+                    msgDiv.remove();
+
+                    ultimaQuantidade--;
+
+                } else {
+
+                    alert(
+                        'Erro ao excluir mensagem.'
+                    );
+
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao excluir mensagem:',
+                    erro
+                );
+
+
+                alert(
+                    'Não foi possível excluir a mensagem.'
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           PESQUISA DE CONVERSAS
+           ===================================================== */
+
+        document
+            .getElementById(
+                'pesquisaConversas'
+            )
+            .addEventListener(
+                'input',
+                function () {
+
+                    const termo =
+                        this.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    document
+                        .querySelectorAll(
+                            '.chat-item'
+                        )
+                        .forEach(item => {
+
+                            const nome =
+                                item
+                                    .querySelector(
+                                        'strong'
+                                    )
+                                    ?.textContent
+                                    .toLowerCase()
+                                || '';
+
+
+                            item.style.display =
+                                nome.includes(
+                                    termo
+                                )
+                                    ? ''
+                                    : 'none';
+
+                        });
+
+                }
+            );
+
+
+        /* =====================================================
+           FECHAR POLLING AO SAIR DA PÁGINA
+           ===================================================== */
+
+        window.addEventListener(
+            'beforeunload',
+            function () {
+
+                pararAtualizacaoMensagens();
+
+                pararAtualizacaoConversas();
+
+            }
+        );
 
     </script>
 
+
+    <!-- ===================================================== -->
+    <!-- FOOTER                                                 -->
+    <!-- ===================================================== -->
+
     <footer>
+
         <div class="rodapenovo">
-            <a href="/static"><img src="/img/Design%20sem%20nome.svg"></a>
-            <a href="/sobreNos">
-                <p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p>
+
+            <a href="/static">
+
+                <img
+                        src="/img/Design%20sem%20nome.svg">
+
             </a>
-            <a href="/ajuda"><p>Central de ajuda</p></a>
-            <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
+
+
+            <a href="/sobreNos">
+
+                <p>
+                    Conheça nosso incrível projeto
+                    <br>
+                    de incentivo a reutilização
+                </p>
+
+            </a>
+
+
+            <a href="/ajuda">
+
+                <p>
+                    Central de ajuda
+                </p>
+
+            </a>
+
+
+            <small>
+
+                © 2026 Sistema Trocabook
+                <br>
+                Todos os direitos reservados
+
+            </small>
+
         </div>
+
     </footer>
+
+
 </div>
-</body>
+
+
 <script src="/js/fetch.js"></script>
-<script type="module" src="/js/logout.js"></script>
-<script src="/js/menu-logado.js"></script>
+
+<script
+        type="module"
+        src="/js/logout.js">
+</script>
+
+<script src="/js/menu-logado.js">
+</script>
+
+
+</body>
+
 </html>

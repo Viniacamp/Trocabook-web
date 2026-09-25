@@ -1,6 +1,7 @@
 package com.trocabook.Trocabook.controllers;
 
 
+import com.trocabook.Trocabook.controllers.response.ChatConversaResponse;
 import com.trocabook.Trocabook.controllers.response.ChatResponse;
 
 
@@ -43,74 +44,34 @@ public class ChatController {
         this.usuarioAutenticadoService = usuarioAutenticadoService;
     }
 
-    @GetMapping("/conversar")
-    public String conversar(
-            @RequestParam("anuncio") String uidAnuncio,
-            @RequestParam("remetente") String uidUsuarioRemetente,
-            @RequestParam(name = "destinatario", required = false) String uidUsuarioDestinatario,
-            HttpSession sessao,
-            Model model
-    ) {
-        UsuarioOutput usuarioLogado = usuarioAutenticadoService.getUsuarioOutput(sessao);
+    @GetMapping
+    public String abrirChat(
+            @RequestParam(name = "anuncio", required = false) String uidAnuncio,
+            @RequestParam(name = "destinatario", required = false) String uidDestinatario,
+            Model model,
+            HttpSession sessao) {
+
+        UsuarioOutput usuarioLogado =
+                usuarioAutenticadoService.getUsuarioOutput(sessao);
 
         if (usuarioLogado == null) {
             return "redirect:/";
         }
 
+        List<ConversaDTO> conversas =
+                conversaService.listarConversas(usuarioLogado.id());
 
-        if (!uidUsuarioRemetente.equals(usuarioLogado.id())) {
-            throw new SecurityException("Tentativa de acesso indevido a conversa de outro usuário");
-        }
-
-        AnuncioDTO anuncio = anuncioService.buscarPorUid(uidAnuncio);
-
-
-        if (uidUsuarioDestinatario == null) {
-            uidUsuarioDestinatario = anuncio.uidUsuario();
-        }
-
-
-        List<MensagemDTO> mensagens = conversaService.listarMensagens(uidUsuarioRemetente, uidUsuarioDestinatario, uidAnuncio);
-
-
-        UsuarioOutput usuarioNegociante;
-
-        if (uidUsuarioDestinatario.equals(anuncio.uidUsuario())) {
-            usuarioNegociante = new UsuarioOutput(anuncio.uidUsuario(), anuncio.nomeUsuario(), anuncio.fotoPerfil());
-        } else {
-            usuarioNegociante = usuarioService.buscarPorUid(uidUsuarioDestinatario);
-        }
-
-
-
-        MensagemDTO mensagemDTO = new MensagemDTO(uidUsuarioRemetente, uidUsuarioDestinatario, uidAnuncio);
-
-        model.addAttribute("mensagemDTO", mensagemDTO);
         model.addAttribute("usuarioLogado", usuarioLogado);
-        model.addAttribute("usuarioNegociante", usuarioNegociante);
-        model.addAttribute("livro", anuncio);
-        model.addAttribute("mensagens", mensagens);
-
-        return "/chat/chat";
-    }
-
-    @GetMapping("/list-mensagens")
-    public String listMensagens(Model model, HttpSession sessao) {
-        UsuarioOutput usuarioLogado = usuarioAutenticadoService.getUsuarioOutput(sessao);
-
-        if (usuarioLogado == null){
-            return "redirect:/";
-        }
-        List<ConversaDTO> conversas = conversaService.listarConversas(usuarioLogado.id());
+        model.addAttribute("conversas", conversas);
 
         if (conversas.isEmpty()) {
             model.addAttribute("mensagemVazia", "Nenhuma conversa iniciada");
         }
 
-        model.addAttribute("usuarioLogado", usuarioLogado);
-        model.addAttribute("conversas", conversas);
+        model.addAttribute("anuncioInicial", uidAnuncio);
+        model.addAttribute("destinatarioInicial", uidDestinatario);
 
-        return "/chat/list-mensagens";
+        return "/chat/chat";
     }
 
     @PutMapping("/mensagens/{id}")
@@ -145,5 +106,79 @@ public class ChatController {
         List<MensagemDTO> mensagens = conversaService.listarMensagens(uidUsuarioRemetente, uidUsuarioDestinatario, uidAnuncio);
 
         return new ChatResponse<>(mensagens, "sucesso");
+    }
+
+    @GetMapping("/conversar/dados")
+    @ResponseBody
+    public ChatResponse<ChatConversaResponse> carregarConversa(
+            @RequestParam("anuncio") String uidAnuncio,
+            @RequestParam("destinatario") String uidUsuarioDestinatario,
+            HttpSession sessao
+    ) {
+        UsuarioOutput usuarioLogado =
+                usuarioAutenticadoService.getUsuarioOutput(sessao);
+
+        if (usuarioLogado == null) {
+            throw new SecurityException("Usuário não autenticado");
+        }
+
+        AnuncioDTO anuncio = anuncioService.buscarPorUid(uidAnuncio);
+
+        if (anuncio == null) {
+            throw new IllegalArgumentException("Anúncio não encontrado");
+        }
+
+        List<MensagemDTO> mensagens =
+                conversaService.listarMensagens(
+                        usuarioLogado.id(),
+                        uidUsuarioDestinatario,
+                        uidAnuncio
+                );
+
+        UsuarioOutput usuarioNegociante;
+
+        if (uidUsuarioDestinatario.equals(anuncio.uidUsuario())) {
+
+            usuarioNegociante = new UsuarioOutput(
+                    anuncio.uidUsuario(),
+                    anuncio.nomeUsuario(),
+                    anuncio.fotoPerfil()
+            );
+
+        } else {
+
+            usuarioNegociante =
+                    usuarioService.buscarPorUid(uidUsuarioDestinatario);
+        }
+
+        ChatConversaResponse resposta =
+                new ChatConversaResponse(
+                        anuncio,
+                        usuarioNegociante,
+                        mensagens
+                );
+
+        return new ChatResponse<>(resposta, "sucesso");
+    }
+
+    @GetMapping("/conversas/atualizar")
+    @ResponseBody
+    public ChatResponse<List<ConversaDTO>> atualizarConversas(
+            HttpSession sessao) {
+
+        UsuarioOutput usuarioLogado =
+                usuarioAutenticadoService.getUsuarioOutput(sessao);
+
+        if (usuarioLogado == null) {
+            throw new SecurityException("Usuário não autenticado");
+        }
+
+        List<ConversaDTO> conversas =
+                conversaService.listarConversas(usuarioLogado.id());
+
+        return new ChatResponse<>(
+                conversas,
+                "sucesso"
+        );
     }
 }

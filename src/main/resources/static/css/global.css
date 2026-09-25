@@ -1,0 +1,371 @@
+/* ==========================================================================
+   TROCA BOOK - GLOBAL & DESIGN SYSTEM (global.css)
+   ========================================================================== */
+
+/* --- 1. FONTS & VARIÁVEIS (:root) --- */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+
+:root {
+    /* Tipografia */
+    --font-primary: 'Manrope', sans-serif;
+
+    /* Cores Principais */
+    --color-primary: #007BFF;
+    --color-primary-hover: rgb(6, 96, 148);
+    --color-secondary: #6c63ff;
+    --color-danger: #d9534f;
+    --color-danger-hover: rgba(220, 53, 69, 0.8);
+    --color-success: #28a745;
+    
+    /* Gradientes */
+    --gradient-header: linear-gradient(267deg, rgb(229, 178, 254) 27.55%, rgb(104, 158, 254) 100.00%);
+    --gradient-banner-cadastro: linear-gradient(132deg, rgb(255, 206, 236) 0%, rgb(151, 150, 240) 100%);
+    
+    /* Fundos & Neutros */
+    --bg-body: #fafafa;
+    --bg-card: #ffffff;
+    --bg-muted: #f1f1f1;
+    --border-color: #E0E0E0;
+    --border-color-light: #eeeeee;
+
+    /* Sombras */
+    --shadow-header: 0 4px 6px -3px rgba(0, 0, 0, 0.4);
+    --shadow-footer: 0 -4px 6px -5px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 0 10px rgba(0, 0, 0, 0.1);
+    --shadow-card-hover: 0 0 10px rgba(0, 0, 0, 0.2);
+    --shadow-dropdown: 0px 8px 16px rgba(0, 0, 0, 0.15);
+
+    /* Raios de Borda */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+}
+
+/* --- 2. RESETS E ELEMENTOS BÁSICOS --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0 auto;
+    font-family: var(--font-primary);
+    background-color: var(--bg-body);
+}
+
+.container {
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+p {
+    text-align: center;
+}
+
+table th, td {
+    border-collapse: collapse;
+    text-align: center;
+}
+
+/* --- 3. CABEÇALHO / NAVBAR --- */
+.cabecalho {
+    width: 100%;
+    background: var(--gradient-header);
+    border: none;
+    box-shadow: var(--shadow-header);
+    padding-left: 13px;
+}
+
+.cabecalho table,
+.cabecalho th,
+.cabecalho td {
+    height: 100%;
+}
+
+.cabecalho img {
+    width: 220px;
+    margin-left: -40px;
+    vertical-align: middle;
+}
+
+.cadbutton {
+    float: right;
+}
+
+.cabecalho input {
+    width: 100%; 
+    height: 35px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    font-size: 14px;
+    margin-left: -20px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+
+.cabecalho select {
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    padding-left: 5px;
+    margin-right: 5px;
+}
+
+.cabecalho select::after {
+    background-color: rgb(230, 230, 230);
+}
+
+.cabecalho button {
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: var(--font-primary);
+    font-size: 16px;
+}
+
+.banner {
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.banner img {
+    width: 100%;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+/* Links e utilitários de navegação */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 30px;
+    height: 30px;
+}
+
+.search-bar {
+    flex-grow: 1;
+    margin: 0 20px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.nav-links a {
+    margin-right: 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links .profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+/* --- 4. AUTOCOMPLETE DA BARRA DE PESQUISA --- */
+.autocomplete-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    margin-left: 5px;
+}
+
+.sugestoes-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: var(--shadow-dropdown);
+    border-radius: var(--radius-md);
+    z-index: 999;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.sugestoes-autocomplete a {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #eee;
+    background-color: white;
+}
+
+.sugestoes-autocomplete a:hover {
+    background-color: #f9f9f9;
+}
+
+.sugestoes-autocomplete img.livro-capa {
+    height: 60px;
+    width: 40px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    margin-right: 12px;
+    margin-left: 8px;
+}
+
+.sugestoes-autocomplete p {
+    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sugestoes-autocomplete img.perfil-foto {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 12px;
+}
+
+/* --- 5. DROPDOWN DE USUÁRIO (MENU LOGADO) --- */
+.user-menu-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.user-menu-btn {
+    margin-left: 35px;
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+}
+
+.user-menu-btn span {
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+img.user-menu-icon {
+    width: 38px;
+    height: 38px;
+}
+
+.arrow {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #ffffff;
+    min-width: 170px;
+    box-shadow: var(--shadow-dropdown);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    z-index: 1000;
+    margin-top: 6px;
+}
+
+.dropdown-content a,
+.dropdown-content .logout-btn {
+    color: #333333;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover,
+.dropdown-content .logout-btn:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content .logout-btn {
+    color: var(--color-danger);
+    font-weight: bold;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-color-light);
+    margin: 4px 0;
+}
+
+.show {
+    display: block;
+}
+
+/* Controles de navegação do ambiente logado */
+.meus-livros4,
+.anunciar-livro4 {
+    text-decoration: none;
+    position: relative;
+    line-height: 20px;
+    font-weight: 600;
+    color: inherit;
+    display: inline-block;
+    min-width: 100px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+/* --- 6. RODAPÉ (FOOTER) --- */
+.rodapenovo {
+    width: 100%;
+    height: 100px;
+    background-color: white;
+    box-shadow: var(--shadow-footer);
+}
+
+.rodapenovo img {
+    width: 180px;
+    margin-left: -5px;
+    float: left;
+    margin-right: 5px;
+}
+
+.rodapenovo p {
+    float: left;
+    text-align: left;
+    margin: 0 auto;
+    padding-top: 28px;
+    padding-right: 37px;
+    color: var(--color-primary);
+}
+
+.rodapenovo p:hover {
+    color: var(--color-primary-hover);
+}
+
+.rodapenovo small {
+    float: right;
+    font-size: 16px;
+    padding-top: 28px;
+    padding-right: 30px;
+}

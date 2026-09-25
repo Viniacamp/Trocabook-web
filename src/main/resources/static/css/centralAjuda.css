@@ -1,0 +1,95 @@
+/* ==========================================================================
+   TROCA BOOK - CENTRAL DE AJUDA & SOBRE NÓS (centralAjuda.css)
+   Páginas de Suporte, FAQ e Apresentação
+   ========================================================================== */
+
+/* --- 1. CENTRAL DE AJUDA --- */
+.ajudahome {
+    max-width: 1400px;
+    margin: 50px auto 0 auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.ajudahome h1 {
+    text-align: center;
+}
+
+.ajudahome input {
+    width: 45%;
+    max-width: 600px;
+    min-width: 280px;
+    height: 35px;
+    border-radius: var(--radius-lg, 8px);
+    text-decoration: none;
+    border-style: solid;
+    border-color: var(--border-color, #E0E0E0);
+    font-family: var(--font-primary, 'Manrope', sans-serif);
+    font-size: 16px;
+    padding-left: 10px;
+}
+
+/* Blocos de tópicos da Central de Ajuda */
+.blocos {
+    margin: 40px auto 100px auto;
+    width: 100%;
+    max-width: 1100px;
+    padding: 0 20px;
+}
+
+.blocos h3,
+.blocos p {
+    color: #000000;
+    text-align: left;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.blocos p {
+    color: #5F5F5F;
+}
+
+.blocos a {
+    text-decoration: none;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.flex > div {
+    position: relative;
+    border-radius: 18px;
+    height: 200px;
+    width: 265px;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 2px 8px 0 rgba(0, 0, 0, 0.19);
+    background-color: #ffffff;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.flex > div:hover {
+    cursor: pointer;
+    box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 6px 0 rgba(0, 0, 0, 0.19);
+    transform: translateY(-2px);
+}
+
+/* --- 2. PÁGINA SOBRE NÓS --- */
+.sobrenos {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.sobrenos img {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    margin: 20px auto;
+}
