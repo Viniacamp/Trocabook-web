@@ -146,10 +146,12 @@
 
                 <div th:each="anuncio : ${livros}">
 
-                    <img
-                            class="capa-livro"
-                            th:src="${anuncio.capa}"
-                            alt="Capa do livro">
+                    <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                        <img
+                                class="capa-livro"
+                                th:src="${anuncio.capa}"
+                                th:alt="'Capa do livro ' + ${anuncio.titulo}">
+                    </a>
 
                 </div>
 

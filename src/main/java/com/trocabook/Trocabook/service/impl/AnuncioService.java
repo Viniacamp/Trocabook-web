@@ -11,6 +11,7 @@ import com.trocabook.Trocabook.service.IUsuarioService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -108,8 +109,17 @@ public class AnuncioService implements IAnuncioService {
 
     @Override
     public List<AnuncioDTO> buscarPorTitulo(String titulo) {
+
+        if (titulo == null || titulo.isBlank()) {
+            return List.of();
+        }
+
+        String tituloNormalizado = titulo
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
         return anuncioRepository
-                .buscarPorTitulo(titulo)
+                .buscarPorTitulo(tituloNormalizado)
                 .stream()
                 .map(Anuncio::paraDto)
                 .toList();

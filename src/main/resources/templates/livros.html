@@ -89,8 +89,8 @@
                     </a>
                 </div>
 
-                <a th:href="@{/chat(anuncio=${anuncio.id}, destinatario=${anuncio.uidUsuario})}">
-                    <button type="button">Negociar</button>
+                <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                    <button type="button">Ver detalhes</button>
                 </a>
 
             </div>

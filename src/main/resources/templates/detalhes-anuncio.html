@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${anuncio.titulo()} + ' | Trocabook'">
+        Detalhes do anúncio | Trocabook
+    </title>
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+</head>
+
+<body>
+
+<main class="detalhes-anuncio-container">
+
+    <section class="detalhes-anuncio-principal">
+
+        <!-- CAPA -->
+        <div class="detalhes-anuncio-capa">
+            <img th:src="${anuncio.capa()}"
+                 th:alt="'Capa do livro ' + ${anuncio.titulo()}">
+        </div>
+
+        <!-- INFORMAÇÕES -->
+        <div class="detalhes-anuncio-info">
+
+            <span class="detalhes-anuncio-label">
+                Livro anunciado
+            </span>
+
+            <h1 th:text="${anuncio.titulo()}">
+                Título do livro
+            </h1>
+
+            <!-- TIPO DE NEGOCIAÇÃO -->
+            <div class="detalhes-anuncio-tags">
+
+                        <span class="detalhes-tag"
+                              th:text="${anuncio.tipoNegociacao() == 'AMBOS'
+                              ? 'Troca e Venda'
+                              : #strings.capitalize(#strings.toLowerCase(anuncio.tipoNegociacao()))}">
+                            Tipo de negociação
+                        </span>
+
+            </div>
+
+            <!-- ANUNCIANTE -->
+            <div class="detalhes-anunciante">
+
+                <img th:src="${anuncio.fotoPerfil()}"
+                     alt="Foto do anunciante"
+                     class="detalhes-anunciante-foto">
+
+                <div class="detalhes-anunciante-info">
+                    <span>Anunciante</span>
+
+                    <strong th:text="${anuncio.nomeUsuario()}">
+                        Nome do usuário
+                    </strong>
+                </div>
+
+            </div>
+
+            <!-- BOTÃO -->
+            <div class="detalhes-anuncio-acoes">
+
+                <a th:if="${usuarioLogado != null and !proprioAnuncio}"
+                   th:href="@{/chat(anuncio=${anuncio.id()}, destinatario=${anuncio.uidUsuario()})}"
+                   class="detalhes-btn-negociar">
+                    Negociar!
+                </a>
+
+                <a th:if="${usuarioLogado == null}"
+                   href="/login"
+                   class="detalhes-btn-negociar">
+                    Entre para negociar
+                </a>
+
+                <span th:if="${proprioAnuncio}"
+                      class="detalhes-proprio-anuncio">
+                    Este anúncio é seu
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

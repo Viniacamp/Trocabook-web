@@ -87,21 +87,9 @@
 
                 <p th:text="${anuncio.titulo}"></p>
 
-                <th:block sec:authorize="isAuthenticated()">
-
-                    <a th:href="@{/chat(anuncio=${anuncio.id}, destinatario=${anuncio.uidUsuario})}">
-                        <button type="button">Negociar</button>
-                    </a>
-
-                </th:block>
-
-                <th:block sec:authorize="!isAuthenticated()">
-
-                    <a href="/login">
-                        <button type="button">Negociar</button>
-                    </a>
-
-                </th:block>
+                <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                    <button type="button">Ver detalhes</button>
+                </a>
 
             </div>
 

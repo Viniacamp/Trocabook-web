@@ -1,0 +1,213 @@
+/* ==========================================================================
+   TROCA BOOK - DETALHES DO ANÚNCIO
+   ========================================================================== */
+
+.detalhes-anuncio-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 55px 30px;
+}
+
+.detalhes-anuncio-principal {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 45px;
+}
+
+/* --- CAPA --- */
+
+.detalhes-anuncio-capa {
+    flex: 0 0 270px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.detalhes-anuncio-capa img {
+    width: 100%;
+    max-width: 270px;
+    height: 390px;
+    object-fit: contain;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    background-color: #ffffff;
+}
+
+/* --- INFORMAÇÕES DO LIVRO --- */
+
+.detalhes-anuncio-info {
+    flex: 1;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+}
+
+.detalhes-anuncio-label {
+    color: #777777;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.detalhes-anuncio-info h1 {
+    margin: 0 0 15px;
+    font-size: 30px;
+    line-height: 1.2;
+    color: #222222;
+}
+
+/* --- TAGS --- */
+
+.detalhes-anuncio-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.detalhes-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 12px;
+
+    border-radius: 20px;
+
+    background: var(--gradient-header);
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* --- ANUNCIANTE --- */
+
+.detalhes-anunciante {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: auto;
+    margin-bottom: 18px;
+
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color-light);
+}
+
+.detalhes-anunciante-foto {
+    width: 46px;
+    height: 46px;
+
+    min-width: 46px;
+
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.detalhes-anunciante-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.detalhes-anunciante-info span {
+    color: #777777;
+    font-size: 12px;
+}
+
+.detalhes-anunciante-info strong {
+    color: #222222;
+    font-size: 14px;
+}
+
+/* --- AÇÕES --- */
+
+.detalhes-anuncio-acoes {
+    width: 100%;
+}
+
+.detalhes-btn-negociar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 48px;
+
+    border: none;
+    border-radius: var(--radius-xl);
+
+    background: var(--gradient-header);
+
+    color: #ffffff;
+    text-decoration: none;
+
+    font-family: var(--font-primary);
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.detalhes-btn-negociar:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.detalhes-proprio-anuncio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 48px;
+
+    border-radius: var(--radius-xl);
+    background-color: var(--bg-muted);
+
+    color: #666666;
+    font-weight: 600;
+}
+
+/* --- RESPONSIVIDADE --- */
+
+@media (max-width: 768px) {
+
+    .detalhes-anuncio-container {
+        padding: 30px 20px;
+    }
+
+    .detalhes-anuncio-principal {
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .detalhes-anuncio-capa {
+        flex: none;
+        width: 100%;
+    }
+
+    .detalhes-anuncio-capa img {
+        max-width: 230px;
+        height: 330px;
+    }
+
+    .detalhes-anuncio-info {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .detalhes-anuncio-info h1 {
+        font-size: 24px;
+    }
+
+    .detalhes-anunciante {
+        margin-top: 20px;
+    }
+}

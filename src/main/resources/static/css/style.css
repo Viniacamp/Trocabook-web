@@ -13,8 +13,11 @@
 /* 3. Módulo de Livros: Grid, Cards, Criação de Anúncios, Meus Livros e Destaques */
 @import url('./livro.css');
 
-/* 4. Módulo Central de Ajuda: Suporte, FAQ e Sobre Nós */
+/* 4. Detalhes de Anúncio */
+@import url('./detalhes-anuncio.css');
+
+/* 5. Módulo Central de Ajuda: Suporte, FAQ e Sobre Nós */
 @import url('./centralAjuda.css');
 
-/* 5. Módulo de Chat: Layout Base de Mensagens e Painéis */
+/* 6. Módulo de Chat: Layout Base de Mensagens e Painéis */
 @import url('./chat-layout.css');
