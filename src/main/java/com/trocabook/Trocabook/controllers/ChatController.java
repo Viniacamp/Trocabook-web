@@ -10,6 +10,7 @@ import com.trocabook.Trocabook.controllers.response.ChatResponse;
 import com.trocabook.Trocabook.model.dto.*;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.IConversaService;
+import com.trocabook.Trocabook.service.IInteracaoService;
 import com.trocabook.Trocabook.service.IUsuarioService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 import jakarta.servlet.http.HttpSession;
@@ -30,17 +31,20 @@ public class ChatController {
     private final IConversaService conversaService;
     private final IUsuarioService usuarioService;
     private final IAnuncioService anuncioService;
+    private final IInteracaoService interacaoService;
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
     public ChatController(
             IConversaService conversaService,
             IUsuarioService usuarioService,
             IAnuncioService anuncioService,
+            IInteracaoService interacaoService,
             UsuarioAutenticadoService usuarioAutenticadoService) {
 
         this.conversaService = conversaService;
         this.usuarioService = usuarioService;
         this.anuncioService = anuncioService;
+        this.interacaoService = interacaoService;
         this.usuarioAutenticadoService = usuarioAutenticadoService;
     }
 
@@ -91,8 +95,35 @@ public class ChatController {
     // 🔹 Envio de mensagem (via fetch)
     @PostMapping("/mensagens")
     @ResponseBody
-    public ChatResponse<MensagemDTO> salvarMensagemAjax(@RequestBody MensagemDTO mensagemDTO) {
-        return new ChatResponse<>(conversaService.enviarMensagem(mensagemDTO), "sucesso");
+    public ChatResponse<MensagemDTO> salvarMensagemAjax(
+            @RequestBody MensagemDTO mensagemDTO,
+            HttpSession sessao) {
+
+        UsuarioOutput usuarioLogado =
+                usuarioAutenticadoService.getUsuarioOutput(sessao);
+
+        if (usuarioLogado == null) {
+            throw new SecurityException("Usuário não autenticado");
+        }
+
+        MensagemDTO mensagemSalva =
+                conversaService.enviarMensagem(mensagemDTO);
+
+        AnuncioDTO anuncio =
+                anuncioService.buscarPorUid(mensagemDTO.uidAnuncio());
+
+        if (anuncio != null && !usuarioLogado.id().equals(anuncio.uidUsuario())) {
+            interacaoService.registrarInicioConversa(
+                    usuarioLogado.id(),
+                    anuncio.uidLivro(),
+                    anuncio.id()
+            );
+        }
+
+        return new ChatResponse<>(
+                mensagemSalva,
+                "sucesso"
+        );
     }
 
     // 🔹 Atualização automática (polling)

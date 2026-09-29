@@ -28,7 +28,7 @@ public class WebSecurityConfig {
                         .ignoringRequestMatchers(
                                 "/dados/**",
                                 "/chat/**",
-                                "/pesquisar",
+                                "/pesquisar/**",
                                 "/api/auth/**",
                                 "/deslogar"
                         )

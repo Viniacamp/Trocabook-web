@@ -3,6 +3,7 @@ package com.trocabook.Trocabook.controllers;
 
 import java.util.List;
 
+import com.trocabook.Trocabook.service.IInteracaoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +26,14 @@ public class IndexController {
 	private final UsuarioAutenticadoService usuarioAutenticadoService;
 	private final IUsuarioService usuarioService;
 	private final IAnuncioService anuncioService;
+	private final IInteracaoService interacaoService;
 	private final ApplicationInstance applicationInstance;
 
-	public IndexController(UsuarioAutenticadoService usuarioAutenticadoService, IUsuarioService usuarioService, IAnuncioService anuncioService, ApplicationInstance applicationInstance) {
+	public IndexController(UsuarioAutenticadoService usuarioAutenticadoService, IUsuarioService usuarioService, IAnuncioService anuncioService, IInteracaoService interacaoService, ApplicationInstance applicationInstance) {
 		this.usuarioAutenticadoService = usuarioAutenticadoService;
 		this.usuarioService = usuarioService;
 		this.anuncioService = anuncioService;
+		this.interacaoService = interacaoService;
 		this.applicationInstance = applicationInstance;
 	}
 
@@ -77,6 +80,33 @@ public class IndexController {
 		}
 		return anuncioService
 				.buscarPorTitulo(nm_livro);
+	}
+
+	@PostMapping("/pesquisar/interacao")
+	@ResponseBody
+	public void registrarInteracaoPesquisa(
+			@RequestParam String termo,
+			HttpSession sessao) {
+
+		if (termo == null || termo.isBlank()) {
+			return;
+		}
+
+		try {
+			UsuarioOutput usuario =
+					usuarioAutenticadoService.getUsuarioOutput(sessao);
+
+			if (usuario != null) {
+				interacaoService.registrarPesquisa(
+						usuario.id(),
+						termo
+				);
+			}
+
+		} catch (IllegalStateException ex) {
+			// Usuário não autenticado:
+			// não registra interação personalizada.
+		}
 	}
 	
 
