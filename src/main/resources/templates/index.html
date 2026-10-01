@@ -75,11 +75,56 @@
     </table>
 
     <div class="livros">
+
+        <th:block th:if="${recomendacoes != null and !recomendacoes.isEmpty()}">
+
+            <h2 sec:authorize="isAuthenticated()">
+                Recomendados para você
+            </h2>
+
+            <h2 sec:authorize="!isAuthenticated()">
+                Descubra novos livros
+            </h2>
+
+            <section class="livros-grid">
+
+                <div class="livro-card"
+                     th:each="anuncio : ${recomendacoes}">
+
+                    <img th:src="${anuncio.capa}"
+                         class="capaLivros"
+                         alt="Capa do livro">
+
+                    <p th:text="${anuncio.titulo}"></p>
+
+                    <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                        <button type="button">
+                            Ver detalhes
+                        </button>
+                    </a>
+
+                </div>
+
+            </section>
+
+            <a style="text-decoration: none" href="/livros">
+                <p style="text-align: right;
+                      text-decoration: none;
+                      color:#007BFF">
+                    &gt; Ver mais livros
+                </p>
+            </a>
+
+            <br><br><br>
+
+        </th:block>
+
         <h2>Propostas recentes</h2>
 
         <section class="livros-grid">
 
-            <div class="livro-card" th:each="anuncio : ${anuncios}">
+            <div class="livro-card"
+                 th:each="anuncio : ${anuncios}">
 
                 <img th:src="${anuncio.capa}"
                      class="capaLivros"
@@ -88,7 +133,9 @@
                 <p th:text="${anuncio.titulo}"></p>
 
                 <a th:href="@{'/anuncios/' + ${anuncio.id}}">
-                    <button type="button">Ver detalhes</button>
+                    <button type="button">
+                        Ver detalhes
+                    </button>
                 </a>
 
             </div>

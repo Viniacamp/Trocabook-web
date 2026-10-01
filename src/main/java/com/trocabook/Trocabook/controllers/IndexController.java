@@ -4,6 +4,7 @@ package com.trocabook.Trocabook.controllers;
 import java.util.List;
 
 import com.trocabook.Trocabook.service.IInteracaoService;
+import com.trocabook.Trocabook.service.IRecomendacaoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,33 +28,56 @@ public class IndexController {
 	private final IUsuarioService usuarioService;
 	private final IAnuncioService anuncioService;
 	private final IInteracaoService interacaoService;
+	private final IRecomendacaoService recomendacaoService;
 	private final ApplicationInstance applicationInstance;
 
-	public IndexController(UsuarioAutenticadoService usuarioAutenticadoService, IUsuarioService usuarioService, IAnuncioService anuncioService, IInteracaoService interacaoService, ApplicationInstance applicationInstance) {
+	public IndexController(UsuarioAutenticadoService usuarioAutenticadoService, IUsuarioService usuarioService, IAnuncioService anuncioService, IInteracaoService interacaoService, IRecomendacaoService recomendacaoService, ApplicationInstance applicationInstance) {
 		this.usuarioAutenticadoService = usuarioAutenticadoService;
 		this.usuarioService = usuarioService;
 		this.anuncioService = anuncioService;
 		this.interacaoService = interacaoService;
+		this.recomendacaoService = recomendacaoService;
 		this.applicationInstance = applicationInstance;
 	}
 
 	@GetMapping("/")
 	public String index(Model model, HttpSession sessao) {
+
+		List<AnuncioDTO> todosAnuncios =
+				anuncioService.listarTodos();
+
+		List<AnuncioDTO> recomendacoes;
+
 		try {
-			UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
+			UsuarioOutput usuario =
+					usuarioAutenticadoService.getUsuarioOutput(sessao);
 
 			model.addAttribute("usuario", usuario);
-		} catch (IllegalStateException ex){
 
+			recomendacoes =
+					recomendacaoService.buscarRecomendacoes(
+							usuario.id(),
+							5,
+							todosAnuncios
+					);
+
+		} catch (IllegalStateException ex) {
+			recomendacoes =
+					recomendacaoService.buscarAleatorios(
+							todosAnuncios,
+							5
+					);
 		}
 
-		List<UsuarioOutput> destaques = usuarioService.buscarMelhoresAvaliados();
+		List<UsuarioOutput> destaques =
+				usuarioService.buscarMelhoresAvaliados();
+
 		List<AnuncioDTO> anuncios =
-				anuncioService.listarTodos()
-						.stream()
+				todosAnuncios.stream()
 						.limit(10)
 						.toList();
 
+		model.addAttribute("recomendacoes", recomendacoes);
 		model.addAttribute("destaques", destaques);
 		model.addAttribute("anuncios", anuncios);
 		model.addAttribute(

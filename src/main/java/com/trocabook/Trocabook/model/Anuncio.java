@@ -141,19 +141,8 @@ public class Anuncio implements Serializable {
         TROCA, VENDA, AMBOS
     }
 
-    public static Anuncio from(AnuncioDTO anuncioDTO){
-        return new Anuncio(
-                anuncioDTO.id(),
-                anuncioDTO.uidUsuario(),
-                anuncioDTO.uidLivro(),
-                anuncioDTO.nomeUsuario(),
-                TipoNegociacao.valueOf(anuncioDTO.tipoNegociacao()),
-                anuncioDTO.titulo(), anuncioDTO.fotoPerfil(),
-                anuncioDTO.capa(), anuncioDTO.autores(),
-                anuncioDTO.categorias());
-    }
 
-    public AnuncioDTO paraDto(){
+    public AnuncioDTO paraDto(List<String> autores, List<String> categorias){
         return new AnuncioDTO(
                 this.id,
                 this.uidUsuario,
@@ -163,8 +152,8 @@ public class Anuncio implements Serializable {
                 this.titulo,
                 this.fotoPerfil,
                 this.capa,
-                this.autores,
-                this.categorias
+                autores,
+                categorias
         );
     }
 
