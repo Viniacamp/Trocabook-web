@@ -4,6 +4,8 @@ import com.trocabook.Trocabook.controllers.response.RecomendacaoResponse;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import com.trocabook.Trocabook.service.IRecomendacaoCacheService;
 import com.trocabook.Trocabook.service.IRecomendacaoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,6 +16,9 @@ import java.util.stream.Collectors;
 public class RecomendacaoService implements IRecomendacaoService {
 
     private final IRecomendacaoCacheService recomendacaoCacheService;
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(RecomendacaoService.class);
 
     public RecomendacaoService(
             IRecomendacaoCacheService recomendacaoCacheService
@@ -35,8 +40,34 @@ public class RecomendacaoService implements IRecomendacaoService {
             return List.of();
         }
 
-        List<RecomendacaoResponse> ranking =
-                recomendacaoCacheService.buscarRanking(uidUsuario);
+        List<RecomendacaoResponse> ranking;
+
+        try {
+            ranking =
+                    recomendacaoCacheService.buscarRanking(
+                            uidUsuario
+                    );
+        } catch (Exception ex) {
+
+            logger.warn(
+                    "Serviço de recomendação indisponível. " +
+                            "Utilizando anúncios aleatórios para o usuário {}.",
+                    uidUsuario
+            );
+
+            logger.debug(
+                    "Erro ao consultar serviço de recomendação.",
+                    ex
+            );
+
+
+            return buscarAleatorios(
+                    anuncios,
+                    quantidade > 0
+                            ? quantidade
+                            : anuncios.size()
+            );
+        }
 
         if (ranking == null || ranking.isEmpty()) {
             return buscarAleatorios(
@@ -66,6 +97,7 @@ public class RecomendacaoService implements IRecomendacaoService {
 
         return recomendacoes.toList();
     }
+
 
     @Override
     public List<AnuncioDTO> buscarAleatorios(
