@@ -121,6 +121,24 @@ public class AnuncioService implements IAnuncioService {
     public List<AnuncioDTO> listarTodosPorTipoNegociacao(
             Anuncio.TipoNegociacao tipoNegociacao
     ) {
+        Cache cache =
+                cacheManager.getCache("anuncios");
+
+        if (cache != null) {
+            List<AnuncioDTO> anunciosCacheados =
+                    buscarAnunciosNoCache(cache);
+
+            if (anunciosCacheados != null) {
+                return anunciosCacheados.stream()
+                        .filter(anuncio ->
+                                tipoNegociacao.name().equals(
+                                        anuncio.tipoNegociacao()
+                                )
+                        )
+                        .toList();
+            }
+        }
+
         return anuncioRepository
                 .listarTodosPorTipoNegociacao(tipoNegociacao)
                 .stream()
@@ -128,10 +146,29 @@ public class AnuncioService implements IAnuncioService {
                 .toList();
     }
 
+
     @Override
     public List<AnuncioDTO> listarAnunciosUsuario(
             String uidUsuario
     ) {
+        Cache cache =
+                cacheManager.getCache("anuncios");
+
+        if (cache != null) {
+            List<AnuncioDTO> anunciosCacheados =
+                    buscarAnunciosNoCache(cache);
+
+            if (anunciosCacheados != null) {
+                return anunciosCacheados.stream()
+                        .filter(anuncio ->
+                                uidUsuario.equals(
+                                        anuncio.uidUsuario()
+                                )
+                        )
+                        .toList();
+            }
+        }
+
         return anuncioRepository
                 .buscarPorUidUsuario(uidUsuario)
                 .stream()
@@ -144,6 +181,29 @@ public class AnuncioService implements IAnuncioService {
             String uidUsuario,
             Anuncio.TipoNegociacao tipoNegociacao
     ) {
+        Cache cache =
+                cacheManager.getCache("anuncios");
+
+        if (cache != null) {
+            List<AnuncioDTO> anunciosCacheados =
+                    buscarAnunciosNoCache(cache);
+
+            if (anunciosCacheados != null) {
+                return anunciosCacheados.stream()
+                        .filter(anuncio ->
+                                uidUsuario.equals(
+                                        anuncio.uidUsuario()
+                                )
+                        )
+                        .filter(anuncio ->
+                                tipoNegociacao.name().equals(
+                                        anuncio.tipoNegociacao()
+                                )
+                        )
+                        .toList();
+            }
+        }
+
         return anuncioRepository
                 .buscarPorUidUsuarioETipoNegociacao(
                         uidUsuario,
