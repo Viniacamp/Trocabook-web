@@ -14,8 +14,15 @@ public interface IRecomendacaoService {
             List<AnuncioDTO> anuncios
     );
 
+    List<AnuncioDTO> ordenarPorRecomendacao(
+            String uidUsuario,
+            List<AnuncioDTO> anuncios
+    );
+
     List<AnuncioDTO> buscarAleatorios(
             List<AnuncioDTO> anuncios,
             int quantidade
     );
+
+
 }

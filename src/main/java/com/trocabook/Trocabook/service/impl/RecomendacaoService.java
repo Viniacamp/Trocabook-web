@@ -98,6 +98,71 @@ public class RecomendacaoService implements IRecomendacaoService {
         return recomendacoes.toList();
     }
 
+    @Override
+    public List<AnuncioDTO> ordenarPorRecomendacao(
+            String uidUsuario,
+            List<AnuncioDTO> anuncios
+    ) {
+        if (uidUsuario == null
+                || uidUsuario.isBlank()
+                || anuncios == null
+                || anuncios.isEmpty()) {
+
+            return anuncios == null
+                    ? List.of()
+                    : anuncios;
+        }
+
+        List<RecomendacaoResponse> ranking;
+
+        try {
+            ranking =
+                    recomendacaoCacheService.buscarRanking(
+                            uidUsuario
+                    );
+        } catch (Exception ex) {
+            logger.warn(
+                    "Serviço de recomendação indisponível. " +
+                            "Mantendo ordenação original dos anúncios " +
+                            "para o usuário {}.",
+                    uidUsuario
+            );
+
+            logger.debug(
+                    "Erro ao consultar serviço de recomendação.",
+                    ex
+            );
+
+            return anuncios;
+        }
+
+        if (ranking == null || ranking.isEmpty()) {
+            return anuncios;
+        }
+
+        Map<String, Integer> posicaoRanking =
+                new HashMap<>();
+
+        for (int i = 0; i < ranking.size(); i++) {
+            posicaoRanking.put(
+                    ranking.get(i).uidAnuncio(),
+                    i
+            );
+        }
+
+        return anuncios.stream()
+                .sorted(
+                        Comparator.comparingInt(
+                                anuncio ->
+                                        posicaoRanking.getOrDefault(
+                                                anuncio.id(),
+                                                Integer.MAX_VALUE
+                                        )
+                        )
+                )
+                .toList();
+    }
+
 
     @Override
     public List<AnuncioDTO> buscarAleatorios(
