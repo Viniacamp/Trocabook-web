@@ -486,7 +486,8 @@ public class DataInitializer implements CommandLineRunner {
         return anuncioService.anunciar(
                 livro.getId(),
                 usuario.id(),
-                tipoNegociacao.name()
+                tipoNegociacao.name(),
+                "Anunciante não informou uma descrição"
         );
     }
 

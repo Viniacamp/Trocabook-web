@@ -20,5 +20,7 @@ public record AnuncioDTO(
 
         List<String> autores,
 
-        List<String> categorias) {
+        List<String> categorias,
+
+        String descricao) {
 }

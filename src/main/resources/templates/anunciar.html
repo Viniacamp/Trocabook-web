@@ -8,6 +8,9 @@
     <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
     <link rel="stylesheet" type="text/css" href="/css/anunciarLivroApi.css"/>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>Criar novo anuncio | Trocabook</title>
 </head>
 <body>
@@ -61,51 +64,263 @@
         <div class="anuncio">
             <h1>Crie o seu anúncio</h1>
 
-            <div class="busca-livro-container">
-                <input type="text" id="tituloBuscado" placeholder="Digite o título do livro a ser anunciado">
-                <button id="buscarLivro" onclick="buscarLivro()" type="button">Buscar</button>
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <div id="escolhaModoCadastro">
 
-                <!-- Resultados da API -->
-                <div id="resultadosLivros" class="sugestoes-autocomplete"></div>
+                <p>Como deseja cadastrar o livro?</p>
+
+                <div class="modo-cadastro-container">
+
+                    <div
+                            id="modoAutomatico"
+                            class="modo-cadastro-card"
+                            role="button"
+                            tabindex="0">
+
+                        <i class="fas fa-search"></i>
+
+                        <h2>Buscar automaticamente</h2>
+
+                        <p>
+                            Pesquise o livro e preencha os dados
+                            automaticamente.
+                        </p>
+
+                    </div>
+
+                    <div
+                            id="modoManual"
+                            class="modo-cadastro-card"
+                            role="button"
+                            tabindex="0">
+
+                        <i class="fas fa-pen"></i>
+
+                        <h2>Preencher manualmente</h2>
+
+                        <p>
+                            Informe os dados e envie a capa
+                            do livro manualmente.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
-            <form th:object="${anuncioRequest}" th:action="@{/AnunciarLivro}" enctype="multipart/form-data" method="post" class="form-anuncio">
+
+            <div
+                    id="buscaAutomatica"
+                    class="busca-livro-container"
+                    style="display: none;">
+
+                <input
+                        type="text"
+                        id="tituloBuscado"
+                        placeholder="Digite o título do livro a ser anunciado">
+
+                <button
+                        id="buscarLivro"
+                        onclick="buscarLivro()"
+                        type="button">
+                    Buscar
+                </button>
+
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}">
+
+                <div
+                        id="resultadosLivros"
+                        class="sugestoes-autocomplete">
+                </div>
+
+            </div>
+            <form th:object="${anuncioRequest}"
+                  th:action="@{/AnunciarLivro}"
+                  enctype="multipart/form-data"
+                  method="post"
+                  class="form-anuncio"
+                  id="formAnuncio">
+
                 <input type="hidden"
                        th:name="${_csrf.parameterName}"
                        th:value="${_csrf.token}" />
 
+                <input
+                        type="hidden"
+                        th:field="*{modoCadastro}"
+                        id="modoCadastro">
 
-                <div class="livro-detalhes">
-                    <label for="capaLivro" class="label-principal">Capa do Livro:</label>
-                    <img id="capaLivro" class="capaLivro" th:src="${anuncioRequest.urlImagem != null ? anuncioRequest.urlImagem : ''}" style="display:none;">
-                    <input type="hidden" th:field="*{urlImagem}" id="urlImagem">
+
+                <div id="camposAnuncio"
+                     class="livro-detalhes"
+                     style="display: none;">
+                    <!-- CAPA AUTOMÁTICA -->
+                    <div id="capaAutomatica">
+                        <label for="capaLivro" class="label-principal">
+                            Capa do Livro:
+                        </label>
+
+                        <img
+                                id="capaLivro"
+                                class="capaLivro"
+                                th:src="${anuncioRequest.urlImagem != null ? anuncioRequest.urlImagem : ''}"
+                                style="display: none;">
+
+                        <input
+                                type="hidden"
+                                th:field="*{urlImagem}"
+                                id="urlImagem">
+                    </div>
+
+
+                    <!-- CAPA MANUAL -->
+                    <div id="capaManual" style="display: none;">
+
+                        <label class="label-principal">
+                            Capa do Livro:
+                        </label>
+
+                        <label for="imagem" class="file-upload-label">
+
+                            <div
+                                    id="upload-prompt-livro"
+                                    class="upload-prompt">
+
+                                <i class="fa fa-upload fa-2x"></i>
+
+                                <span class="upload-file-name">
+                    Selecione ou arraste a capa aqui
+                </span>
+
+                            </div>
+
+                            <div
+                                    id="preview-container-livro"
+                                    class="upload-preview-container"
+                                    style="display: none;">
+
+                                <img
+                                        id="image-preview-livro"
+                                        class="upload-image-preview"
+                                        src="#"
+                                        alt="Prévia da capa do livro">
+
+                                <span
+                                        id="remove-image-btn"
+                                        class="upload-remove-btn"
+                                        title="Remover capa">
+
+                    <i class="fa fa-times"></i>
+
+                </span>
+
+                            </div>
+
+                        </label>
+
+                        <input
+                                type="file"
+                                id="imagem"
+                                name="imagem"
+                                accept="image/jpeg,image/png,image/gif"
+                                style="display: none;">
+
+                        <p
+                                class="text-danger"
+                                th:if="${erroFoto}"
+                                th:text="${erroFoto}">
+                        </p>
+
+                    </div>
                     <label for="titulo">Título:</label>
                     <!-- Agora é editável -->
                     <input type="text" id="titulo" th:field="*{titulo}" placeholder="Título do livro" readonly>
                     <p class="text-danger" th:if="${erroTitulo}" th:text="${erroTitulo}"></p>
-                    <label for="dataPublicacao">Data de Publicação:</label>
-                    <input type="date" id="dataPublicacao" th:field="*{dataPublicacao}" readonly>
-                    <label>Autores:</label>
-                    <div id="autores" class="tags-container">
-                        <div th:each="autor, i : *{autores}">
-                            <input type="hidden" th:field="*{autores[__${i.index}__]}" th:value="${autor}" readonly>
-                            <span th:text="${autor}"></span>
-                        </div>
-                    </div>
-                    <p class="text-danger" th:if="${erroAutor}" th:text="${erroAutor}"></p>
+                    <div id="dataPublicacaoContainer">
 
-                    <label>Categorias:</label>
-                    <div id="categorias" class="tags-container">
-                        <div th:each="categoria, i : *{categorias}">
-                            <input type="hidden" th:field="*{categorias[__${i.index}__]}" th:value="${categoria}" readonly>
-                            <span th:text="${categoria}"></span>
-                        </div>
+                        <label for="dataPublicacao">
+                            Data de Publicação:
+                        </label>
+
+                        <input
+                                type="date"
+                                id="dataPublicacao"
+                                th:field="*{dataPublicacao}"
+                                readonly>
+
                     </div>
-                    <p class="text-danger" th:if="${erroCategoria}" th:text="${erroCategoria}"></p>
+                    <div id="autoresAutomaticos">
+                        <label>Autores:</label>
+                        <div id="autores" class="tags-container">
+                            <div th:each="autor, i : *{autores}">
+                                <input type="hidden" th:field="*{autores[__${i.index}__]}" th:value="${autor}" readonly>
+                                <span th:text="${autor}"></span>
+                            </div>
+                        </div>
+                        <p class="text-danger" th:if="${erroAutor}" th:text="${erroAutor}"></p>
+                    </div>
+
+                    <div id="autoresManuais" style="display: none;">
+                        <label for="autoresManual">Autores:</label>
+
+                        <input
+                                type="text"
+                                id="autoresManual"
+                                placeholder="Ex.: Machado de Assis, José de Alencar">
+
+                        <div id="autoresManuaisHidden"></div>
+                    </div>
+
+                    <div id="categoriasAutomaticas">
+                        <label>Categorias:</label>
+                        <div id="categorias" class="tags-container">
+                            <div th:each="categoria, i : *{categorias}">
+                                <input type="hidden" th:field="*{categorias[__${i.index}__]}" th:value="${categoria}" readonly>
+                                <span th:text="${categoria}"></span>
+                            </div>
+                        </div>
+                        <p class="text-danger" th:if="${erroCategoria}" th:text="${erroCategoria}"></p>
+                    </div>
+
+                    <div id="categoriasManuais" style="display: none;">
+
+                        <label>Categorias:</label>
+
+                        <!-- Categorias confirmadas pelo usuário -->
+                        <div
+                                id="categoriasSelecionadas"
+                                class="categorias-selecionadas">
+                        </div>
+
+                        <button
+                                type="button"
+                                id="btnSelecionarCategorias"
+                                class="btn-selecionar-categorias">
+
+                            <i class="fas fa-list"></i>
+                            Selecionar categorias
+
+                        </button>
+
+                        <!-- Valores enviados ao Spring -->
+                        <div id="categoriasManuaisHidden"></div>
+
+                        <p
+                                class="text-danger"
+                                th:if="${erroCategoria}"
+                                th:text="${erroCategoria}">
+                        </p>
+
+                    </div>
 
                     <label for="descricao">Descrição:</label>
-                    <textarea id="descricao" name="descricao" placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir"></textarea>
-
+                    <textarea
+                            id="descricao"
+                            th:field="*{descricao}"
+                            placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir">
+                    </textarea>
                     <label for="tipoNegociacao">Tipo de negociação:</label>
                     <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" required>
                         <option value="">Selecione...</option>
@@ -121,6 +336,118 @@
                     <button type="submit" class="btn-criar">Criar Anúncio</button>
                 </div>
             </form>
+
+            <!-- MODAL DE SELEÇÃO DE CATEGORIAS -->
+            <div
+                    id="modalCategorias"
+                    class="modal-categorias">
+
+                <div class="modal-categorias-conteudo">
+
+                    <div class="modal-categorias-header">
+
+                        <h2>Selecione as categorias</h2>
+
+                        <button
+                                type="button"
+                                id="btnFecharCategorias"
+                                class="modal-fechar"
+                                aria-label="Fechar">
+
+                            <i class="fas fa-times"></i>
+
+                        </button>
+
+                    </div>
+
+                    <div
+                            id="listaCategorias"
+                            class="lista-categorias-modal">
+
+                        <label
+                                class="categoria-opcao"
+                                th:each="categoria : ${categoriasDisponiveis}">
+
+                            <input
+                                    type="checkbox"
+                                    class="categoria-checkbox"
+                                    th:value="${categoria.nome}">
+
+                            <span th:text="${categoria.nome}">
+                    Categoria
+                </span>
+
+                        </label>
+
+                        <label class="categoria-opcao outra-categoria">
+
+                            <input
+                                    type="checkbox"
+                                    id="checkboxNovaCategoria">
+
+                            <span>
+                    Outra categoria
+                </span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="modal-categorias-footer">
+
+                        <button
+                                type="button"
+                                id="btnCancelarCategorias">
+                            Cancelar
+                        </button>
+
+                        <button
+                                type="button"
+                                id="btnConfirmarCategorias">
+                            Concluir
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MODAL PARA CRIAR NOVA CATEGORIA -->
+            <div
+                    id="modalNovaCategoria"
+                    class="modal-nova-categoria">
+
+                <div class="modal-nova-categoria-conteudo">
+
+                    <h2>Nova categoria</h2>
+
+                    <input
+                            type="text"
+                            id="novaCategoria"
+                            maxlength="60"
+                            placeholder="Digite o nome da categoria">
+
+                    <div class="modal-nova-categoria-acoes">
+
+                        <button
+                                type="button"
+                                id="btnCancelarNovaCategoria">
+                            Cancelar
+                        </button>
+
+                        <button
+                                type="button"
+                                id="btnAdicionarNovaCategoria">
+                            Adicionar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
         </div>
     </div>
     <footer>
@@ -140,6 +467,551 @@
     const resultados = document.getElementById("resultadosLivros");
     const container = document.querySelector(".busca-livro-container");
     const botaoBuscar = document.getElementById("buscarLivro");
+
+    const modoAutomatico = document.getElementById("modoAutomatico");
+    const modoManual = document.getElementById("modoManual");
+    const modoCadastro = document.getElementById("modoCadastro");
+
+    const buscaAutomatica = document.getElementById("buscaAutomatica");
+    const camposAnuncio = document.getElementById("camposAnuncio");
+
+    const inputImagem = document.getElementById("imagem");
+    const uploadPromptLivro = document.getElementById("upload-prompt-livro");
+    const previewContainerLivro = document.getElementById("preview-container-livro");
+    const imagePreviewLivro = document.getElementById("image-preview-livro");
+    const removeImageBtn = document.getElementById("remove-image-btn");
+    const uploadLabelLivro = document.querySelector('#capaManual .file-upload-label');
+    const formAnuncio = document.getElementById("formAnuncio");
+
+    const btnSelecionarCategorias =
+        document.getElementById("btnSelecionarCategorias");
+
+    const modalCategorias =
+        document.getElementById("modalCategorias");
+
+    const btnFecharCategorias =
+        document.getElementById("btnFecharCategorias");
+
+    const btnCancelarCategorias =
+        document.getElementById("btnCancelarCategorias");
+
+    const btnConfirmarCategorias =
+        document.getElementById("btnConfirmarCategorias");
+
+    const checkboxNovaCategoria =
+        document.getElementById("checkboxNovaCategoria");
+
+    const modalNovaCategoria =
+        document.getElementById("modalNovaCategoria");
+
+    const novaCategoria =
+        document.getElementById("novaCategoria");
+
+    const btnCancelarNovaCategoria =
+        document.getElementById("btnCancelarNovaCategoria");
+
+    const btnAdicionarNovaCategoria =
+        document.getElementById("btnAdicionarNovaCategoria");
+
+    const listaCategorias =
+        document.getElementById("listaCategorias");
+
+    const categoriasSelecionadas =
+        document.getElementById("categoriasSelecionadas");
+
+    let categoriasConfirmadas = [];
+
+    btnSelecionarCategorias.addEventListener("click", function () {
+
+        restaurarCheckboxesConfirmados();
+
+        modalCategorias.style.display = "flex";
+    });
+
+    btnCancelarCategorias.addEventListener("click", fecharModalCategorias);
+    btnFecharCategorias.addEventListener("click", fecharModalCategorias);
+
+    checkboxNovaCategoria.addEventListener("change", function () {
+
+        if (!this.checked) {
+            return;
+        }
+
+        novaCategoria.value = "";
+
+        modalNovaCategoria.style.display = "flex";
+
+        novaCategoria.focus();
+    });
+
+    btnCancelarNovaCategoria.addEventListener("click", function () {
+
+        novaCategoria.value = "";
+
+        checkboxNovaCategoria.checked = false;
+
+        modalNovaCategoria.style.display = "none";
+    });
+
+    btnAdicionarNovaCategoria.addEventListener("click", function () {
+
+        const nome = novaCategoria.value.trim();
+
+        if (nome.length === 0) {
+            window.alert("Informe o nome da categoria.");
+            return;
+        }
+
+        const checkboxExistente =
+            encontrarCategoria(nome);
+
+        if (checkboxExistente) {
+
+            checkboxExistente.checked = true;
+
+        } else {
+
+            adicionarNovaCategoriaAoModal(nome);
+        }
+
+        novaCategoria.value = "";
+
+        checkboxNovaCategoria.checked = false;
+
+        modalNovaCategoria.style.display = "none";
+    });
+
+    btnConfirmarCategorias.addEventListener("click", function () {
+
+        categoriasConfirmadas = [
+            ...document.querySelectorAll(
+                ".categoria-checkbox:checked"
+            )
+        ].map(checkbox => checkbox.value);
+
+        atualizarCategoriasSelecionadas();
+
+        modalCategorias.style.display = "none";
+    });
+
+    function encontrarCategoria(nome) {
+
+        return [
+            ...document.querySelectorAll(".categoria-checkbox")
+        ].find(checkbox =>
+            checkbox.value.localeCompare(
+                nome,
+                undefined,
+                {
+                    sensitivity: "base"
+                }
+            ) === 0
+        );
+    }
+
+    function restaurarCheckboxesConfirmados() {
+
+        document
+            .querySelectorAll(".categoria-checkbox")
+            .forEach(checkbox => {
+
+                checkbox.checked =
+                    categoriasConfirmadas.includes(
+                        checkbox.value
+                    );
+            });
+    }
+
+    function adicionarNovaCategoriaAoModal(nome) {
+
+        const label = document.createElement("label");
+        label.className = "categoria-opcao";
+        label.dataset.novaCategoria = "true";
+
+        const checkbox = document.createElement("input");
+
+        checkbox.type = "checkbox";
+        checkbox.className = "categoria-checkbox";
+        checkbox.value = nome;
+        checkbox.checked = true;
+
+        const span = document.createElement("span");
+        span.textContent = nome;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+
+        listaCategorias.insertBefore(
+            label,
+            document.querySelector(".outra-categoria")
+        );
+    }
+
+    function atualizarCategoriasSelecionadas() {
+
+        categoriasSelecionadas.innerHTML = "";
+
+        categoriasConfirmadas.forEach(nome => {
+
+            const tag = document.createElement("span");
+            tag.className = "categoria-tag";
+
+            const texto = document.createElement("span");
+            texto.textContent = nome;
+
+            const remover = document.createElement("button");
+
+            remover.type = "button";
+            remover.innerHTML = "&times;";
+            remover.setAttribute(
+                "aria-label",
+                `Remover ${nome}`
+            );
+
+            remover.addEventListener("click", function () {
+
+                categoriasConfirmadas =
+                    categoriasConfirmadas.filter(
+                        categoria => categoria !== nome
+                    );
+
+                const checkbox = encontrarCategoria(nome);
+
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+
+                atualizarCategoriasSelecionadas();
+            });
+
+            tag.appendChild(texto);
+            tag.appendChild(remover);
+
+            categoriasSelecionadas.appendChild(tag);
+        });
+
+        criarInputsCategoriasSelecionadas();
+    }
+
+    function fecharModalCategorias() {
+
+        document
+            .querySelectorAll(
+                '.categoria-opcao[data-nova-categoria="true"]'
+            )
+            .forEach(label => {
+
+                const checkbox =
+                    label.querySelector(".categoria-checkbox");
+
+                if (
+                    !categoriasConfirmadas.includes(
+                        checkbox.value
+                    )
+                ) {
+                    label.remove();
+                }
+            });
+
+        restaurarCheckboxesConfirmados();
+
+        checkboxNovaCategoria.checked = false;
+
+        modalCategorias.style.display = "none";
+    }
+
+
+
+
+    formAnuncio.addEventListener("submit", function (event) {
+
+        if (modoCadastro.value !== "MANUAL") {
+            return;
+        }
+
+        criarInputsManuais(
+            "autoresManual",
+            "autoresManuaisHidden",
+            "autores"
+        );
+
+        criarInputsCategoriasSelecionadas();
+
+        const titulo = document.getElementById("titulo").value.trim();
+
+        if (titulo.length === 0) {
+            event.preventDefault();
+            window.alert("Informe o título do livro.");
+            return;
+        }
+
+        if (!inputImagem.files || inputImagem.files.length === 0) {
+            event.preventDefault();
+            window.alert("Selecione uma capa para o livro.");
+            return;
+        }
+
+        if (document.getElementById("autoresManuaisHidden").children.length === 0) {
+            event.preventDefault();
+            window.alert("Informe pelo menos um autor.");
+            return;
+        }
+
+        if (document.getElementById("categoriasManuaisHidden").children.length === 0) {
+            event.preventDefault();
+            window.alert("Selecione pelo menos uma categoria.");
+            return;
+        }
+    });
+
+
+
+    inputImagem.addEventListener("change", function () {
+
+        const arquivo = this.files[0];
+
+        if (arquivo) {
+            exibirPreviewCapa(arquivo);
+        }
+    });
+
+    removeImageBtn.addEventListener("click", function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        inputImagem.value = "";
+
+        imagePreviewLivro.src = "#";
+
+        previewContainerLivro.style.display = "none";
+        uploadPromptLivro.style.display = "block";
+    });
+
+    ["dragenter", "dragover"].forEach(evento => {
+
+        uploadLabelLivro.addEventListener(evento, function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            uploadLabelLivro.classList.add("is-dragover");
+        });
+    });
+
+    ["dragleave", "drop"].forEach(evento => {
+
+        uploadLabelLivro.addEventListener(evento, function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            uploadLabelLivro.classList.remove("is-dragover");
+        });
+    });
+
+    uploadLabelLivro.addEventListener("drop", function (event) {
+
+        const arquivos = event.dataTransfer.files;
+
+        if (!arquivos || arquivos.length === 0) {
+            return;
+        }
+
+        const arquivo = arquivos[0];
+
+        if (!arquivoImagemValido(arquivo)) {
+            window.alert("Selecione um arquivo de imagem.");
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(arquivo);
+
+        inputImagem.files = dataTransfer.files;
+
+        exibirPreviewCapa(arquivo);
+    });
+
+
+
+    function criarInputsCategoriasSelecionadas() {
+
+        const container =
+            document.getElementById(
+                "categoriasManuaisHidden"
+            );
+
+        container.innerHTML = "";
+
+        categoriasConfirmadas.forEach(
+            (categoria, indice) => {
+
+                const hiddenInput =
+                    document.createElement("input");
+
+                hiddenInput.type = "hidden";
+                hiddenInput.name =
+                    `categorias[${indice}]`;
+
+                hiddenInput.value = categoria;
+
+                container.appendChild(hiddenInput);
+            }
+        );
+    }
+
+    function arquivoImagemValido(arquivo) {
+
+        const tiposPermitidos = [
+            "image/jpeg",
+            "image/png",
+            "image/gif"
+        ];
+
+        return tiposPermitidos.includes(arquivo.type);
+    }
+
+    function criarInputsManuais(inputId, containerId, nomeCampo) {
+
+        const input = document.getElementById(inputId);
+        const container = document.getElementById(containerId);
+
+        container.innerHTML = "";
+
+        const valores = input.value
+            .split(",")
+            .map(valor => valor.trim())
+            .filter(valor => valor.length > 0);
+
+        valores.forEach((valor, indice) => {
+
+            const hiddenInput = document.createElement("input");
+
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `${nomeCampo}[${indice}]`;
+            hiddenInput.value = valor;
+
+            container.appendChild(hiddenInput);
+        });
+    }
+
+    function exibirPreviewCapa(arquivo) {
+
+        if (!arquivoImagemValido(arquivo)) {
+            window.alert("Selecione um arquivo de imagem.");
+            inputImagem.value = "";
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            imagePreviewLivro.src = event.target.result;
+
+            uploadPromptLivro.style.display = "none";
+            previewContainerLivro.style.display = "block";
+        };
+
+        reader.readAsDataURL(arquivo);
+    }
+
+    modoAutomatico.addEventListener("click", selecionarModoAutomatico);
+    modoManual.addEventListener("click", selecionarModoManual);
+
+    function selecionarModoAutomatico() {
+        document.getElementById("autoresManual").value = "";
+        limparCategoriasManuais();
+
+        document.getElementById("autoresManuaisHidden").innerHTML = "";
+        document.getElementById("categoriasManuaisHidden").innerHTML = "";
+
+        inputImagem.value = "";
+        imagePreviewLivro.src = "#";
+        previewContainerLivro.style.display = "none";
+        uploadPromptLivro.style.display = "block";
+
+        modoCadastro.value = "GOOGLE_BOOKS";
+
+        modoAutomatico.classList.add("selecionado");
+        modoManual.classList.remove("selecionado");
+
+        limparDadosLivro();
+
+        buscaAutomatica.style.display = "block";
+        camposAnuncio.style.display = "none";
+
+        document.getElementById("capaAutomatica").style.display = "block";
+        document.getElementById("capaManual").style.display = "none";
+
+        document.getElementById("titulo").readOnly = true;
+
+        document.getElementById("dataPublicacaoContainer").style.display = "block";
+
+        document.getElementById("autoresAutomaticos").style.display = "block";
+        document.getElementById("autoresManuais").style.display = "none";
+
+        document.getElementById("categoriasAutomaticas").style.display = "block";
+        document.getElementById("categoriasManuais").style.display = "none";
+    }
+
+    function selecionarModoManual() {
+
+        modoCadastro.value = "MANUAL";
+
+        modoManual.classList.add("selecionado");
+        modoAutomatico.classList.remove("selecionado");
+
+        buscaAutomatica.style.display = "none";
+
+        limparDadosLivro();
+
+        camposAnuncio.style.display = "block";
+
+        document.getElementById("capaAutomatica").style.display = "none";
+        document.getElementById("capaManual").style.display = "block";
+
+        document.getElementById("titulo").readOnly = false;
+
+        document.getElementById("dataPublicacaoContainer").style.display = "none";
+
+        document.getElementById("autoresAutomaticos").style.display = "none";
+        document.getElementById("autoresManuais").style.display = "block";
+
+        document.getElementById("categoriasAutomaticas").style.display = "none";
+        document.getElementById("categoriasManuais").style.display = "block";
+    }
+
+    function limparCategoriasManuais() {
+
+        categoriasConfirmadas = [];
+
+        document
+            .querySelectorAll(".categoria-checkbox")
+            .forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+        document
+            .querySelectorAll(
+                '.categoria-opcao[data-nova-categoria="true"]'
+            )
+            .forEach(label => label.remove());
+
+        checkboxNovaCategoria.checked = false;
+
+        categoriasSelecionadas.innerHTML = "";
+
+        document.getElementById(
+            "categoriasManuaisHidden"
+        ).innerHTML = "";
+
+        novaCategoria.value = "";
+
+        modalCategorias.style.display = "none";
+        modalNovaCategoria.style.display = "none";
+    }
 
 
     document.addEventListener("click", function (event) {
@@ -162,7 +1034,7 @@
 
 
     botaoBuscar.addEventListener("click", function (event) {
-        event.stopPropagation(); // 🔥 impede o clique de propagar
+        event.stopPropagation(); // impede o clique de propagar
     });
 
     function buscarLivro() {
@@ -263,7 +1135,28 @@
             categoriasDiv.appendChild(span);
             categoriasDiv.appendChild(hiddenInput);
         });
+
+        camposAnuncio.style.display = "block";
     }
+
+    function limparDadosLivro() {
+
+        document.getElementById("titulo").value = "";
+        document.getElementById("dataPublicacao").value = "";
+        document.getElementById("lingua").value = "";
+        document.getElementById("googleBooksId").value = "";
+        document.getElementById("urlImagem").value = "";
+
+        const capaLivro = document.getElementById("capaLivro");
+        capaLivro.src = "";
+        capaLivro.style.display = "none";
+
+        document.getElementById("autores").innerHTML = "";
+        document.getElementById("categorias").innerHTML = "";
+
+        resultados.innerHTML = "";
+    }
+
 
 </script>
 <script type="module" src="/js/logout.js"></script>

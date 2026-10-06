@@ -130,6 +130,470 @@
     padding: 8px 10px;
 }
 
+/* --- ESCOLHA DO MODO DE CADASTRO --- */
+
+.modo-cadastro-container {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 30px auto;
+}
+
+.modo-cadastro-card {
+    width: 280px;
+    min-height: 180px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background-color: var(--bg-card, #ffffff);
+    border: 2px solid transparent;
+    border-radius: var(--radius-xl, 12px);
+
+    box-shadow: var(--shadow-card, 0 0 10px rgba(0, 0, 0, 0.1));
+
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.modo-cadastro-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover, 0 0 10px rgba(0, 0, 0, 0.2));
+}
+
+.modo-cadastro-card.selecionado {
+    border-color: var(--color-primary, #007bff);
+    box-shadow: var(--shadow-card-hover, 0 0 10px rgba(0, 0, 0, 0.2));
+}
+
+.modo-cadastro-card i {
+    font-size: 34px;
+    margin-bottom: 15px;
+}
+
+.modo-cadastro-card h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.modo-cadastro-card p {
+    margin: 0;
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@media (max-width: 650px) {
+
+    .modo-cadastro-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .modo-cadastro-card {
+        width: 100%;
+        max-width: 320px;
+        min-height: 150px;
+    }
+}
+
+/* --- FORMULÁRIO DO ANÚNCIO --- */
+
+.livro-detalhes {
+    width: 100%;
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+#capaAutomatica {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+#capaAutomatica .label-principal {
+    display: block;
+    margin-bottom: 12px;
+}
+
+#capaAutomatica .capaLivro {
+    width: auto;
+    max-width: 180px;
+    height: 260px;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.livro-detalhes > label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+#dataPublicacaoContainer,
+#autoresAutomaticos,
+#autoresManuais,
+#categoriasAutomaticas,
+#categoriasManuais {
+    margin-top: 20px;
+}
+
+#dataPublicacaoContainer > label,
+#autoresAutomaticos > label,
+#autoresManuais > label,
+#categoriasAutomaticas > label,
+#categoriasManuais > label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+#descricao {
+    display: block;
+    width: 100%;
+    min-height: 100px;
+    margin: 0 auto;
+    padding: 12px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+#tipoNegociacao {
+    display: block;
+    width: 100%;
+    height: 40px;
+    margin: 0 auto;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.btn-criar {
+    margin-top: 25px;
+}
+
+.livro-detalhes > input[type="text"],
+#dataPublicacaoContainer input,
+#autoresManuais input,
+#categoriasManuais input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* =========================================
+   SELETOR DE CATEGORIAS - ANÚNCIO MANUAL
+========================================= */
+
+/* Categorias escolhidas exibidas no formulário */
+.categorias-selecionadas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0 15px;
+}
+
+.categoria-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    background-color: #f0e8ff;
+    border: 1px solid #d4b8ff;
+    border-radius: 20px;
+
+    font-size: 14px;
+}
+
+.categoria-tag button {
+    margin: 0;
+    padding: 0;
+
+    width: 18px;
+    height: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: none;
+    border: none;
+
+    color: #666666;
+    text-shadow: none;
+
+    font-size: 16px;
+    cursor: pointer;
+}
+
+
+/* Botão que abre o seletor */
+.btn-selecionar-categorias {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin: 10px auto 0;
+}
+
+
+/* Fundo escurecido do modal */
+.modal-categorias {
+    display: none;
+
+    position: fixed;
+    z-index: 1000;
+
+    inset: 0;
+
+    background-color: rgba(0, 0, 0, 0.45);
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+/* Caixa principal */
+.modal-categorias-conteudo {
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: #ffffff;
+    border-radius: 12px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+}
+
+
+/* Cabeçalho */
+.modal-categorias-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.modal-categorias-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.paganunciar .modal-fechar {
+    margin: 0;
+    padding: 4px;
+
+    background: none;
+
+    color: #555555;
+    text-shadow: none;
+
+    font-size: 22px;
+}
+
+
+/* Lista rolável */
+.lista-categorias-modal {
+    overflow-y: auto;
+
+    padding: 10px 20px;
+
+    text-align: left;
+}
+
+
+/* Cada categoria */
+.categoria-opcao {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 10px 4px;
+
+    box-sizing: border-box;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.categoria-opcao:hover {
+    background-color: #f8f8f8;
+}
+
+
+/*
+ Impede .paganunciar input de transformar
+ os checkboxes em inputs gigantes.
+*/
+.paganunciar .categoria-opcao input[type="checkbox"] {
+    appearance: auto;
+
+    width: 18px;
+    height: 18px;
+
+    min-width: 18px;
+
+    margin: 0;
+    padding: 0;
+
+    cursor: pointer;
+}
+
+.categoria-opcao span {
+    cursor: pointer;
+}
+
+
+/* Rodapé */
+.modal-categorias-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    padding: 15px 20px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+.paganunciar .modal-categorias-footer button {
+    margin: 0;
+}
+
+
+/* Opção de nova categoria */
+.outra-categoria {
+    margin-top: 8px;
+
+    font-weight: bold;
+
+    border-bottom: none;
+}
+
+
+/* =========================================
+   MODAL - NOVA CATEGORIA
+========================================= */
+
+.modal-nova-categoria {
+    display: none;
+
+    position: fixed;
+    z-index: 1100;
+
+    inset: 0;
+
+    background-color: rgba(0, 0, 0, 0.45);
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.modal-nova-categoria-conteudo {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 22px;
+
+    box-sizing: border-box;
+
+    background-color: #ffffff;
+    border-radius: 12px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.modal-nova-categoria-conteudo h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.paganunciar .modal-nova-categoria-conteudo input {
+    width: 100%;
+    height: 40px;
+
+    margin: 0;
+
+    box-sizing: border-box;
+}
+
+.modal-nova-categoria-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.paganunciar .modal-nova-categoria-acoes button {
+    margin: 0;
+}
+
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .modal-categorias-conteudo {
+        max-height: 90vh;
+    }
+
+    .modal-categorias-header,
+    .modal-categorias-footer {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .lista-categorias-modal {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .modal-nova-categoria-conteudo {
+        max-width: 100%;
+    }
+}
+
 /* --- 3. PÁGINA MEUS LIVROS & GALERIA --- */
 #exibirLivros {
     display: flex;

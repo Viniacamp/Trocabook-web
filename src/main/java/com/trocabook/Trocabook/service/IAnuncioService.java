@@ -6,7 +6,7 @@ import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import java.util.List;
 
 public interface IAnuncioService {
-    AnuncioDTO anunciar(String uidLivro, String uidUsuario, String tipoNegociacao);
+    AnuncioDTO anunciar(String uidLivro, String uidUsuario, String tipoNegociacao, String descricao);
 
 
     AnuncioDTO buscarPorUid(String uid);

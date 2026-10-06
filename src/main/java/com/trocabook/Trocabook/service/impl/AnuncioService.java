@@ -54,7 +54,8 @@ public class AnuncioService implements IAnuncioService {
     public AnuncioDTO anunciar(
             String uidLivro,
             String uidUsuario,
-            String tipoNegociacao
+            String tipoNegociacao,
+            String descricao
     ) {
         UsuarioOutput usuarioFirebase =
                 usuarioService.buscarPorUid(uidUsuario);
@@ -69,6 +70,10 @@ public class AnuncioService implements IAnuncioService {
             return null;
         }
 
+        if (descricao == null || descricao.isBlank()) {
+            descricao = "Anunciante não informou uma descrição.";
+        }
+
         Anuncio anuncio = new Anuncio(
                 UUID.randomUUID().toString(),
                 uidUsuario,
@@ -79,7 +84,8 @@ public class AnuncioService implements IAnuncioService {
                 usuarioFirebase.fotoPerfil(),
                 livro.getUrlImagem(),
                 livro.getIdsAutores(),
-                livro.getIdsCategorias()
+                livro.getIdsCategorias(),
+                descricao
         );
 
         anuncioRepository.salvar(anuncio);
@@ -242,6 +248,8 @@ public class AnuncioService implements IAnuncioService {
         if (anuncio == null) {
             return null;
         }
+
+        anuncio.setDescricao(anuncioDTO.descricao());
 
         anuncio.setTipoNegociacao(
                 Anuncio.TipoNegociacao.valueOf(

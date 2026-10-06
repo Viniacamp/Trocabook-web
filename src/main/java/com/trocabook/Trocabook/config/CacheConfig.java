@@ -37,13 +37,25 @@ public class CacheConfig {
                                 .build()
                 );
 
+        CaffeineCache categoriasCache =
+                new CaffeineCache(
+                        "categorias",
+                        Caffeine.newBuilder()
+                                .maximumSize(100)
+                                .expireAfterWrite(
+                                        Duration.ofMinutes(60)
+                                )
+                                .build()
+                );
+
         SimpleCacheManager cacheManager =
                 new SimpleCacheManager();
 
         cacheManager.setCaches(
                 List.of(
                         anunciosCache,
-                        recomendacoesCache
+                        recomendacoesCache,
+                        categoriasCache
                 )
         );
 

@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.service;
 
+import com.trocabook.Trocabook.model.Categoria;
 import com.trocabook.Trocabook.model.Livro;
 import com.trocabook.Trocabook.model.dto.LivroBuscaOutput;
 
@@ -53,4 +54,13 @@ public interface ILivroService {
      * @return lista de livros
      */
     List<Livro> buscarTodos();
+
+    Livro cadastrarManual(
+            String titulo,
+            List<String> autores,
+            List<String> categorias,
+            String urlImagem
+    );
+
+    List<Categoria> listarCategorias();
 }

@@ -11,9 +11,11 @@ public record AnunciarLivroRequest(
         String urlImagem,
         String lingua,
         List<String> categorias,
-        String tipoNegociacao
+        String tipoNegociacao,
+        String descricao,
+        String modoCadastro
 ) {
     public AnunciarLivroRequest() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 }

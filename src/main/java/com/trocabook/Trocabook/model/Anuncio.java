@@ -32,10 +32,12 @@ public class Anuncio implements Serializable {
 
     private List<String> categorias;
 
+    private String descricao;
+
     public Anuncio() {
     }
 
-    public Anuncio(String id, String uidUsuario, String uidLivro, String nomeUsuario, TipoNegociacao tipoNegociacao, String titulo, String fotoPerfil, String capa, List<String> autores, List<String> categorias) {
+    public Anuncio(String id, String uidUsuario, String uidLivro, String nomeUsuario, TipoNegociacao tipoNegociacao, String titulo, String fotoPerfil, String capa, List<String> autores, List<String> categorias, String descricao) {
         this.id = id;
         this.uidUsuario = uidUsuario;
         this.uidLivro = uidLivro;
@@ -47,6 +49,7 @@ public class Anuncio implements Serializable {
         this.capa = capa;
         this.autores = autores;
         this.categorias = categorias;
+        this.descricao = descricao;
     }
 
     public String getId() {
@@ -137,6 +140,14 @@ public class Anuncio implements Serializable {
         this.categorias = categorias;
     }
 
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
     public enum TipoNegociacao {
         TROCA, VENDA, AMBOS
     }
@@ -153,7 +164,8 @@ public class Anuncio implements Serializable {
                 this.fotoPerfil,
                 this.capa,
                 autores,
-                categorias
+                categorias,
+                this.descricao
         );
     }
 

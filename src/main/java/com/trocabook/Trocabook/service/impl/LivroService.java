@@ -11,6 +11,9 @@ import com.trocabook.Trocabook.repository.LivroRepository;
 import com.trocabook.Trocabook.service.feign.GoogleAPIBooksService;
 import com.trocabook.Trocabook.service.ILivroService;
 import com.trocabook.Trocabook.service.ITraducaoService;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class LivroService implements ILivroService {
     private final GoogleAPIBooksService googleAPIBooksService;
     private final ITraducaoService traducaoService;
     private final GoogleAPIBooksAdapter adapter;
+    private final CacheManager cacheManager;
 
     public LivroService(
             LivroRepository livroRepository,
@@ -31,7 +35,8 @@ public class LivroService implements ILivroService {
             CategoriaRepository categoriaRepository,
             GoogleAPIBooksService googleAPIBooksService,
             ITraducaoService traducaoService,
-            GoogleAPIBooksAdapter adapter
+            GoogleAPIBooksAdapter adapter,
+            CacheManager cacheManager
     ) {
         this.livroRepository = livroRepository;
         this.autorRepository = autorRepository;
@@ -39,6 +44,7 @@ public class LivroService implements ILivroService {
         this.googleAPIBooksService = googleAPIBooksService;
         this.traducaoService = traducaoService;
         this.adapter = adapter;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -72,60 +78,12 @@ public class LivroService implements ILivroService {
         /*
          * Obtém os IDs dos autores.
          */
-        List<String> idsAutores = livroTraduzido.autores()
-                .stream()
-                .map(nome -> {
-
-                    var autorExistente =
-                            autorRepository.buscarPorNome(nome);
-
-                    if (autorExistente != null) {
-                        return autorExistente.getId();
-                    }
-
-                    Autor novoAutor =
-                            new Autor();
-
-                    novoAutor.setId(
-                            java.util.UUID.randomUUID().toString()
-                    );
-
-                    novoAutor.setNome(nome);
-
-                    autorRepository.salvar(novoAutor);
-
-                    return novoAutor.getId();
-                })
-                .toList();
+        List<String> idsAutores = obterIdsAutores(livroTraduzido.autores());
 
         /*
          * Obtém os IDs das categorias.
          */
-        List<String> idsCategorias = livroTraduzido.categorias()
-                .stream()
-                .map(nome -> {
-
-                    var categoriaExistente =
-                            categoriaRepository.buscarPorNome(nome);
-
-                    if (categoriaExistente != null) {
-                        return categoriaExistente.getId();
-                    }
-
-                    Categoria novaCategoria =
-                            new Categoria();
-
-                    novaCategoria.setId(
-                            java.util.UUID.randomUUID().toString()
-                    );
-
-                    novaCategoria.setNome(nome);
-
-                    categoriaRepository.salvar(novaCategoria);
-
-                    return novaCategoria.getId();
-                })
-                .toList();
+        List<String> idsCategorias = obterIdsCategorias(livroTraduzido.categorias());
 
         /*
          * Converte o DTO de busca traduzido para a entidade Firebase.
@@ -168,6 +126,37 @@ public class LivroService implements ILivroService {
     @Override
     public List<Livro> buscarTodos() {
         return livroRepository.buscarTodos();
+    }
+
+    @Override
+    public Livro cadastrarManual(
+            String titulo,
+            List<String> autores,
+            List<String> categorias,
+            String urlImagem
+    ) {
+
+        List<String> idsAutores =
+                obterIdsAutores(autores);
+
+        List<String> idsCategorias =
+                obterIdsCategorias(categorias);
+
+        Livro livro = new Livro();
+
+        livro.setId(
+                java.util.UUID.randomUUID().toString()
+        );
+
+        livro.setGoogleBooksId(null);
+        livro.setTitulo(titulo);
+        livro.setIdsAutores(idsAutores);
+        livro.setIdsCategorias(idsCategorias);
+        livro.setPublicadora(null);
+        livro.setDataPublicacao(null);
+        livro.setUrlImagem(urlImagem);
+
+        return livroRepository.salvar(livro);
     }
 
     private LivroBuscaOutput traduzirLivro(LivroBuscaOutput livro) {
@@ -225,6 +214,79 @@ public class LivroService implements ILivroService {
                 livro.lingua(),
                 categoriasTraduzidas
         );
+    }
+
+    @Override
+    @Cacheable(value = "categorias", key = "'todas'")
+    public List<Categoria> listarCategorias() {
+        return categoriaRepository.buscarTodos();
+    }
+
+    private List<String> obterIdsAutores(List<String> autores) {
+
+        return autores.stream()
+                .map(String::trim)
+                .filter(nome -> !nome.isBlank())
+                .distinct()
+                .map(nome -> {
+
+                    Autor autorExistente =
+                            autorRepository.buscarPorNome(nome);
+
+                    if (autorExistente != null) {
+                        return autorExistente.getId();
+                    }
+
+                    Autor novoAutor = new Autor();
+
+                    novoAutor.setId(
+                            java.util.UUID.randomUUID().toString()
+                    );
+
+                    novoAutor.setNome(nome);
+
+                    autorRepository.salvar(novoAutor);
+
+                    return novoAutor.getId();
+                })
+                .toList();
+    }
+
+    private List<String> obterIdsCategorias(List<String> categorias) {
+
+        return categorias.stream()
+                .map(String::trim)
+                .filter(nome -> !nome.isBlank())
+                .distinct()
+                .map(nome -> {
+
+                    Categoria categoriaExistente =
+                            categoriaRepository.buscarPorNome(nome);
+
+                    if (categoriaExistente != null) {
+                        return categoriaExistente.getId();
+                    }
+
+                    Categoria novaCategoria =
+                            new Categoria();
+
+                    novaCategoria.setId(
+                            java.util.UUID.randomUUID().toString()
+                    );
+
+                    novaCategoria.setNome(nome);
+
+                    categoriaRepository.salvar(novaCategoria);
+
+                    Cache cache = cacheManager.getCache("categorias");
+
+                    if (cache != null) {
+                        cache.evict("todas");
+                    }
+
+                    return novaCategoria.getId();
+                })
+                .toList();
     }
 
 
