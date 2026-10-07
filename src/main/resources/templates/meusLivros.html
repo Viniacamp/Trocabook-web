@@ -86,11 +86,14 @@
         <div class="livros-grid"
              th:if="${anuncios != null && !anuncios.isEmpty()}">
 
-            <div th:each="anuncio : ${anuncios}">
-                <img th:src="${anuncio.capa}"
-                     class="capa-livro"
-                     alt="Capa do livro"/>
-            </div>
+
+                <div th:each="anuncio : ${anuncios}">
+                    <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                        <img th:src="${anuncio.capa}"
+                             class="capa-livro"
+                             alt="Capa do livro"/>
+                    </a>
+                </div>
 
         </div>
 

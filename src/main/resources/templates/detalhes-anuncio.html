@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -12,9 +13,59 @@
     </title>
 
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
+<div class="container">
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho"><tr>
+                <th id="cabecalhoelementos">
+                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar">
+                        <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
+                    </div>
+
+                    <th:block sec:authorize="isAuthenticated()">
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img th:src="${usuarioLogado.fotoPerfil}" class="user-menu-icon">
+                                <span>Olá, <span th:text="${usuarioLogado.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span class="arrow">▼</span>
+                            </button>
+
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
+                    </th:block>
+                </th></tr>
+            </table>
+        </div>
+    </header>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</div>
 
 <main class="detalhes-anuncio-container">
 
@@ -29,6 +80,17 @@
         <!-- INFORMAÇÕES -->
         <div class="detalhes-anuncio-info">
 
+            <button type="button"
+                    id="btnEditarAnuncio"
+                    class="detalhes-btn-editar"
+                    th:if="${proprioAnuncio}"
+                    title="Editar anúncio"
+                    aria-label="Editar anúncio">
+
+                <i class="fas fa-pen"></i>
+
+            </button>
+
             <span class="detalhes-anuncio-label">
                 Livro anunciado
             </span>
@@ -37,18 +99,109 @@
                 Título do livro
             </h1>
 
-            <!-- TIPO DE NEGOCIAÇÃO -->
-            <div class="detalhes-anuncio-tags">
+            <!-- VISUALIZAÇÃO DO ANÚNCIO -->
+            <div id="visualizacaoAnuncio">
 
-                        <span class="detalhes-tag"
-                              th:text="${anuncio.tipoNegociacao() == 'AMBOS'
-                              ? 'Troca e Venda'
-                              : #strings.capitalize(#strings.toLowerCase(anuncio.tipoNegociacao()))}">
-                            Tipo de negociação
-                        </span>
+                <!-- TIPO DE NEGOCIAÇÃO -->
+                <div class="detalhes-anuncio-tags">
+
+                    <span class="detalhes-tag"
+                          th:text="${anuncio.tipoNegociacao() == 'AMBOS'
+                          ? 'Troca e Venda'
+                          : #strings.capitalize(
+                                #strings.toLowerCase(anuncio.tipoNegociacao())
+                            )}">
+                        Tipo de negociação
+                    </span>
+
+                </div>
+
+                <!-- DESCRIÇÃO -->
+                <div class="detalhes-anuncio-descricao">
+
+                    <span class="detalhes-anuncio-label">
+                        Descrição
+                    </span>
+
+                    <p th:text="${anuncio.descricao()}">
+                        Descrição do anúncio
+                    </p>
+
+                </div>
 
             </div>
 
+
+            <!-- EDIÇÃO DO ANÚNCIO -->
+            <form th:if="${proprioAnuncio}"
+                  th:action="@{/anuncios/{id}/editar(id=${anuncio.id()})}"
+                  method="post"
+                  id="formEditarAnuncio"
+                  class="detalhes-edicao"
+                  style="display: none;">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <div class="detalhes-edicao-campo">
+
+                    <label for="tipoNegociacaoEdicao">
+                        Tipo de negociação
+                    </label>
+
+                    <select id="tipoNegociacaoEdicao"
+                            name="tipoNegociacao"
+                            required>
+
+                        <option value="TROCA"
+                                th:selected="${anuncio.tipoNegociacao() == 'TROCA'}">
+                            Troca
+                        </option>
+
+                        <option value="VENDA"
+                                th:selected="${anuncio.tipoNegociacao() == 'VENDA'}">
+                            Venda
+                        </option>
+
+                        <option value="AMBOS"
+                                th:selected="${anuncio.tipoNegociacao() == 'AMBOS'}">
+                            Troca e Venda
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="detalhes-edicao-campo">
+
+                    <label for="descricaoEdicao">
+                        Descrição
+                    </label>
+
+                    <textarea id="descricaoEdicao"
+                              name="descricao"
+                              maxlength="1000"
+                              th:text="${anuncio.descricao()}"></textarea>
+
+                </div>
+
+                <div class="detalhes-edicao-acoes">
+
+                    <button type="button"
+                            id="btnCancelarEdicao"
+                            class="detalhes-btn-cancelar">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="detalhes-btn-salvar">
+                        Salvar
+                    </button>
+
+                </div>
+
+            </form>
             <!-- ANUNCIANTE -->
             <div class="detalhes-anunciante">
 
@@ -82,6 +235,7 @@
                 </a>
 
                 <span th:if="${proprioAnuncio}"
+                      id="mensagemProprioAnuncio"
                       class="detalhes-proprio-anuncio">
                     Este anúncio é seu
                 </span>
@@ -93,6 +247,54 @@
     </section>
 
 </main>
+<script src="/js/pesquisa.js"></script>
+<script type="module" src="/js/logout.js"></script>
+<script src="/js/menu-logado.js"></script>
+<script th:if="${proprioAnuncio}">
+    const btnEditarAnuncio =
+        document.getElementById("btnEditarAnuncio");
 
+    const btnCancelarEdicao =
+        document.getElementById("btnCancelarEdicao");
+
+    const visualizacaoAnuncio =
+        document.getElementById("visualizacaoAnuncio");
+
+    const formEditarAnuncio =
+        document.getElementById("formEditarAnuncio");
+
+    const mensagemProprioAnuncio =
+        document.getElementById("mensagemProprioAnuncio");
+
+    btnEditarAnuncio.addEventListener("click", function () {
+
+        visualizacaoAnuncio.style.display = "none";
+        formEditarAnuncio.style.display = "block";
+
+        btnEditarAnuncio.style.display = "none";
+
+        mensagemProprioAnuncio.style.display = "none";
+
+        document
+            .querySelector(".detalhes-anuncio-info")
+            .classList.add("em-edicao");
+    });
+
+    btnCancelarEdicao.addEventListener("click", function () {
+
+        formEditarAnuncio.reset();
+
+        formEditarAnuncio.style.display = "none";
+        visualizacaoAnuncio.style.display = "block";
+
+        btnEditarAnuncio.style.display = "flex";
+
+        mensagemProprioAnuncio.style.display = "flex";
+
+        document
+            .querySelector(".detalhes-anuncio-info")
+            .classList.remove("em-edicao");
+    });
+</script>
 </body>
 </html>

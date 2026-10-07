@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.controllers;
 
+import com.trocabook.Trocabook.controllers.request.AtualizarAnuncioRequest;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
@@ -9,7 +10,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class DetalhesAnuncioController {
@@ -59,5 +62,32 @@ public class DetalhesAnuncioController {
         model.addAttribute("proprioAnuncio", proprioAnuncio);
 
         return "detalhes-anuncio";
+    }
+
+    @PostMapping("/anuncios/{id}/editar")
+    public String editar(
+            @PathVariable String id,
+            @ModelAttribute AtualizarAnuncioRequest request,
+            HttpSession sessao
+    ) {
+        UsuarioOutput usuarioLogado =
+                usuarioAutenticadoService.getUsuarioOutput(sessao);
+
+        if (usuarioLogado == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            anuncioService.atualizar(
+                    id,
+                    usuarioLogado.id(),
+                    request.descricao(),
+                    request.tipoNegociacao()
+            );
+        } catch (IllegalArgumentException e) {
+            return "redirect:/anuncios/" + id;
+        }
+
+        return "redirect:/anuncios/" + id;
     }
 }

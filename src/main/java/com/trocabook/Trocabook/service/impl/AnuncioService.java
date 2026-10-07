@@ -239,23 +239,43 @@ public class AnuncioService implements IAnuncioService {
     }
 
     @Override
-    public AnuncioDTO atualizar(AnuncioDTO anuncioDTO) {
+    public AnuncioDTO atualizar(
+            String uidAnuncio,
+            String uidUsuario,
+            String descricao,
+            String tipoNegociacao
+    ) {
         Anuncio anuncio =
-                anuncioRepository.buscarPorUid(
-                        anuncioDTO.id()
-                );
+                anuncioRepository.buscarPorUid(uidAnuncio);
 
         if (anuncio == null) {
             return null;
         }
 
-        anuncio.setDescricao(anuncioDTO.descricao());
+        if (!anuncio.getUidUsuario().equals(uidUsuario)) {
+            throw new IllegalArgumentException(
+                    "Usuário não possui permissão para editar este anúncio."
+            );
+        }
 
-        anuncio.setTipoNegociacao(
-                Anuncio.TipoNegociacao.valueOf(
-                        anuncioDTO.tipoNegociacao()
-                )
-        );
+        if (descricao == null || descricao.isBlank()) {
+            descricao = "Anunciante não informou uma descrição.";
+        }
+
+        Anuncio.TipoNegociacao tipo;
+
+        try {
+            tipo = Anuncio.TipoNegociacao.valueOf(
+                    tipoNegociacao.trim().toUpperCase(Locale.ROOT)
+            );
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new IllegalArgumentException(
+                    "Tipo de negociação inválido."
+            );
+        }
+
+        anuncio.setDescricao(descricao);
+        anuncio.setTipoNegociacao(tipo);
 
         anuncioRepository.atualizar(anuncio);
 

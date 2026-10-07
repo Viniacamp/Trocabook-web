@@ -21,7 +21,12 @@ public interface IAnuncioService {
 
     List<AnuncioDTO> buscarPorTitulo(String titulo);
 
-    AnuncioDTO atualizar(AnuncioDTO anuncioDTO);
+    AnuncioDTO atualizar(
+            String uidAnuncio,
+            String uidUsuario,
+            String descricao,
+            String tipoNegociacao
+    );
 
     void deletar(String uid);
 
