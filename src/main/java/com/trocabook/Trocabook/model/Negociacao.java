@@ -31,22 +31,31 @@ public class Negociacao implements Serializable {
 
     private String capa;
 
+    private StatusNegociacao status;
+
+    private boolean confirmacaoAnunciante;
+
+    private boolean confirmacaoComprador;
+
     public Negociacao() {
     }
 
-    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, String dataNegociacao, TipoNegociacao tipoNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa) {
+    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, String dataNegociacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador) {
         this.id = id;
         this.usuarioAnuncianteId = usuarioAnuncianteId;
         this.usuarioCompradorId = usuarioCompradorId;
         this.anuncioId = anuncioId;
         this.dataNegociacao = dataNegociacao;
         this.tipoNegociacao = tipoNegociacao;
+        this.status = statusNegociacao;
         this.nmAnunciante = nmAnunciante;
         this.fotoPerfilAnunciante = fotoPerfilAnunciante;
         this.nmComprador = nmComprador;
         this.fotoPerfilComprador = fotoPerfilComprador;
         this.titulo = titulo;
         this.capa = capa;
+        this.confirmacaoAnunciante = confirmacaoAnunciante;
+        this.confirmacaoComprador = confirmacaoComprador;
     }
 
     public String getId() {
@@ -145,11 +154,43 @@ public class Negociacao implements Serializable {
         this.capa = capa;
     }
 
+    public boolean isConfirmacaoAnunciante() {
+        return confirmacaoAnunciante;
+    }
+
+    public void setConfirmacaoAnunciante(boolean confirmacaoAnunciante) {
+        this.confirmacaoAnunciante = confirmacaoAnunciante;
+    }
+
+    public boolean isConfirmacaoComprador() {
+        return confirmacaoComprador;
+    }
+
+    public void setConfirmacaoComprador(boolean confirmacaoComprador) {
+        this.confirmacaoComprador = confirmacaoComprador;
+    }
+
+    public StatusNegociacao getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusNegociacao status) {
+        this.status = status;
+    }
+
+    public enum StatusNegociacao {
+        PENDENTE,
+        EM_ANDAMENTO,
+        RECUSADA,
+        CANCELADA,
+        FINALIZADA
+    }
+
     public enum TipoNegociacao {
         TROCA, VENDA, AMBOS
     }
 
-    public static Negociacao from(NegociacaoDTO negociacaoDTO){
+    public static Negociacao from(NegociacaoDTO negociacaoDTO) {
         return new Negociacao(
                 negociacaoDTO.id(),
                 negociacaoDTO.usuarioAnuncianteId(),
@@ -157,17 +198,19 @@ public class Negociacao implements Serializable {
                 negociacaoDTO.anuncioId(),
                 negociacaoDTO.dataNegociacao().toString(),
                 TipoNegociacao.valueOf(negociacaoDTO.tipoNegociacao()),
+                StatusNegociacao.valueOf(negociacaoDTO.status()),
                 negociacaoDTO.nmAnunciante(),
                 negociacaoDTO.fotoPerfilAnunciante(),
                 negociacaoDTO.nmComprador(),
                 negociacaoDTO.fotoPerfilComprador(),
                 negociacaoDTO.titulo(),
-                negociacaoDTO.capa()
+                negociacaoDTO.capa(),
+                negociacaoDTO.confirmacaoAnunciante(),
+                negociacaoDTO.confirmacaoComprador()
         );
-
     }
 
-    public NegociacaoDTO paraDto(){
+    public NegociacaoDTO paraDto() {
         return new NegociacaoDTO(
                 this.id,
                 this.usuarioAnuncianteId,
@@ -175,12 +218,15 @@ public class Negociacao implements Serializable {
                 this.anuncioId,
                 LocalDateTime.parse(this.dataNegociacao),
                 this.tipoNegociacao.name(),
+                this.status.name(),
                 this.nmAnunciante,
                 this.fotoPerfilAnunciante,
                 this.nmComprador,
                 this.fotoPerfilComprador,
                 this.titulo,
-                this.capa
+                this.capa,
+                this.confirmacaoAnunciante,
+                this.confirmacaoComprador
         );
     }
 }

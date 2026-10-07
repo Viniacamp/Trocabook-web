@@ -18,5 +18,12 @@ public interface NegociacaoRepository {
 
     List<Negociacao> buscarPorUidCompradorETipoNegociacao(String uidComprador, Negociacao.TipoNegociacao tipoNegociacao);
 
+    List<Negociacao> buscarPorAnuncioId(String anuncioId);
+
     long contarNegociacoesPorUsuarioETipo(String uidAnunciante, Negociacao.TipoNegociacao tipoNegociacao);
+
+    Negociacao buscarPorAnuncioEComprador(
+            String anuncioId,
+            String usuarioCompradorId
+    );
 }

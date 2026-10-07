@@ -10,11 +10,14 @@ public record NegociacaoDTO(
         String anuncioId,
         LocalDateTime dataNegociacao,
         String tipoNegociacao,
+        String status,
         String nmAnunciante,
         String fotoPerfilAnunciante,
         String nmComprador,
         String fotoPerfilComprador,
         String titulo,
-        String capa
+        String capa,
+        boolean confirmacaoAnunciante,
+        boolean confirmacaoComprador
 ) {
 }

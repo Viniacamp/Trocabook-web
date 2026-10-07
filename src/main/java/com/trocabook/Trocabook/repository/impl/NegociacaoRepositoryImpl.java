@@ -167,6 +167,30 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
     }
 
     @Override
+    public List<Negociacao> buscarPorAnuncioId(String anuncioId) {
+        try {
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo("anuncioId", anuncioId)
+                    .get()
+                    .get();
+
+            return documentos
+                    .getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Negociacao.class))
+                    .toList();
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException
+                    ("Thread interrompida ao buscar negociação por uid de anuncio", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Erro ao buscar negociação por uid de anuncio", e);
+        }
+    }
+
+    @Override
     public long contarNegociacoesPorUsuarioETipo(
             String uidUsuario,
             Negociacao.TipoNegociacao tipoNegociacao
@@ -174,8 +198,18 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
         try {
             var negociacoesComoAnunciante = firestore
                     .collection(COLECAO)
-                    .whereEqualTo("usuarioAnuncianteId", uidUsuario)
-                    .whereEqualTo("tipoNegociacao", tipoNegociacao.name())
+                    .whereEqualTo(
+                            "usuarioAnuncianteId",
+                            uidUsuario
+                    )
+                    .whereEqualTo(
+                            "tipoNegociacao",
+                            tipoNegociacao.name()
+                    )
+                    .whereEqualTo(
+                            "status",
+                            Negociacao.StatusNegociacao.FINALIZADA.name()
+                    )
                     .get()
                     .get();
 
@@ -183,6 +217,10 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
                     .collection(COLECAO)
                     .whereEqualTo("usuarioCompradorId", uidUsuario)
                     .whereEqualTo("tipoNegociacao", tipoNegociacao.name())
+                    .whereEqualTo(
+                            "status",
+                            Negociacao.StatusNegociacao.FINALIZADA.name()
+                    )
                     .get()
                     .get();
 
@@ -201,6 +239,51 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
 
             throw new RuntimeException(
                     "Erro ao contar negociações",
+                    e
+            );
+        }
+    }
+
+    @Override
+    public Negociacao buscarPorAnuncioEComprador(
+            String anuncioId,
+            String usuarioCompradorId
+    ) {
+        try {
+
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo("anuncioId", anuncioId)
+                    .whereEqualTo(
+                            "usuarioCompradorId",
+                            usuarioCompradorId
+                    )
+                    .limit(1)
+                    .get()
+                    .get();
+
+            if (documentos.isEmpty()) {
+                return null;
+            }
+
+            return documentos
+                    .getDocuments()
+                    .getFirst()
+                    .toObject(Negociacao.class);
+
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException(
+                    "Thread interrompida ao buscar negociação",
+                    e
+            );
+
+        } catch (ExecutionException e) {
+
+            throw new RuntimeException(
+                    "Erro ao buscar negociação",
                     e
             );
         }

@@ -523,12 +523,15 @@ public class DataInitializer implements CommandLineRunner {
                 anuncio.id(),
                 LocalDateTime.now(),
                 tipoNegociacao.name(),
+                Negociacao.StatusNegociacao.FINALIZADA.name(),
                 anunciante.nome(),
                 anunciante.fotoPerfil(),
                 comprador.nome(),
                 comprador.fotoPerfil(),
                 anuncio.titulo(),
-                anuncio.capa()
+                anuncio.capa(),
+                true,
+                true
         );
 
         negociacaoService.salvar(negociacaoDTO);

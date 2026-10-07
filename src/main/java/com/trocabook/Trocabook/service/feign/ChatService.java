@@ -19,6 +19,11 @@ public interface ChatService {
             @RequestBody MensagemDTO mensagemDTO
     );
 
+    @GetMapping("/{id}")
+    ChatResponse<MensagemDTO> buscarMensagemPorId(
+            @PathVariable String id
+    );
+
     @GetMapping
     ChatResponse<List<MensagemDTO>> listarMensagensEntreUsuarios(
             @RequestParam("remetente") String uidRemetente,

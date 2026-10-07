@@ -433,6 +433,26 @@
 
             </p>
 
+            <div class="book-description">
+
+                <strong>
+                    Descrição:
+                </strong>
+
+                <p id="bookDescricao">
+                </p>
+
+            </div>
+
+            <div
+                    id="negociacaoArea"
+                    class="negociacao-area">
+
+                <div id="negociacaoConteudo">
+                </div>
+
+            </div>
+
 
         </aside>
 
@@ -484,7 +504,11 @@
 
             uidAnuncio: null,
 
-            uidDestinatario: null
+            uidDestinatario: null,
+
+            anuncio: null,
+
+            negociacao: null
 
         };
 
@@ -574,6 +598,16 @@
         const bookTitulo =
             document.getElementById(
                 'bookTitulo'
+            );
+
+        const bookDescricao =
+            document.getElementById(
+                'bookDescricao'
+            );
+
+        const negociacaoConteudo =
+            document.getElementById(
+                'negociacaoConteudo'
             );
 
 
@@ -716,6 +750,12 @@
                 const conversa =
                     data.data;
 
+                conversaAtual.anuncio =
+                    conversa.anuncio;
+
+                conversaAtual.negociacao =
+                    conversa.negociacao || null;
+
 
                 /* ---------------------------------------------
                    Dados do usuário
@@ -750,10 +790,19 @@
                         conversa.anuncio.capa
                         || '/img/capa-padrao.png';
 
+                    bookDescricao.textContent =
+                        conversa.anuncio.descricao
+                        || 'Anunciante não informou uma descrição.';
+
 
 
 
                 }
+
+                renderizarNegociacao(
+                    conversa.anuncio,
+                    conversa.negociacao
+                );
 
 
                 /* ---------------------------------------------
@@ -806,6 +855,201 @@
 
         }
 
+        async function proporNegociacao(
+            tipoNegociacao
+        ) {
+
+            if (!conversaAtual.uidAnuncio) {
+                return;
+            }
+
+            const confirmar =
+                confirm(
+                    `Deseja enviar uma proposta de ${
+                        formatarTipoNegociacao(
+                            tipoNegociacao
+                        ).toLowerCase()
+                    }?`
+                );
+
+            if (!confirmar) {
+                return;
+            }
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        '/chat/negociacoes',
+                        {
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body: JSON.stringify({
+                                anuncioId:
+                                conversaAtual.uidAnuncio,
+
+                                tipoNegociacao:
+                                tipoNegociacao
+                            })
+                        }
+                    );
+
+                const data =
+                    await resposta.json();
+
+                if (
+                    !resposta.ok ||
+                    data.status !== 'success'
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        'Erro ao criar negociação.'
+                    );
+                }
+
+                conversaAtual.negociacao =
+                    data.data;
+
+                renderizarNegociacao(
+                    conversaAtual.anuncio,
+                    data.data
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao criar negociação:',
+                    erro
+                );
+
+                alert(
+                    'Não foi possível enviar a proposta.'
+                );
+            }
+        }
+
+        async function aceitarNegociacao(idNegociacao) {
+
+            const confirmar =
+                confirm(
+                    'Deseja aceitar esta proposta?'
+                );
+
+            if (!confirmar) {
+                return;
+            }
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        `/chat/negociacoes/${
+                            encodeURIComponent(idNegociacao)
+                        }/aceitar`,
+                        {
+                            method: 'PUT'
+                        }
+                    );
+
+                const data =
+                    await resposta.json();
+
+                if (
+                    !resposta.ok ||
+                    data.status !== 'success'
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        'Não foi possível aceitar a proposta.'
+                    );
+                }
+
+                conversaAtual.negociacao =
+                    data.data;
+
+                renderizarNegociacao(
+                    conversaAtual.anuncio,
+                    data.data
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao aceitar negociação:',
+                    erro
+                );
+
+                alert(
+                    'Não foi possível aceitar a proposta.'
+                );
+            }
+        }
+
+        async function recusarNegociacao(idNegociacao) {
+
+            const confirmar =
+                confirm(
+                    'Deseja recusar esta proposta?'
+                );
+
+            if (!confirmar) {
+                return;
+            }
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        `/chat/negociacoes/${
+                            encodeURIComponent(idNegociacao)
+                        }/recusar`,
+                        {
+                            method: 'PUT'
+                        }
+                    );
+
+                const data =
+                    await resposta.json();
+
+                if (
+                    !resposta.ok ||
+                    data.status !== 'success'
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        'Não foi possível recusar a proposta.'
+                    );
+                }
+
+                conversaAtual.negociacao =
+                    data.data;
+
+                renderizarNegociacao(
+                    conversaAtual.anuncio,
+                    data.data
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao recusar negociação:',
+                    erro
+                );
+
+                alert(
+                    'Não foi possível recusar a proposta.'
+                );
+            }
+        }
+
 
         /* =====================================================
            CLIQUE NAS CONVERSAS
@@ -837,6 +1081,273 @@
                 );
 
             });
+
+        function renderizarNegociacao(
+            anuncio,
+            negociacao
+        ) {
+
+            negociacaoConteudo.innerHTML = '';
+
+            if (!anuncio) {
+                return;
+            }
+
+            const souAnunciante =
+                anuncio.uidUsuario ===
+                uidUsuarioLogado;
+
+            /*
+             * O anunciante não inicia uma negociação.
+             * Se ainda não existe proposta, não há
+             * nenhuma ação para ele realizar.
+             */
+            if (!negociacao) {
+
+                if (souAnunciante) {
+
+                    negociacaoConteudo.innerHTML = `
+                <div class="negociacao-status">
+                    <i class="fa-solid fa-clock"></i>
+
+                    <span>
+                        Aguardando proposta de negociação.
+                    </span>
+                </div>
+            `;
+
+                    return;
+                }
+
+                renderizarBotaoProporNegociacao(
+                    anuncio
+                );
+
+                return;
+            }
+
+            /*
+             * Negociação existente.
+             */
+            switch (negociacao.status) {
+
+                case 'PENDENTE':
+
+                    if (souAnunciante) {
+
+                        negociacaoConteudo.innerHTML = `
+            <div class="negociacao-status">
+                <i class="fa-solid fa-handshake"></i>
+
+                <strong>
+                    Proposta recebida
+                </strong>
+
+                <span>
+                    Tipo: ${formatarTipoNegociacao(
+                            negociacao.tipoNegociacao
+                        )}
+                </span>
+
+                <span>
+                    Você possui uma proposta
+                    aguardando resposta.
+                </span>
+
+                <div class="negociacao-acoes-resposta">
+
+                    <button
+                        type="button"
+                        class="btn-negociacao btn-aceitar"
+                        onclick="aceitarNegociacao(
+                            '${negociacao.id}'
+                        )">
+
+                        <i class="fa-solid fa-check"></i>
+
+                        Aceitar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-negociacao btn-recusar"
+                        onclick="recusarNegociacao(
+                            '${negociacao.id}'
+                        )">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Recusar
+                    </button>
+
+                </div>
+            </div>
+        `;
+
+                    } else {
+
+                        negociacaoConteudo.innerHTML = `
+            <div class="negociacao-status">
+                <i class="fa-solid fa-clock"></i>
+
+                <strong>
+                    Proposta enviada
+                </strong>
+
+                <span>
+                    Tipo: ${formatarTipoNegociacao(
+                            negociacao.tipoNegociacao
+                        )}
+                </span>
+
+                <span>
+                    Aguardando resposta do anunciante.
+                </span>
+            </div>
+        `;
+                    }
+
+                    break;
+
+                case 'EM_ANDAMENTO':
+
+                    negociacaoConteudo.innerHTML = `
+                <div class="negociacao-status">
+                    <i class="fa-solid fa-handshake"></i>
+
+                    <strong>
+                        Negociação em andamento
+                    </strong>
+
+                    <span>
+                        Tipo: ${formatarTipoNegociacao(
+                        negociacao.tipoNegociacao
+                    )}
+                    </span>
+                </div>
+            `;
+
+                    break;
+
+                case 'FINALIZADA':
+
+                    negociacaoConteudo.innerHTML = `
+                <div class="negociacao-status">
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <strong>
+                        Negociação finalizada
+                    </strong>
+                </div>
+            `;
+
+                    break;
+
+                case 'RECUSADA':
+                case 'CANCELADA':
+
+                    if (souAnunciante) {
+
+                        negociacaoConteudo.innerHTML = `
+                    <div class="negociacao-status">
+                        <span>
+                            Negociação encerrada.
+                        </span>
+                    </div>
+                `;
+
+                    } else {
+
+                        renderizarBotaoProporNegociacao(
+                            anuncio
+                        );
+
+                    }
+
+                    break;
+            }
+        }
+
+        function renderizarBotaoProporNegociacao(
+            anuncio
+        ) {
+
+            if (anuncio.tipoNegociacao === 'AMBOS') {
+
+                negociacaoConteudo.innerHTML = `
+            <div class="negociacao-acoes">
+
+                <strong>
+                    Como deseja negociar?
+                </strong>
+
+                <button
+                    type="button"
+                    class="btn-negociacao"
+                    onclick="proporNegociacao('TROCA')">
+
+                    <i class="fa-solid fa-arrows-rotate"></i>
+
+                    Propor troca
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-negociacao"
+                    onclick="proporNegociacao('VENDA')">
+
+                    <i class="fa-solid fa-tag"></i>
+
+                    Comprar
+                </button>
+
+            </div>
+        `;
+
+                return;
+            }
+
+            const texto =
+                anuncio.tipoNegociacao === 'TROCA'
+                    ? 'Propor troca'
+                    : 'Comprar';
+
+            negociacaoConteudo.innerHTML = `
+        <div class="negociacao-acoes">
+
+            <button
+                type="button"
+                class="btn-negociacao"
+                onclick="proporNegociacao(
+                    '${anuncio.tipoNegociacao}'
+                )">
+
+                <i class="fa-solid fa-handshake"></i>
+
+                ${texto}
+
+            </button>
+
+        </div>
+    `;
+        }
+
+        function formatarTipoNegociacao(
+            tipo
+        ) {
+
+            switch (tipo) {
+
+                case 'TROCA':
+                    return 'Troca';
+
+                case 'VENDA':
+                    return 'Venda';
+
+                default:
+                    return tipo || '';
+            }
+        }
 
 
         /* =====================================================
@@ -1591,99 +2102,104 @@
                 !conversaAtual.uidAnuncio ||
                 !conversaAtual.uidDestinatario
             ) {
-
                 return;
-
             }
-
 
             try {
 
                 const resposta =
                     await fetch(
-
-                        `/chat/mensagens/atualizar` +
-                        `?anuncio=${encodeURIComponent(conversaAtual.uidAnuncio)}` +
-                        `&remetente=${encodeURIComponent(uidUsuarioLogado)}` +
-                        `&destinatario=${encodeURIComponent(conversaAtual.uidDestinatario)}`
-
+                        `/chat/conversa/atualizar` +
+                        `?anuncio=${encodeURIComponent(
+                            conversaAtual.uidAnuncio
+                        )}` +
+                        `&destinatario=${encodeURIComponent(
+                            conversaAtual.uidDestinatario
+                        )}`
                     );
 
-
                 if (!resposta.ok) {
-
                     return;
-
                 }
-
 
                 const data =
                     await resposta.json();
 
-
-                if (
-                    data.status !==
-                    'success'
-                ) {
-
+                if (data.status !== 'success') {
                     return;
-
                 }
 
+                const atualizacao =
+                    data.data;
+
+                if (!atualizacao) {
+                    return;
+                }
 
                 const mensagens =
-                    data.data || [];
-
+                    atualizacao.mensagens || [];
 
                 /*
-                 * Se não existem novas mensagens,
-                 * não fazemos nada.
+                 * Atualiza a negociação.
                  */
+                const negociacaoAtualizada =
+                    atualizacao.negociacao || null;
 
+                const statusAnterior =
+                    conversaAtual.negociacao?.status || null;
+
+                const statusAtual =
+                    negociacaoAtualizada?.status || null;
+
+                conversaAtual.negociacao =
+                    negociacaoAtualizada;
+
+                /*
+                 * Só redesenha a lateral quando o status
+                 * realmente tiver mudado.
+                 */
+                if (statusAnterior !== statusAtual) {
+
+                    renderizarNegociacao(
+                        conversaAtual.anuncio,
+                        negociacaoAtualizada
+                    );
+                }
+
+                /*
+                 * Atualiza mensagens somente quando
+                 * chegaram mensagens novas.
+                 */
                 if (
-                    mensagens.length <=
+                    mensagens.length >
                     ultimaQuantidade
                 ) {
 
-                    return;
-
-                }
-
-
-                /*
-                 * Adiciona somente as novas mensagens.
-                 */
-
-                const novas =
-                    mensagens.slice(
-                        ultimaQuantidade
-                    );
-
-
-                novas.forEach(
-                    mensagem => {
-
-                        adicionarMensagemNoContainer(
-                            mensagem
+                    const novas =
+                        mensagens.slice(
+                            ultimaQuantidade
                         );
 
-                    }
-                );
+                    novas.forEach(
+                        mensagem => {
 
+                            adicionarMensagemNoContainer(
+                                mensagem
+                            );
+                        }
+                    );
 
-                ultimaQuantidade =
-                    mensagens.length;
-
+                    ultimaQuantidade =
+                        mensagens.length;
+                }
 
             } catch (erro) {
 
                 console.error(
-                    'Erro no polling:',
+                    'Erro no polling da conversa:',
                     erro
                 );
-
             }
-
         }
 
 

@@ -1,9 +1,6 @@
 package com.trocabook.Trocabook.service.impl;
 
-import com.trocabook.Trocabook.model.dto.AtualizarMensagemDTO;
-import com.trocabook.Trocabook.model.dto.ConversaDTO;
-import com.trocabook.Trocabook.model.dto.MensagemDTO;
-import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.model.dto.*;
 import com.trocabook.Trocabook.service.feign.ChatService;
 import com.trocabook.Trocabook.service.IConversaService;
 import com.trocabook.Trocabook.service.IUsuarioService;
@@ -68,17 +65,68 @@ public class ConversaService implements IConversaService {
 
     @Override
     public List<MensagemDTO> listarMensagens(
-            String uidRemetente,
+            String uidUsuarioLogado,
             String uidDestinatario,
-            String uidAnuncio) {
+            AnuncioDTO anuncio
+    ) {
 
-        return chatService
-                .listarMensagensEntreUsuarios(
-                        uidRemetente,
-                        uidDestinatario,
-                        uidAnuncio
-                )
-                .getData();
+        if (uidDestinatario == null
+                || uidDestinatario.isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Destinatário não informado"
+            );
+        }
+
+        if (uidUsuarioLogado.equals(uidDestinatario)) {
+
+            throw new IllegalArgumentException(
+                    "Não é possível acessar uma conversa consigo mesmo"
+            );
+        }
+
+        boolean usuarioEhAnunciante =
+                uidUsuarioLogado.equals(
+                        anuncio.uidUsuario()
+                );
+
+        /*
+         * Interessado:
+         * só pode conversar com o anunciante.
+         */
+        if (!usuarioEhAnunciante
+                && !uidDestinatario.equals(anuncio.uidUsuario())) {
+
+            throw new SecurityException(
+                    "Você não possui acesso a esta conversa"
+            );
+        }
+
+        List<MensagemDTO> mensagens =
+                chatService
+                        .listarMensagensEntreUsuarios(
+                                uidUsuarioLogado,
+                                uidDestinatario,
+                                anuncio.id()
+                        )
+                        .getData();
+
+        /*
+         * O interessado pode iniciar uma conversa nova,
+         * portanto uma lista vazia é válida para ele.
+         *
+         * O anunciante só pode acessar uma conversa
+         * que já tenha sido iniciada pelo interessado.
+         */
+        if (usuarioEhAnunciante
+                && mensagens.isEmpty()) {
+
+            throw new SecurityException(
+                    "Você não possui acesso a esta conversa"
+            );
+        }
+
+        return mensagens;
     }
 
     @Override
@@ -91,13 +139,71 @@ public class ConversaService implements IConversaService {
     @Override
     public MensagemDTO atualizarMensagem(
             String id,
-            AtualizarMensagemDTO dto) {
+            String uidUsuario,
+            AtualizarMensagemDTO dto
+    ) {
 
-        return chatService.alterarMensagem(id, dto).getData();
+        MensagemDTO mensagem =
+                chatService
+                        .buscarMensagemPorId(id)
+                        .getData();
+
+        if (mensagem == null) {
+            throw new IllegalArgumentException(
+                    "Mensagem não encontrada"
+            );
+        }
+
+        if (!uidUsuario.equals(mensagem.uidRemetente())) {
+            throw new SecurityException(
+                    "Você não possui permissão para alterar esta mensagem"
+            );
+        }
+
+        if (dto.conteudo() == null
+                || dto.conteudo().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "A mensagem não pode estar vazia"
+            );
+        }
+
+        AtualizarMensagemDTO mensagemAtualizada =
+                new AtualizarMensagemDTO(
+                        dto.conteudo().trim()
+                );
+
+        return chatService
+                .alterarMensagem(
+                        id,
+                        mensagemAtualizada
+                )
+                .getData();
     }
 
     @Override
-    public void excluirMensagem(String id) {
+    public void excluirMensagem(
+            String id,
+            String uidUsuario
+    ) {
+
+        MensagemDTO mensagem =
+                chatService
+                        .buscarMensagemPorId(id)
+                        .getData();
+
+        if (mensagem == null) {
+            throw new IllegalArgumentException(
+                    "Mensagem não encontrada"
+            );
+        }
+
+        if (!uidUsuario.equals(mensagem.uidRemetente())) {
+            throw new SecurityException(
+                    "Você não possui permissão para excluir esta mensagem"
+            );
+        }
+
         chatService.excluirMensagem(id);
     }
 }
