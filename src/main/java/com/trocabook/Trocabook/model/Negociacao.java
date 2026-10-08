@@ -37,10 +37,15 @@ public class Negociacao implements Serializable {
 
     private boolean confirmacaoComprador;
 
+    private String anuncioOferecidoId;
+    private String tituloLivroOferecido;
+    private String capaLivroOferecido;
+    private String descricaoOferta;
+
     public Negociacao() {
     }
 
-    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, String dataNegociacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador) {
+    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, String dataNegociacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador, String anuncioOferecidoId, String tituloLivroOferecido, String capaLivroOferecido, String descricaoOferta) {
         this.id = id;
         this.usuarioAnuncianteId = usuarioAnuncianteId;
         this.usuarioCompradorId = usuarioCompradorId;
@@ -56,6 +61,10 @@ public class Negociacao implements Serializable {
         this.capa = capa;
         this.confirmacaoAnunciante = confirmacaoAnunciante;
         this.confirmacaoComprador = confirmacaoComprador;
+        this.anuncioOferecidoId = anuncioOferecidoId;
+        this.tituloLivroOferecido = tituloLivroOferecido;
+        this.capaLivroOferecido = capaLivroOferecido;
+        this.descricaoOferta = descricaoOferta;
     }
 
     public String getId() {
@@ -178,6 +187,38 @@ public class Negociacao implements Serializable {
         this.status = status;
     }
 
+    public String getAnuncioOferecidoId() {
+        return anuncioOferecidoId;
+    }
+
+    public void setAnuncioOferecidoId(String anuncioOferecidoId) {
+        this.anuncioOferecidoId = anuncioOferecidoId;
+    }
+
+    public String getTituloLivroOferecido() {
+        return tituloLivroOferecido;
+    }
+
+    public void setTituloLivroOferecido(String tituloLivroOferecido) {
+        this.tituloLivroOferecido = tituloLivroOferecido;
+    }
+
+    public String getCapaLivroOferecido() {
+        return capaLivroOferecido;
+    }
+
+    public void setCapaLivroOferecido(String capaLivroOferecido) {
+        this.capaLivroOferecido = capaLivroOferecido;
+    }
+
+    public String getDescricaoOferta() {
+        return descricaoOferta;
+    }
+
+    public void setDescricaoOferta(String descricaoOferta) {
+        this.descricaoOferta = descricaoOferta;
+    }
+
     public enum StatusNegociacao {
         PENDENTE,
         EM_ANDAMENTO,
@@ -206,7 +247,11 @@ public class Negociacao implements Serializable {
                 negociacaoDTO.titulo(),
                 negociacaoDTO.capa(),
                 negociacaoDTO.confirmacaoAnunciante(),
-                negociacaoDTO.confirmacaoComprador()
+                negociacaoDTO.confirmacaoComprador(),
+                negociacaoDTO.anuncioOferecidoId(),
+                negociacaoDTO.tituloLivroOferecido(),
+                negociacaoDTO.capaLivroOferecido(),
+                negociacaoDTO.descricaoOferta()
         );
     }
 
@@ -226,7 +271,11 @@ public class Negociacao implements Serializable {
                 this.titulo,
                 this.capa,
                 this.confirmacaoAnunciante,
-                this.confirmacaoComprador
+                this.confirmacaoComprador,
+                this.anuncioOferecidoId,
+                this.tituloLivroOferecido,
+                this.capaLivroOferecido,
+                this.descricaoOferta
         );
     }
 }

@@ -40,6 +40,18 @@ public class RecomendacaoService implements IRecomendacaoService {
             return List.of();
         }
 
+        List<AnuncioDTO> anunciosAtivos =
+                anuncios.stream()
+                        .filter(anuncio ->
+                                "ATIVO".equals(anuncio.status())
+                        )
+                        .toList();
+
+        if (anunciosAtivos.isEmpty()) {
+            return List.of();
+        }
+
+
         List<RecomendacaoResponse> ranking;
 
         try {
@@ -62,24 +74,24 @@ public class RecomendacaoService implements IRecomendacaoService {
 
 
             return buscarAleatorios(
-                    anuncios,
+                    anunciosAtivos,
                     quantidade > 0
                             ? quantidade
-                            : anuncios.size()
+                            : anunciosAtivos.size()
             );
         }
 
         if (ranking == null || ranking.isEmpty()) {
             return buscarAleatorios(
-                    anuncios,
+                    anunciosAtivos,
                     quantidade > 0
                             ? quantidade
-                            : anuncios.size()
+                            : anunciosAtivos.size()
             );
         }
 
         Map<String, AnuncioDTO> anunciosPorId =
-                anuncios.stream()
+                anunciosAtivos.stream()
                         .collect(Collectors.toMap(
                                 AnuncioDTO::id,
                                 Function.identity()

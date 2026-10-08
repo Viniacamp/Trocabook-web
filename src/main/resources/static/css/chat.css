@@ -191,6 +191,21 @@
     box-sizing: border-box;
 }
 
+.mensagem-link-negociacao {
+    display: inline-block;
+    margin-top: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+
+    color: inherit;
+}
+
+.mensagem-link-negociacao:hover {
+    opacity: 0.75;
+}
+
 
 /* Balão do usuário */
 .message.user .message-balao {
@@ -419,6 +434,36 @@
     text-overflow: ellipsis;
 }
 
+.btn-ver-negociacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    margin-top: 12px;
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+
+    background: #f0f0f0;
+    color: #333;
+
+    transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.btn-ver-negociacao:hover {
+    background: #e5e5e5;
+    transform: translateY(-1px);
+}
 
 /* =========================================================
    RESPONSIVIDADE

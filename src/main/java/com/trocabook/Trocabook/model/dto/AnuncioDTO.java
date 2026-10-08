@@ -22,5 +22,6 @@ public record AnuncioDTO(
 
         List<String> categorias,
 
-        String descricao) {
+        String descricao,
+        String status) {
 }

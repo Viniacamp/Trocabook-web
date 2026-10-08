@@ -44,7 +44,7 @@ public class DestaqueController {
         }
         Long numeroTrocas = negociacaoService.contarNegociacoesPorUsuarioETipo(uid, Negociacao.TipoNegociacao.TROCA);
         Long numeroVendas = negociacaoService.contarNegociacoesPorUsuarioETipo(uid, Negociacao.TipoNegociacao.VENDA);
-        List<AnuncioDTO> livrosDestaque = anuncioService.listarAnunciosUsuario(uid);
+        List<AnuncioDTO> livrosDestaque = anuncioService.listarAnunciosAtivosPorUsuario(uid);
 
         model.addAttribute("usuarioDestaque", usuarioDestaque);
         model.addAttribute("qtd_trocas", numeroTrocas);

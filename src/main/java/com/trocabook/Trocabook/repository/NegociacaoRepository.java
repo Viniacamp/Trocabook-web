@@ -2,6 +2,7 @@ package com.trocabook.Trocabook.repository;
 
 import com.trocabook.Trocabook.model.Negociacao;
 
+import java.util.Arrays;
 import java.util.List;
 
 public interface NegociacaoRepository {
@@ -26,4 +27,6 @@ public interface NegociacaoRepository {
             String anuncioId,
             String usuarioCompradorId
     );
+
+    List<Negociacao> buscarPorAnuncioOferecidoId(String anuncioOferecidoId);
 }

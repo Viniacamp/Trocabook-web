@@ -13,13 +13,13 @@ public interface IAnuncioService {
 
     List<AnuncioDTO> listarTodos();
 
-    List<AnuncioDTO> listarTodosPorTipoNegociacao(Anuncio.TipoNegociacao tipoNegociacao);
+    List<AnuncioDTO> listarAnunciosAtivosPorTipoNegociacao(Anuncio.TipoNegociacao tipoNegociacao);
 
-    List<AnuncioDTO> listarAnunciosUsuario(String uidUsuario);
+    List<AnuncioDTO> listarAnunciosAtivosPorUsuario(String uidUsuario);
 
-    List<AnuncioDTO> listarAnunciosUsuarioETipo(String uidUsuario, Anuncio.TipoNegociacao tipoNegociacao);
+    List<AnuncioDTO> listarAnunciosAtivosPorUsuarioETipo(String uidUsuario, Anuncio.TipoNegociacao tipoNegociacao);
 
-    List<AnuncioDTO> buscarPorTitulo(String titulo);
+    List<AnuncioDTO> buscarAnunciosAtivosPorTitulo(String titulo);
 
     AnuncioDTO atualizar(
             String uidAnuncio,
@@ -27,6 +27,14 @@ public interface IAnuncioService {
             String descricao,
             String tipoNegociacao
     );
+
+    List<AnuncioDTO> listarAtivos();
+
+    List<AnuncioDTO> listarAnunciosAtivosTrocaveis(
+            String uidUsuario
+    );
+
+    AnuncioDTO finalizar(String uidAnuncio);
 
     void deletar(String uid);
 

@@ -458,6 +458,190 @@
 
     </main>
 
+    <!-- ===================================================== -->
+    <!-- MODAL - TIPO DE OFERTA                                 -->
+    <!-- ===================================================== -->
+
+    <div
+            id="modalTipoOferta"
+            class="modal-troca"
+            style="display: none;">
+
+        <div class="modal-troca-conteudo">
+
+            <button
+                    type="button"
+                    class="modal-troca-fechar"
+                    onclick="fecharModalTroca()">
+                &times;
+            </button>
+
+            <div class="modal-troca-icone">
+                <i class="fa-solid fa-book"></i>
+            </div>
+
+            <h3>
+                Livro oferecido
+            </h3>
+
+            <p>
+                O livro que você deseja oferecer
+                está anunciado no Trocabook?
+            </p>
+
+            <div class="modal-troca-acoes">
+
+                <button
+                        type="button"
+                        class="btn-negociacao"
+                        onclick="selecionarLivroAnunciado()">
+
+                    <i class="fa-solid fa-check"></i>
+                    Sim
+                </button>
+
+                <button
+                        type="button"
+                        class="btn-negociacao btn-secundario"
+                        onclick="selecionarLivroNaoAnunciado()">
+
+                    <i class="fa-solid fa-pen"></i>
+                    Não
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL - SELECIONAR ANÚNCIO                             -->
+    <!-- ===================================================== -->
+
+    <div
+            id="modalSelecionarLivro"
+            class="modal-troca"
+            style="display: none;">
+
+        <div class="modal-troca-conteudo modal-troca-grande">
+
+            <button
+                    type="button"
+                    class="modal-troca-fechar"
+                    onclick="fecharModalTroca()">
+                &times;
+            </button>
+
+            <h3>
+                Selecione o livro que deseja oferecer
+            </h3>
+
+            <div
+                    id="listaLivrosOferta"
+                    class="lista-livros-oferta">
+            </div>
+
+            <label
+                    for="descricaoOfertaAnunciada"
+                    class="label-oferta">
+                Observação sobre a oferta
+                <span>(opcional)</span>
+            </label>
+
+            <textarea
+                    id="descricaoOfertaAnunciada"
+                    class="descricao-oferta"
+                    maxlength="500"
+                    placeholder="Ex.: livro em ótimo estado.">
+        </textarea>
+
+            <div class="modal-troca-acoes">
+
+                <button
+                        type="button"
+                        class="btn-negociacao btn-secundario"
+                        onclick="voltarModalTipoOferta()">
+                    Voltar
+                </button>
+
+                <button
+                        type="button"
+                        class="btn-negociacao"
+                        onclick="confirmarLivroAnunciado()">
+                    Enviar proposta
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL - LIVRO NÃO ANUNCIADO                            -->
+    <!-- ===================================================== -->
+
+    <div
+            id="modalDescricaoOferta"
+            class="modal-troca"
+            style="display: none;">
+
+        <div class="modal-troca-conteudo">
+
+            <button
+                    type="button"
+                    class="modal-troca-fechar"
+                    onclick="fecharModalTroca()">
+                &times;
+            </button>
+
+            <h3>
+                Descreva o livro oferecido
+            </h3>
+
+            <p>
+                Informe qual livro você deseja oferecer
+                ao anunciante.
+            </p>
+
+            <textarea
+                    id="descricaoOfertaManual"
+                    class="descricao-oferta"
+                    maxlength="500"
+                    placeholder="Ex.: O Hobbit, J. R. R. Tolkien, edição de 2019, em bom estado.">
+        </textarea>
+
+            <small
+                    id="contadorDescricaoOferta"
+                    class="contador-oferta">
+                0 / 500
+            </small>
+
+            <div class="modal-troca-acoes">
+
+                <button
+                        type="button"
+                        class="btn-negociacao btn-secundario"
+                        onclick="voltarModalTipoOferta()">
+                    Voltar
+                </button>
+
+                <button
+                        type="button"
+                        class="btn-negociacao"
+                        onclick="confirmarLivroNaoAnunciado()">
+                    Enviar proposta
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
 
     <!-- ===================================================== -->
     <!-- JAVASCRIPT DO CHAT                                    -->
@@ -467,6 +651,25 @@
     <script th:inline="javascript">
         const anuncioInicial = /*[[${anuncioInicial}]]*/ null;
         const destinatarioInicial = /*[[${destinatarioInicial}]]*/ null;
+
+        const descricaoOfertaManual =
+            document.getElementById(
+                'descricaoOfertaManual'
+            );
+
+        const contadorDescricaoOferta =
+            document.getElementById(
+                'contadorDescricaoOferta'
+            );
+
+        descricaoOfertaManual.addEventListener(
+            'input',
+            () => {
+
+                contadorDescricaoOferta.textContent =
+                    `${descricaoOfertaManual.value.length} / 500`;
+            }
+        );
 
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -511,6 +714,8 @@
             negociacao: null
 
         };
+
+        let anuncioOferecidoSelecionado = null;
 
 
         let ultimaQuantidade = 0;
@@ -863,18 +1068,38 @@
                 return;
             }
 
+            if (tipoNegociacao === 'TROCA') {
+
+                anuncioOferecidoSelecionado = null;
+
+                document.getElementById(
+                    'modalTipoOferta'
+                ).style.display = 'flex';
+
+                return;
+            }
+
             const confirmar =
                 confirm(
-                    `Deseja enviar uma proposta de ${
-                        formatarTipoNegociacao(
-                            tipoNegociacao
-                        ).toLowerCase()
-                    }?`
+                    'Deseja enviar uma proposta de compra?'
                 );
 
             if (!confirmar) {
                 return;
             }
+
+            await enviarPropostaNegociacao(
+                tipoNegociacao,
+                null,
+                null
+            );
+        }
+
+        async function enviarPropostaNegociacao(
+            tipoNegociacao,
+            anuncioOferecidoId,
+            descricaoOferta
+        ) {
 
             try {
 
@@ -894,7 +1119,13 @@
                                 conversaAtual.uidAnuncio,
 
                                 tipoNegociacao:
-                                tipoNegociacao
+                                tipoNegociacao,
+
+                                anuncioOferecidoId:
+                                anuncioOferecidoId,
+
+                                descricaoOferta:
+                                descricaoOferta
                             })
                         }
                     );
@@ -916,6 +1147,8 @@
                 conversaAtual.negociacao =
                     data.data;
 
+                fecharModalTroca();
+
                 renderizarNegociacao(
                     conversaAtual.anuncio,
                     data.data
@@ -929,8 +1162,70 @@
                 );
 
                 alert(
+                    erro.message ||
                     'Não foi possível enviar a proposta.'
                 );
+            }
+        }
+
+        async function selecionarLivroAnunciado() {
+
+            document.getElementById(
+                'modalTipoOferta'
+            ).style.display = 'none';
+
+            document.getElementById(
+                'modalSelecionarLivro'
+            ).style.display = 'flex';
+
+            const lista =
+                document.getElementById(
+                    'listaLivrosOferta'
+                );
+
+            lista.innerHTML = `
+        <div class="carregando-oferta">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Carregando seus livros...
+        </div>
+    `;
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        '/chat/anuncios-ofereciveis'
+                    );
+
+                const data =
+                    await resposta.json();
+
+                if (
+                    !resposta.ok ||
+                    data.status !== 'success'
+                ) {
+                    throw new Error(
+                        data.message ||
+                        'Não foi possível carregar seus anúncios.'
+                    );
+                }
+
+                renderizarLivrosOferta(
+                    data.data || []
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao carregar anúncios:',
+                    erro
+                );
+
+                lista.innerHTML = `
+            <div class="oferta-vazia">
+                Não foi possível carregar seus livros.
+            </div>
+        `;
             }
         }
 
@@ -1050,6 +1345,32 @@
             }
         }
 
+        async function confirmarLivroAnunciado() {
+
+            if (!anuncioOferecidoSelecionado) {
+
+                alert(
+                    'Selecione o livro que deseja oferecer.'
+                );
+
+                return;
+            }
+
+            const descricao =
+                document
+                    .getElementById(
+                        'descricaoOfertaAnunciada'
+                    )
+                    .value
+                    .trim();
+
+            await enviarPropostaNegociacao(
+                'TROCA',
+                anuncioOferecidoSelecionado,
+                descricao || null
+            );
+        }
+
 
         /* =====================================================
            CLIQUE NAS CONVERSAS
@@ -1081,6 +1402,181 @@
                 );
 
             });
+
+        function criarDetalhesOferta(negociacao) {
+
+            const container =
+                document.createElement('div');
+
+            container.className =
+                'negociacao-oferta';
+
+            /*
+             * Só existe oferta de livro em negociações
+             * do tipo TROCA.
+             */
+            if (negociacao.tipoNegociacao !== 'TROCA') {
+                return container;
+            }
+
+            const tituloSecao =
+                document.createElement('strong');
+
+            tituloSecao.className =
+                'negociacao-oferta-titulo';
+
+            tituloSecao.textContent =
+                'Livro oferecido';
+
+            container.appendChild(
+                tituloSecao
+            );
+
+
+            /*
+             * Livro oferecido possui anúncio no Trocabook.
+             */
+            if (negociacao.anuncioOferecidoId) {
+
+                const livro =
+                    document.createElement('div');
+
+                livro.className =
+                    'negociacao-oferta-livro';
+
+
+                const imagem =
+                    document.createElement('img');
+
+                imagem.className =
+                    'negociacao-oferta-capa';
+
+                imagem.src =
+                    negociacao.capaLivroOferecido
+                    || '/img/capa-padrao.png';
+
+                imagem.alt =
+                    negociacao.tituloLivroOferecido
+                        ? `Capa de ${negociacao.tituloLivroOferecido}`
+                        : 'Capa do livro oferecido';
+
+
+                const informacoes =
+                    document.createElement('div');
+
+                informacoes.className =
+                    'negociacao-oferta-info';
+
+
+                const titulo =
+                    document.createElement('strong');
+
+                titulo.textContent =
+                    negociacao.tituloLivroOferecido
+                    || 'Livro oferecido';
+
+
+                const identificacao =
+                    document.createElement('span');
+
+                identificacao.className =
+                    'negociacao-oferta-anunciado';
+
+                identificacao.textContent =
+                    'Anunciado no Trocabook';
+
+
+                informacoes.appendChild(
+                    titulo
+                );
+
+                informacoes.appendChild(
+                    identificacao
+                );
+
+
+                livro.appendChild(
+                    imagem
+                );
+
+                livro.appendChild(
+                    informacoes
+                );
+
+                container.appendChild(
+                    livro
+                );
+            }
+
+
+            /*
+             * Livro não anunciado.
+             *
+             * Nesse caso, descricaoOferta é a própria
+             * descrição do livro oferecido.
+             */
+            else if (negociacao.descricaoOferta) {
+
+                const descricaoLivro =
+                    document.createElement('p');
+
+                descricaoLivro.className =
+                    'negociacao-oferta-descricao';
+
+                descricaoLivro.textContent =
+                    negociacao.descricaoOferta;
+
+                container.appendChild(
+                    descricaoLivro
+                );
+
+                return container;
+            }
+
+
+            /*
+             * Quando existe anúncio vinculado,
+             * descricaoOferta funciona como observação
+             * opcional sobre a oferta.
+             */
+            if (negociacao.descricaoOferta) {
+
+                const observacaoContainer =
+                    document.createElement('div');
+
+                observacaoContainer.className =
+                    'negociacao-oferta-observacao';
+
+
+                const label =
+                    document.createElement('span');
+
+                label.textContent =
+                    'Observação:';
+
+
+                const observacao =
+                    document.createElement('p');
+
+                observacao.textContent =
+                    negociacao.descricaoOferta;
+
+
+                observacaoContainer.appendChild(
+                    label
+                );
+
+                observacaoContainer.appendChild(
+                    observacao
+                );
+
+                container.appendChild(
+                    observacaoContainer
+                );
+            }
+
+            return container;
+        }
 
         function renderizarNegociacao(
             anuncio,
@@ -1135,76 +1631,163 @@
 
                     if (souAnunciante) {
 
-                        negociacaoConteudo.innerHTML = `
-            <div class="negociacao-status">
-                <i class="fa-solid fa-handshake"></i>
+                        /*
+                         * Estrutura principal da proposta.
+                         */
+                        const statusContainer =
+                            document.createElement('div');
 
-                <strong>
-                    Proposta recebida
-                </strong>
+                        statusContainer.className =
+                            'negociacao-status';
 
-                <span>
-                    Tipo: ${formatarTipoNegociacao(
-                            negociacao.tipoNegociacao
-                        )}
-                </span>
 
-                <span>
-                    Você possui uma proposta
-                    aguardando resposta.
-                </span>
+                        const icone =
+                            document.createElement('i');
 
-                <div class="negociacao-acoes-resposta">
+                        icone.className =
+                            'fa-solid fa-handshake';
 
-                    <button
-                        type="button"
-                        class="btn-negociacao btn-aceitar"
-                        onclick="aceitarNegociacao(
-                            '${negociacao.id}'
-                        )">
 
-                        <i class="fa-solid fa-check"></i>
+                        const titulo =
+                            document.createElement('strong');
 
-                        Aceitar
-                    </button>
+                        titulo.textContent =
+                            'Proposta recebida';
 
-                    <button
-                        type="button"
-                        class="btn-negociacao btn-recusar"
-                        onclick="recusarNegociacao(
-                            '${negociacao.id}'
-                        )">
 
-                        <i class="fa-solid fa-xmark"></i>
+                        const tipo =
+                            document.createElement('span');
 
-                        Recusar
-                    </button>
+                        tipo.textContent =
+                            `Tipo: ${
+                                formatarTipoNegociacao(
+                                    negociacao.tipoNegociacao
+                                )
+                            }`;
 
-                </div>
-            </div>
-        `;
+
+                        statusContainer.appendChild(
+                            icone
+                        );
+
+                        statusContainer.appendChild(
+                            titulo
+                        );
+
+                        statusContainer.appendChild(
+                            tipo
+                        );
+
+
+                        /*
+                         * Exibe o livro oferecido somente
+                         * quando for uma TROCA.
+                         */
+                        if (
+                            negociacao.tipoNegociacao ===
+                            'TROCA'
+                        ) {
+
+                            const detalhesOferta =
+                                criarDetalhesOferta(
+                                    negociacao
+                                );
+
+                            statusContainer.appendChild(
+                                detalhesOferta
+                            );
+                        }
+
+
+                        /*
+                         * Ações do anunciante.
+                         */
+                        const acoes =
+                            document.createElement('div');
+
+                        acoes.className =
+                            'negociacao-acoes-resposta';
+
+
+                        const botaoAceitar =
+                            document.createElement('button');
+
+                        botaoAceitar.type =
+                            'button';
+
+                        botaoAceitar.className =
+                            'btn-negociacao btn-aceitar';
+
+                        botaoAceitar.innerHTML =
+                            '<i class="fa-solid fa-check"></i> Aceitar';
+
+                        botaoAceitar.addEventListener(
+                            'click',
+                            () => aceitarNegociacao(
+                                negociacao.id
+                            )
+                        );
+
+
+                        const botaoRecusar =
+                            document.createElement('button');
+
+                        botaoRecusar.type =
+                            'button';
+
+                        botaoRecusar.className =
+                            'btn-negociacao btn-recusar';
+
+                        botaoRecusar.innerHTML =
+                            '<i class="fa-solid fa-xmark"></i> Recusar';
+
+                        botaoRecusar.addEventListener(
+                            'click',
+                            () => recusarNegociacao(
+                                negociacao.id
+                            )
+                        );
+
+
+                        acoes.appendChild(
+                            botaoAceitar
+                        );
+
+                        acoes.appendChild(
+                            botaoRecusar
+                        );
+
+                        statusContainer.appendChild(
+                            acoes
+                        );
+
+                        negociacaoConteudo.appendChild(
+                            statusContainer
+                        );
 
                     } else {
 
                         negociacaoConteudo.innerHTML = `
-            <div class="negociacao-status">
-                <i class="fa-solid fa-clock"></i>
+                <div class="negociacao-status">
 
-                <strong>
-                    Proposta enviada
-                </strong>
+                    <i class="fa-solid fa-clock"></i>
 
-                <span>
-                    Tipo: ${formatarTipoNegociacao(
-                            negociacao.tipoNegociacao
-                        )}
-                </span>
+                    <strong>
+                        Proposta enviada
+                    </strong>
 
-                <span>
-                    Aguardando resposta do anunciante.
-                </span>
-            </div>
-        `;
+                    <span>
+                        Tipo: ${formatarTipoNegociacao(
+                                negociacao.tipoNegociacao
+                            )}
+                    </span>
+
+                    <span>
+                        Aguardando resposta do anunciante.
+                    </span>
+
+                </div>
+            `;
                     }
 
                     break;
@@ -1212,34 +1795,52 @@
                 case 'EM_ANDAMENTO':
 
                     negociacaoConteudo.innerHTML = `
-                <div class="negociacao-status">
-                    <i class="fa-solid fa-handshake"></i>
+                    <div class="negociacao-status">
+                        <i class="fa-solid fa-handshake"></i>
 
-                    <strong>
-                        Negociação em andamento
-                    </strong>
+                        <strong>
+                            Negociação em andamento
+                        </strong>
 
-                    <span>
-                        Tipo: ${formatarTipoNegociacao(
-                        negociacao.tipoNegociacao
-                    )}
-                    </span>
-                </div>
-            `;
+                        <span>
+                            Tipo: ${formatarTipoNegociacao(
+                                    negociacao.tipoNegociacao
+                                )}
+                        </span>
+
+                        <a
+                            href="/negociacoes/${encodeURIComponent(negociacao.id)}"
+                            class="btn-ver-negociacao">
+
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                            Ver negociação
+                        </a>
+                    </div>
+                            `;
 
                     break;
 
                 case 'FINALIZADA':
 
                     negociacaoConteudo.innerHTML = `
-                <div class="negociacao-status">
-                    <i class="fa-solid fa-circle-check"></i>
+                        <div class="negociacao-status">
+                            <i class="fa-solid fa-circle-check"></i>
 
-                    <strong>
-                        Negociação finalizada
-                    </strong>
-                </div>
-            `;
+                            <strong>
+                                Negociação finalizada
+                            </strong>
+
+                            <a
+                                href="/negociacoes/${encodeURIComponent(negociacao.id)}"
+                                class="btn-ver-negociacao">
+
+                                <i class="fa-solid fa-receipt"></i>
+
+                                Ver detalhes
+                            </a>
+                        </div>
+                    `;
 
                     break;
 
@@ -1267,6 +1868,54 @@
                     break;
             }
         }
+
+        function selecionarLivroNaoAnunciado() {
+
+            document.getElementById(
+                'modalTipoOferta'
+            ).style.display = 'none';
+
+            document.getElementById(
+                'modalSelecionarLivro'
+            ).style.display = 'none';
+
+            document.getElementById(
+                'modalDescricaoOferta'
+            ).style.display = 'flex';
+
+            document.getElementById(
+                'descricaoOfertaManual'
+            ).focus();
+        }
+
+
+        async function confirmarLivroNaoAnunciado() {
+
+            const descricao =
+                document
+                    .getElementById(
+                        'descricaoOfertaManual'
+                    )
+                    .value
+                    .trim();
+
+            if (!descricao) {
+
+                alert(
+                    'Descreva o livro que deseja oferecer.'
+                );
+
+                return;
+            }
+
+            await enviarPropostaNegociacao(
+                'TROCA',
+                null,
+                descricao
+            );
+        }
+
+
 
         function renderizarBotaoProporNegociacao(
             anuncio
@@ -1332,9 +1981,165 @@
     `;
         }
 
-        function formatarTipoNegociacao(
-            tipo
+        function fecharModalTroca() {
+
+            document
+                .querySelectorAll(
+                    '.modal-troca'
+                )
+                .forEach(modal => {
+                    modal.style.display = 'none';
+                });
+
+            anuncioOferecidoSelecionado = null;
+
+            const descricaoAnunciada =
+                document.getElementById(
+                    'descricaoOfertaAnunciada'
+                );
+
+            const descricaoManual =
+                document.getElementById(
+                    'descricaoOfertaManual'
+                );
+
+            if (descricaoAnunciada) {
+                descricaoAnunciada.value = '';
+            }
+
+            if (descricaoManual) {
+                descricaoManual.value = '';
+            }
+        }
+
+
+        function voltarModalTipoOferta() {
+
+            document
+                .querySelectorAll(
+                    '.modal-troca'
+                )
+                .forEach(modal => {
+                    modal.style.display = 'none';
+                });
+
+            document.getElementById(
+                'modalTipoOferta'
+            ).style.display = 'flex';
+        }
+
+        function renderizarLivrosOferta(
+            anuncios
         ) {
+
+            const lista =
+                document.getElementById(
+                    'listaLivrosOferta'
+                );
+
+            lista.innerHTML = '';
+
+            if (anuncios.length === 0) {
+
+                lista.innerHTML = `
+            <div class="oferta-vazia">
+                <i class="fa-solid fa-book-open"></i>
+
+                <p>
+                    Você não possui anúncios ativos
+                    disponíveis para troca.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn-negociacao"
+                    onclick="selecionarLivroNaoAnunciado()">
+                    Descrever outro livro
+                </button>
+            </div>
+        `;
+
+                return;
+            }
+
+            anuncios.forEach(anuncio => {
+
+                const card =
+                    document.createElement('button');
+
+                card.type = 'button';
+
+                card.className =
+                    'livro-oferta-card';
+
+                card.dataset.id =
+                    anuncio.id;
+
+                const imagem =
+                    document.createElement('img');
+
+                imagem.src =
+                    anuncio.capa ||
+                    '/img/capa-padrao.png';
+
+                imagem.alt =
+                    `Capa de ${anuncio.titulo || 'livro'}`;
+
+                const info =
+                    document.createElement('div');
+
+                info.className =
+                    'livro-oferta-info';
+
+                const titulo =
+                    document.createElement('strong');
+
+                titulo.textContent =
+                    anuncio.titulo ||
+                    'Livro';
+
+                const tipo =
+                    document.createElement('span');
+
+                tipo.textContent =
+                    formatarTipoNegociacao(
+                        anuncio.tipoNegociacao
+                    );
+
+                info.appendChild(titulo);
+                info.appendChild(tipo);
+
+                card.appendChild(imagem);
+                card.appendChild(info);
+
+                card.addEventListener(
+                    'click',
+                    () => {
+
+                        document
+                            .querySelectorAll(
+                                '.livro-oferta-card'
+                            )
+                            .forEach(item =>
+                                item.classList.remove(
+                                    'selecionado'
+                                )
+                            );
+
+                        card.classList.add(
+                            'selecionado'
+                        );
+
+                        anuncioOferecidoSelecionado =
+                            anuncio.id;
+                    }
+                );
+
+                lista.appendChild(card);
+            });
+        }
+
+        function formatarTipoNegociacao(tipo) {
 
             switch (tipo) {
 
@@ -1344,11 +2149,13 @@
                 case 'VENDA':
                     return 'Venda';
 
+                case 'AMBOS':
+                    return 'Troca e venda';
+
                 default:
                     return tipo || '';
             }
         }
-
 
         /* =====================================================
            RENDERIZAR TODAS AS MENSAGENS
@@ -1444,6 +2251,37 @@
 
 
             balao.appendChild(p);
+
+            const mensagemAceite =
+                msg.conteudo ===
+                '✅ Proposta aceita. A negociação está em andamento.';
+
+            if (
+                mensagemAceite &&
+                conversaAtual.negociacao &&
+                conversaAtual.negociacao.id
+            ) {
+
+                const linkNegociacao =
+                    document.createElement('a');
+
+                linkNegociacao.href =
+                    `/negociacoes/${
+                        encodeURIComponent(
+                            conversaAtual.negociacao.id
+                        )
+                    }`;
+
+                linkNegociacao.className =
+                    'mensagem-link-negociacao';
+
+                linkNegociacao.textContent =
+                    'Ver negociação';
+
+                balao.appendChild(
+                    linkNegociacao
+                );
+            }
 
 
             /* =====================================================

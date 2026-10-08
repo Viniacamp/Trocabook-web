@@ -9,8 +9,10 @@ public interface INegociacaoService {
 
     NegociacaoDTO criar(
             String anuncioId,
-            String uidInteressado,
-            Negociacao.TipoNegociacao tipoNegociacao
+            String usuarioCompradorId,
+            Negociacao.TipoNegociacao tipoNegociacao,
+            String anuncioOferecidoId,
+            String descricaoOferta
     );
 
     NegociacaoDTO buscarPorAnuncioEComprador(
@@ -24,6 +26,11 @@ public interface INegociacaoService {
     );
 
     NegociacaoDTO recusar(
+            String uidNegociacao,
+            String uidUsuario
+    );
+
+    NegociacaoDTO buscarPorUidParaUsuario(
             String uidNegociacao,
             String uidUsuario
     );
@@ -49,4 +56,14 @@ public interface INegociacaoService {
     );
 
     long contarNegociacoesPorUsuarioETipo(String uidAnunciante, Negociacao.TipoNegociacao tipoNegociacao);
+
+    NegociacaoDTO confirmar(
+            String uidNegociacao,
+            String uidUsuario
+    );
+
+    NegociacaoDTO cancelar(
+            String uidNegociacao,
+            String uidUsuario
+    );
 }

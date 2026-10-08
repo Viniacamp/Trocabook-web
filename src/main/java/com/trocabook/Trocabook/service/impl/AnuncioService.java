@@ -15,6 +15,7 @@ import com.trocabook.Trocabook.service.IUsuarioService;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,10 @@ public class AnuncioService implements IAnuncioService {
     }
 
     @Override
+    @CacheEvict(
+            value = "recomendacoes",
+            allEntries = true
+    )
     public AnuncioDTO anunciar(
             String uidLivro,
             String uidUsuario,
@@ -61,13 +66,17 @@ public class AnuncioService implements IAnuncioService {
                 usuarioService.buscarPorUid(uidUsuario);
 
         if (usuarioFirebase == null) {
-            return null;
+            throw new IllegalArgumentException(
+                    "Usuário não encontrado ao criar anúncio."
+            );
         }
 
         Livro livro = livroService.buscarPorUid(uidLivro);
 
         if (livro == null) {
-            return null;
+            throw new IllegalArgumentException(
+                    "Livro não encontrado ao criar anúncio."
+            );
         }
 
         if (descricao == null || descricao.isBlank()) {
@@ -85,7 +94,8 @@ public class AnuncioService implements IAnuncioService {
                 livro.getUrlImagem(),
                 livro.getIdsAutores(),
                 livro.getIdsCategorias(),
-                descricao
+                descricao,
+                Anuncio.StatusAnuncio.ATIVO
         );
 
         anuncioRepository.salvar(anuncio);
@@ -110,7 +120,6 @@ public class AnuncioService implements IAnuncioService {
         return converterParaDto(anuncio);
     }
 
-    @Override
     @Cacheable(
             value = "anuncios",
             key = "'todos'"
@@ -124,7 +133,7 @@ public class AnuncioService implements IAnuncioService {
     }
 
     @Override
-    public List<AnuncioDTO> listarTodosPorTipoNegociacao(
+    public List<AnuncioDTO> listarAnunciosAtivosPorTipoNegociacao(
             Anuncio.TipoNegociacao tipoNegociacao
     ) {
         Cache cache =
@@ -132,7 +141,7 @@ public class AnuncioService implements IAnuncioService {
 
         if (cache != null) {
             List<AnuncioDTO> anunciosCacheados =
-                    buscarAnunciosNoCache(cache);
+                    buscarAnunciosNoCache(cache, "ativos");
 
             if (anunciosCacheados != null) {
                 return anunciosCacheados.stream()
@@ -146,7 +155,7 @@ public class AnuncioService implements IAnuncioService {
         }
 
         return anuncioRepository
-                .listarTodosPorTipoNegociacao(tipoNegociacao)
+                .listarTodosPorTipoNegociacao(tipoNegociacao, Anuncio.StatusAnuncio.ATIVO)
                 .stream()
                 .map(this::converterParaDto)
                 .toList();
@@ -154,7 +163,7 @@ public class AnuncioService implements IAnuncioService {
 
 
     @Override
-    public List<AnuncioDTO> listarAnunciosUsuario(
+    public List<AnuncioDTO> listarAnunciosAtivosPorUsuario(
             String uidUsuario
     ) {
         Cache cache =
@@ -162,7 +171,7 @@ public class AnuncioService implements IAnuncioService {
 
         if (cache != null) {
             List<AnuncioDTO> anunciosCacheados =
-                    buscarAnunciosNoCache(cache);
+                    buscarAnunciosNoCache(cache, "ativos");
 
             if (anunciosCacheados != null) {
                 return anunciosCacheados.stream()
@@ -176,14 +185,14 @@ public class AnuncioService implements IAnuncioService {
         }
 
         return anuncioRepository
-                .buscarPorUidUsuario(uidUsuario)
+                .buscarPorUidUsuario(uidUsuario, Anuncio.StatusAnuncio.ATIVO)
                 .stream()
                 .map(this::converterParaDto)
                 .toList();
     }
 
     @Override
-    public List<AnuncioDTO> listarAnunciosUsuarioETipo(
+    public List<AnuncioDTO> listarAnunciosAtivosPorUsuarioETipo(
             String uidUsuario,
             Anuncio.TipoNegociacao tipoNegociacao
     ) {
@@ -192,7 +201,7 @@ public class AnuncioService implements IAnuncioService {
 
         if (cache != null) {
             List<AnuncioDTO> anunciosCacheados =
-                    buscarAnunciosNoCache(cache);
+                    buscarAnunciosNoCache(cache, "ativos");
 
             if (anunciosCacheados != null) {
                 return anunciosCacheados.stream()
@@ -213,7 +222,8 @@ public class AnuncioService implements IAnuncioService {
         return anuncioRepository
                 .buscarPorUidUsuarioETipoNegociacao(
                         uidUsuario,
-                        tipoNegociacao
+                        tipoNegociacao,
+                        Anuncio.StatusAnuncio.ATIVO
                 )
                 .stream()
                 .map(this::converterParaDto)
@@ -221,7 +231,7 @@ public class AnuncioService implements IAnuncioService {
     }
 
     @Override
-    public List<AnuncioDTO> buscarPorTitulo(String titulo) {
+    public List<AnuncioDTO> buscarAnunciosAtivosPorTitulo(String titulo) {
 
         if (titulo == null || titulo.isBlank()) {
             return List.of();
@@ -232,7 +242,7 @@ public class AnuncioService implements IAnuncioService {
                 .toLowerCase(Locale.ROOT);
 
         return anuncioRepository
-                .buscarPorTitulo(tituloNormalizado)
+                .buscarPorTitulo(tituloNormalizado, Anuncio.StatusAnuncio.ATIVO)
                 .stream()
                 .map(this::converterParaDto)
                 .toList();
@@ -288,10 +298,97 @@ public class AnuncioService implements IAnuncioService {
     }
 
     @Override
+    @CacheEvict(
+            value = "recomendacoes",
+            allEntries = true
+    )
+    public AnuncioDTO finalizar(String uidAnuncio) {
+
+        Anuncio anuncio =
+                anuncioRepository.buscarPorUid(
+                        uidAnuncio
+                );
+
+        if (anuncio == null) {
+            throw new IllegalArgumentException(
+                    "Anúncio não encontrado"
+            );
+        }
+
+        if (anuncio.getStatus()
+                == Anuncio.StatusAnuncio.FINALIZADO) {
+
+            return converterParaDto(anuncio);
+        }
+
+        anuncio.setStatus(
+                Anuncio.StatusAnuncio.FINALIZADO
+        );
+
+        anuncioRepository.atualizar(
+                anuncio
+        );
+
+        AnuncioDTO anuncioAtualizado =
+                converterParaDto(anuncio);
+
+        atualizarNoCache(
+                anuncioAtualizado
+        );
+
+        return anuncioAtualizado;
+    }
+
+    @Override
+    @CacheEvict(
+            value = "recomendacoes",
+            allEntries = true
+    )
     public void deletar(String uid) {
         anuncioRepository.deletar(uid);
 
         removerDoCache(uid);
+    }
+
+    @Override
+    @Cacheable(
+            value = "anuncios",
+            key = "'ativos'"
+    )
+    public List<AnuncioDTO> listarAtivos() {
+
+        return anuncioRepository
+                .listarAtivos()
+                .stream()
+                .map(this::converterParaDto)
+                .toList();
+    }
+
+    @Override
+    public List<AnuncioDTO> listarAnunciosAtivosTrocaveis(
+            String uidUsuario
+    ) {
+
+        if (uidUsuario == null || uidUsuario.isBlank()) {
+            return List.of();
+        }
+
+        return listarAtivos()
+                .stream()
+                .filter(anuncio ->
+                        uidUsuario.equals(
+                                anuncio.uidUsuario()
+                        )
+                )
+                .filter(anuncio ->
+                        "TROCA".equals(
+                                anuncio.tipoNegociacao()
+                        )
+                                || "AMBOS".equals(
+                                anuncio.tipoNegociacao()
+                        )
+                )
+                .toList();
     }
 
     private List<String> buscarNomesAutores(
@@ -351,22 +448,19 @@ public class AnuncioService implements IAnuncioService {
             return;
         }
 
-        List<AnuncioDTO> anunciosCacheados =
-                buscarAnunciosNoCache(cache);
-
-        if (anunciosCacheados == null) {
-            return;
-        }
-
-        List<AnuncioDTO> anunciosAtualizados =
-                new ArrayList<>(anunciosCacheados);
-
-        anunciosAtualizados.add(novoAnuncio);
-
-        cache.put(
+        adicionarAoCache(
+                cache,
                 "todos",
-                List.copyOf(anunciosAtualizados)
+                novoAnuncio
         );
+
+        if ("ATIVO".equals(novoAnuncio.status())) {
+            adicionarAoCache(
+                    cache,
+                    "ativos",
+                    novoAnuncio
+            );
+        }
     }
 
     private void atualizarNoCache(
@@ -379,28 +473,25 @@ public class AnuncioService implements IAnuncioService {
             return;
         }
 
-        List<AnuncioDTO> anunciosCacheados =
-                buscarAnunciosNoCache(cache);
-
-        if (anunciosCacheados == null) {
-            return;
-        }
-
-        List<AnuncioDTO> anunciosAtualizados =
-                anunciosCacheados.stream()
-                        .map(anuncio ->
-                                anuncio.id().equals(
-                                        anuncioAtualizado.id()
-                                )
-                                        ? anuncioAtualizado
-                                        : anuncio
-                        )
-                        .toList();
-
-        cache.put(
+        atualizarNoCache(
+                cache,
                 "todos",
-                anunciosAtualizados
+                anuncioAtualizado
         );
+
+        if ("FINALIZADO".equals(anuncioAtualizado.status())) {
+            removerDoCache(
+                    cache,
+                    "ativos",
+                    anuncioAtualizado.id()
+            );
+        } else {
+            atualizarNoCache(
+                    cache,
+                    "ativos",
+                    anuncioAtualizado
+            );
+        }
     }
 
     private void removerDoCache(
@@ -413,32 +504,112 @@ public class AnuncioService implements IAnuncioService {
             return;
         }
 
-        List<AnuncioDTO> anunciosCacheados =
-                buscarAnunciosNoCache(cache);
+        removerDoCache(
+                cache,
+                "todos",
+                uidAnuncio
+        );
 
-        if (anunciosCacheados == null) {
+        removerDoCache(
+                cache,
+                "ativos",
+                uidAnuncio
+        );
+    }
+
+    private void adicionarAoCache(
+            Cache cache,
+            String chave,
+            AnuncioDTO novoAnuncio
+    ) {
+        List<AnuncioDTO> anuncios =
+                buscarAnunciosNoCache(
+                        cache,
+                        chave
+                );
+
+        if (anuncios == null) {
             return;
         }
 
-        List<AnuncioDTO> anunciosAtualizados =
-                anunciosCacheados.stream()
+        List<AnuncioDTO> atualizados =
+                new ArrayList<>(anuncios);
+
+        atualizados.add(novoAnuncio);
+
+        cache.put(
+                chave,
+                List.copyOf(atualizados)
+        );
+    }
+
+    private void atualizarNoCache(
+            Cache cache,
+            String chave,
+            AnuncioDTO anuncioAtualizado
+    ) {
+        List<AnuncioDTO> anuncios =
+                buscarAnunciosNoCache(
+                        cache,
+                        chave
+                );
+
+        if (anuncios == null) {
+            return;
+        }
+
+        List<AnuncioDTO> atualizados =
+                anuncios.stream()
+                        .map(anuncio ->
+                                anuncio.id().equals(
+                                        anuncioAtualizado.id()
+                                )
+                                        ? anuncioAtualizado
+                                        : anuncio
+                        )
+                        .toList();
+
+        cache.put(
+                chave,
+                atualizados
+        );
+    }
+
+    private void removerDoCache(
+            Cache cache,
+            String chave,
+            String uidAnuncio
+    ) {
+        List<AnuncioDTO> anuncios =
+                buscarAnunciosNoCache(
+                        cache,
+                        chave
+                );
+
+        if (anuncios == null) {
+            return;
+        }
+
+        List<AnuncioDTO> atualizados =
+                anuncios.stream()
                         .filter(anuncio ->
                                 !anuncio.id().equals(uidAnuncio)
                         )
                         .toList();
 
         cache.put(
-                "todos",
-                anunciosAtualizados
+                chave,
+                atualizados
         );
     }
 
     @SuppressWarnings("unchecked")
     private List<AnuncioDTO> buscarAnunciosNoCache(
-            Cache cache
+            Cache cache,
+            String chave
     ) {
         return cache.get(
-                "todos",
+                chave,
                 List.class
         );
     }

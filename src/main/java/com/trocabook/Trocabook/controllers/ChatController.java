@@ -121,7 +121,9 @@ public class ChatController {
                 negociacaoService.criar(
                         request.anuncioId(),
                         usuarioLogado.id(),
-                        tipoNegociacao
+                        tipoNegociacao,
+                        request.anuncioOferecidoId(),
+                        request.descricaoOferta()
                 );
 
         String conteudoMensagem =
@@ -541,6 +543,33 @@ public class ChatController {
 
         return new ChatResponse<>(
                 conversas,
+                "sucesso"
+        );
+    }
+
+    @GetMapping("/anuncios-ofereciveis")
+    @ResponseBody
+    public ChatResponse<List<AnuncioDTO>> listarAnunciosOfereciveis(
+            HttpSession sessao
+    ) {
+
+        UsuarioOutput usuarioLogado =
+                usuarioAutenticadoService.getUsuarioOutput(sessao);
+
+        if (usuarioLogado == null) {
+            throw new SecurityException(
+                    "Usuário não autenticado"
+            );
+        }
+
+        List<AnuncioDTO> anuncios =
+                anuncioService
+                        .listarAnunciosAtivosTrocaveis(
+                                usuarioLogado.id()
+                        );
+
+        return new ChatResponse<>(
+                anuncios,
                 "sucesso"
         );
     }

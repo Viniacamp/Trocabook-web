@@ -404,21 +404,24 @@ public class DataInitializer implements CommandLineRunner {
                 anuncio11,
                 squirtle,
                 pedroLucas,
-                Negociacao.TipoNegociacao.TROCA
+                Negociacao.TipoNegociacao.TROCA,
+                "Livro"
         );
 
         criarNegociacao(
                 anuncio12,
                 rafaela,
                 vinicius,
-                Negociacao.TipoNegociacao.VENDA
+                Negociacao.TipoNegociacao.VENDA,
+                null
         );
 
         criarNegociacao(
                 anuncio13,
                 rafaela,
                 wellington,
-                Negociacao.TipoNegociacao.TROCA
+                Negociacao.TipoNegociacao.TROCA,
+                "Livro"
         );
 
         System.out.println("==========================================");
@@ -472,7 +475,7 @@ public class DataInitializer implements CommandLineRunner {
     ) {
 
         List<AnuncioDTO> anunciosUsuario =
-                anuncioService.listarAnunciosUsuario(usuario.id());
+                anuncioService.listarAnunciosAtivosPorUsuario(usuario.id());
 
         for (AnuncioDTO anuncio : anunciosUsuario) {
 
@@ -499,7 +502,8 @@ public class DataInitializer implements CommandLineRunner {
             AnuncioDTO anuncio,
             UsuarioOutput anunciante,
             UsuarioOutput comprador,
-            Negociacao.TipoNegociacao tipoNegociacao
+            Negociacao.TipoNegociacao tipoNegociacao,
+            String descricaoOferta
     ) {
 
         List<NegociacaoDTO> negociacoes =
@@ -531,8 +535,13 @@ public class DataInitializer implements CommandLineRunner {
                 anuncio.titulo(),
                 anuncio.capa(),
                 true,
-                true
+                true,
+                null,
+                null,
+                null,
+                descricaoOferta
         );
+
 
         negociacaoService.salvar(negociacaoDTO);
     }

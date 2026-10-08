@@ -276,14 +276,50 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
             Thread.currentThread().interrupt();
 
             throw new RuntimeException(
-                    "Thread interrompida ao buscar negociação",
+                    "Thread interrompida ao buscar negociação por anuncio e comprador",
                     e
             );
 
         } catch (ExecutionException e) {
 
             throw new RuntimeException(
-                    "Erro ao buscar negociação",
+                    "Erro ao buscar negociação por anuncio e comprador",
+                    e
+            );
+        }
+    }
+
+    @Override
+    public List<Negociacao> buscarPorAnuncioOferecidoId(String anuncioOferecidoId) {
+        try {
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo("anuncioOferecidoId",
+                            anuncioOferecidoId)
+                    .get()
+                    .get();
+
+
+            return documentos
+                    .getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Negociacao.class))
+                    .toList();
+
+
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException(
+                    "Thread interrompida ao buscar negociação pelo id do anuncio oferecido",
+                    e
+            );
+
+        } catch (ExecutionException e) {
+
+            throw new RuntimeException(
+                    "Erro ao buscar negociação pelo id do anuncio oferecido",
                     e
             );
         }

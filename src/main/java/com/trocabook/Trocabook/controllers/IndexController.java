@@ -44,7 +44,7 @@ public class IndexController {
 	public String index(Model model, HttpSession sessao) {
 
 		List<AnuncioDTO> todosAnuncios =
-				anuncioService.listarTodos();
+				anuncioService.listarAtivos();
 
 		List<AnuncioDTO> recomendacoes;
 
@@ -103,7 +103,7 @@ public class IndexController {
 			return List.of();
 		}
 		return anuncioService
-				.buscarPorTitulo(nm_livro);
+				.buscarAnunciosAtivosPorTitulo(nm_livro);
 	}
 
 	@PostMapping("/pesquisar/interacao")

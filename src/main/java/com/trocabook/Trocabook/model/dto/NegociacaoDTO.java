@@ -18,6 +18,10 @@ public record NegociacaoDTO(
         String titulo,
         String capa,
         boolean confirmacaoAnunciante,
-        boolean confirmacaoComprador
+        boolean confirmacaoComprador,
+        String anuncioOferecidoId,
+        String tituloLivroOferecido,
+        String capaLivroOferecido,
+        String descricaoOferta
 ) {
 }

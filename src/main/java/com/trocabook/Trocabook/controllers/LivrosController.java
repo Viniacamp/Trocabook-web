@@ -54,7 +54,7 @@ public class LivrosController {
                 || filtroLivros.equals("AMBOS")) {
 
             listaAnuncios =
-                    anuncioService.listarTodosPorTipoNegociacao(
+                    anuncioService.listarAnunciosAtivosPorTipoNegociacao(
                             Anuncio.TipoNegociacao.valueOf(
                                     filtroLivros
                             )
@@ -62,7 +62,7 @@ public class LivrosController {
 
         } else {
             listaAnuncios =
-                    anuncioService.listarTodos();
+                    anuncioService.listarAtivos();
         }
 
         listaAnuncios =

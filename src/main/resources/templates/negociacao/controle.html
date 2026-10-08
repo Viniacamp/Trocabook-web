@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Negociação | Trocabook</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+    <link
+            rel="stylesheet"
+            type="text/css"
+            href="/css/negociacao.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho"><tr>
+                <th id="cabecalhoelementos">
+                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar">
+                        <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
+                    </div>
+
+                    <th:block sec:authorize="isAuthenticated()">
+                        <div class="user-menu-container">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                <img
+                                        th:src="${usuarioLogado.fotoPerfil}"
+                                        class="user-menu-icon"
+                                        th:alt="'Foto de ' + ${usuarioLogado.nome}">
+
+                                <span
+                                        th:text="${usuarioLogado.nome}"
+                                        style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);">
+                                </span>
+                                <span class="arrow">▼</span>
+                            </button>
+
+                            <div id="userDropdown" class="dropdown-content">
+                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                <a href="/chat">Chat</a>
+                                <hr class="divider">
+                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
+                    </th:block>
+                </th></tr>
+            </table>
+        </div>
+    </header>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <main class="negociacao-container">
+
+        <section class="negociacao-card">
+
+            <div class="negociacao-cabecalho">
+                <h1>Controle da negociação</h1>
+
+                <span
+                        class="negociacao-status"
+                        th:classappend="' status-' + ${#strings.toLowerCase(negociacao.status)}"
+                        th:text="${#strings.replace(negociacao.status, '_', ' ')}">
+                        EM ANDAMENTO
+                </span>
+
+            </div>
+
+            <div class="negociacao-livro">
+
+                <img
+                        class="negociacao-capa"
+                        th:src="${negociacao.capa}"
+                        th:alt="'Capa do livro ' + ${negociacao.titulo}">
+
+                <div class="negociacao-livro-info">
+                    <span class="negociacao-label">Livro negociado</span>
+
+                    <h2 th:text="${negociacao.titulo}">
+                        Título do livro
+                    </h2>
+
+                    <p>
+                        Tipo de negociação:
+                        <strong th:text="${#strings.capitalize(#strings.toLowerCase(negociacao.tipoNegociacao))}">
+                            Venda
+                        </strong>
+                    </p>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="negociacao-participantes">
+
+                <div class="participante-card">
+
+                <span class="participante-tipo">
+                    Anunciante
+                </span>
+
+                    <img
+                            th:src="${negociacao.fotoPerfilAnunciante}"
+                            th:alt="'Foto de ' + ${negociacao.nmAnunciante}"
+                            class="participante-foto">
+
+                    <strong
+                            th:text="${negociacao.nmAnunciante}">
+                        Anunciante
+                    </strong>
+
+                    <div
+                            class="confirmacao-status"
+                            th:classappend="${negociacao.confirmacaoAnunciante}
+                        ? ' confirmado'
+                        : ' pendente'">
+
+                    <span
+                            th:text="${negociacao.confirmacaoAnunciante}
+                            ? '✓ Confirmado'
+                            : '○ Aguardando confirmação'">
+                    </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="participante-separador">
+                    <span>⇄</span>
+                </div>
+
+
+                <div class="participante-card">
+
+                <span class="participante-tipo">
+                    Interessado
+                </span>
+
+                    <img
+                            th:src="${negociacao.fotoPerfilComprador}"
+                            th:alt="'Foto de ' + ${negociacao.nmComprador}"
+                            class="participante-foto">
+
+                    <strong
+                            th:text="${negociacao.nmComprador}">
+                        Interessado
+                    </strong>
+
+                    <div
+                            class="confirmacao-status"
+                            th:classappend="${negociacao.confirmacaoComprador}
+                        ? ' confirmado'
+                        : ' pendente'">
+
+                    <span
+                            th:text="${negociacao.confirmacaoComprador}
+                            ? '✓ Confirmado'
+                            : '○ Aguardando confirmação'">
+                    </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div
+                    class="confirmacao-negociacao"
+                    th:if="${negociacao.status == 'EM_ANDAMENTO'}">
+
+                <h3>Confirmação da negociação</h3>
+
+                <p th:if="${usuarioLogado.id == negociacao.usuarioAnuncianteId}">
+                    Confirme quando sua parte da negociação estiver concluída.
+                </p>
+
+                <p th:if="${usuarioLogado.id == negociacao.usuarioCompradorId}">
+                    Confirme quando você receber o livro.
+                </p>
+
+                <form
+                        th:action="@{'/negociacoes/' + ${negociacao.id} + '/confirmar'}"
+                        method="post">
+
+                    <button
+                            type="submit"
+                            class="btn-confirmar-negociacao"
+
+                            th:if="${
+                        (usuarioLogado.id == negociacao.usuarioAnuncianteId
+                            and !negociacao.confirmacaoAnunciante)
+                        or
+                        (usuarioLogado.id == negociacao.usuarioCompradorId
+                            and !negociacao.confirmacaoComprador)
+                    }"
+
+                            th:text="${
+                            usuarioLogado.id == negociacao.usuarioAnuncianteId
+                            and negociacao.tipoNegociacao == 'VENDA'
+                            ? 'Confirmar recebimento do pagamento'
+                            : 'Confirmar recebimento do livro'
+                        }">
+
+                        Confirmar
+                    </button>
+
+                </form>
+
+                <div
+                        class="minha-confirmacao-realizada"
+                        th:if="${
+                            (usuarioLogado.id == negociacao.usuarioAnuncianteId
+                                and negociacao.confirmacaoAnunciante)
+                            or
+                            (usuarioLogado.id == negociacao.usuarioCompradorId
+                                and negociacao.confirmacaoComprador)
+                        }">
+
+                    ✓ Você já confirmou sua parte desta negociação.
+
+
+
+
+
+                </div>
+
+                <div class="cancelamento-negociacao">
+
+                    <hr>
+
+                    <h3>Cancelar negociação</h3>
+
+                    <p
+                            th:if="${
+                        !negociacao.confirmacaoAnunciante
+                        and !negociacao.confirmacaoComprador
+                    }">
+                        Caso a negociação não possa continuar,
+                        você pode cancelá-la.
+                    </p>
+
+                    <p
+                            class="aviso-cancelamento"
+                            th:if="${
+                                negociacao.confirmacaoAnunciante
+                                or negociacao.confirmacaoComprador
+                            }">
+                        Atenção: uma das partes já confirmou esta negociação.
+                        Cancele somente se a negociação realmente não puder ser concluída.
+                    </p>
+
+                    <form
+                            th:action="@{'/negociacoes/' + ${negociacao.id} + '/cancelar'}"
+                            method="post"
+                            onsubmit="return confirmarCancelamento();">
+
+                        <button
+                                type="submit"
+                                class="btn-cancelar-negociacao">
+                            Cancelar negociação
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="negociacao-acoes">
+
+                <a
+                        th:href="@{/chat}"
+                        class="btn-voltar-chat">
+                    Voltar para o chat
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ===================================================== -->
+    <!-- FOOTER                                                 -->
+    <!-- ===================================================== -->
+
+    <footer>
+
+        <div class="rodapenovo">
+
+            <a href="/static">
+
+                <img
+                        src="/img/Design%20sem%20nome.svg">
+
+            </a>
+
+
+            <a href="/sobreNos">
+
+                <p>
+                    Conheça nosso incrível projeto
+                    <br>
+                    de incentivo a reutilização
+                </p>
+
+            </a>
+
+
+            <a href="/ajuda">
+
+                <p>
+                    Central de ajuda
+                </p>
+
+            </a>
+
+
+            <small>
+
+                © 2026 Sistema Trocabook
+                <br>
+                Todos os direitos reservados
+
+            </small>
+
+        </div>
+
+    </footer>
+
+
+</div>
+<script th:inline="javascript">
+
+    function confirmarCancelamento() {
+
+        const confirmacaoAnunciante =
+            /*[[${negociacao.confirmacaoAnunciante}]]*/ false;
+
+        const confirmacaoComprador =
+            /*[[${negociacao.confirmacaoComprador}]]*/ false;
+
+        const possuiConfirmacao =
+            confirmacaoAnunciante
+            || confirmacaoComprador;
+
+        if (possuiConfirmacao) {
+
+            return confirm(
+                'Uma das partes já confirmou esta negociação. '
+                + 'Tem certeza de que deseja cancelá-la?'
+            );
+        }
+
+        return confirm(
+            'Tem certeza de que deseja cancelar esta negociação?'
+        );
+    }
+
+</script>
+</body>
+<script src="/js/pesquisa.js"></script>
+<script type="module" src="/js/logout.js"></script>
+<script src="/js/menu-logado.js"></script>
+</html>

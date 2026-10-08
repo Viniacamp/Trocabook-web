@@ -5,6 +5,8 @@ import com.trocabook.Trocabook.model.Interacao;
 import com.trocabook.Trocabook.model.dto.InteracaoDTO;
 import com.trocabook.Trocabook.repository.InteracaoRepository;
 import com.trocabook.Trocabook.service.IInteracaoService;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +18,11 @@ public class InteracaoService implements IInteracaoService {
 
     private final InteracaoRepository interacaoRepository;
 
-    public InteracaoService(InteracaoRepository interacaoRepository) {
+    private final CacheManager cacheManager;
+
+    public InteracaoService(InteracaoRepository interacaoRepository, CacheManager cacheManager) {
         this.interacaoRepository = interacaoRepository;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -49,6 +54,7 @@ public class InteracaoService implements IInteracaoService {
         );
 
         interacaoRepository.salvar(interacao);
+        invalidarCacheRecomendacao(uidUsuario);
 
         return interacao.paraDto();
     }
@@ -82,6 +88,7 @@ public class InteracaoService implements IInteracaoService {
 
         interacaoRepository.salvar(interacao);
 
+        invalidarCacheRecomendacao(uidUsuario);
         return interacao.paraDto();
     }
 
@@ -126,6 +133,7 @@ public class InteracaoService implements IInteracaoService {
 
         interacaoRepository.salvar(interacao);
 
+        invalidarCacheRecomendacao(uidUsuario);
         return interacao.paraDto();
     }
 
@@ -145,5 +153,20 @@ public class InteracaoService implements IInteracaoService {
                 .stream()
                 .map(Interacao::paraDto)
                 .toList();
+    }
+
+    private void invalidarCacheRecomendacao(
+            String uidUsuario
+    ) {
+        if (uidUsuario == null || uidUsuario.isBlank()) {
+            return;
+        }
+
+        Cache cache =
+                cacheManager.getCache("recomendacoes");
+
+        if (cache != null) {
+            cache.evict(uidUsuario);
+        }
     }
 }

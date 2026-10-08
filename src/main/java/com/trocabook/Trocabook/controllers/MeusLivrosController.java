@@ -68,7 +68,7 @@ public class MeusLivrosController {
                     Anuncio.TipoNegociacao.valueOf(filtroAnuncio);
 
             livrosAnuncio =
-                    anuncioService.listarAnunciosUsuarioETipo(
+                    anuncioService.listarAnunciosAtivosPorUsuarioETipo(
                             uidUsuario,
                             tipo
                     );
@@ -76,7 +76,7 @@ public class MeusLivrosController {
         } else {
 
             livrosAnuncio =
-                    anuncioService.listarAnunciosUsuario(
+                    anuncioService.listarAnunciosAtivosPorUsuario(
                             uidUsuario
                     );
         }
