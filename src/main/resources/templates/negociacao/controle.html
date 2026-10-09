@@ -83,30 +83,123 @@
 
             </div>
 
-            <div class="negociacao-livro">
+            <div class="negociacao-resumo">
 
-                <img
-                        class="negociacao-capa"
-                        th:src="${negociacao.capa}"
-                        th:alt="'Capa do livro ' + ${negociacao.titulo}">
+                <!-- Livro principal -->
+                <div class="negociacao-livro-card">
 
-                <div class="negociacao-livro-info">
-                    <span class="negociacao-label">Livro negociado</span>
+                    <span class="negociacao-label">
+                        Livro negociado
+                    </span>
+
+                    <img
+                            class="negociacao-capa"
+                            th:src="${negociacao.capa}"
+                            th:alt="'Capa do livro ' + ${negociacao.titulo}">
 
                     <h2 th:text="${negociacao.titulo}">
                         Título do livro
                     </h2>
 
-                    <p>
-                        Tipo de negociação:
-                        <strong th:text="${#strings.capitalize(#strings.toLowerCase(negociacao.tipoNegociacao))}">
-                            Venda
-                        </strong>
+                </div>
+
+
+                <!-- Indicador da negociação -->
+                <div class="negociacao-troca-indicador">
+
+                <span
+                        class="troca-icone"
+                        th:text="${negociacao.tipoNegociacao == 'TROCA' ? '⇄' : '→'}">
+                    ⇄
+                </span>
+
+                    <span
+                            class="troca-tipo"
+                            th:text="${#strings.capitalize(#strings.toLowerCase(negociacao.tipoNegociacao))}">
+                        Troca
+                    </span>
+
+                </div>
+
+
+                    <!-- Livro oferecido quando existe anúncio -->
+                    <div
+                            class="negociacao-livro-card"
+                            th:if="${negociacao.tipoNegociacao == 'TROCA'
+                    and negociacao.anuncioOferecidoId != null}">
+
+                    <span class="negociacao-label">
+                        Livro oferecido
+                    </span>
+
+                    <img
+                            class="negociacao-capa"
+                            th:src="${negociacao.capaLivroOferecido}"
+                            th:alt="'Capa do livro ' + ${negociacao.tituloLivroOferecido}">
+
+                    <h2 th:text="${negociacao.tituloLivroOferecido}">
+                        Livro oferecido
+                    </h2>
+
+                    <p
+                            class="oferta-observacao"
+                            th:if="${negociacao.descricaoOferta != null
+                    and !#strings.isEmpty(negociacao.descricaoOferta)}">
+
+                        <strong>Observação:</strong>
+
+                        <span th:text="${negociacao.descricaoOferta}">
+                            Observação da oferta
+                        </span>
+
                     </p>
+
+                </div>
+
+
+                    <!-- Troca com livro que não possui anúncio -->
+                    <div
+                            class="negociacao-livro-card livro-nao-anunciado"
+                            th:if="${negociacao.tipoNegociacao == 'TROCA'
+                    and negociacao.anuncioOferecidoId == null}">
+
+                    <span class="negociacao-label">
+                        Livro oferecido
+                    </span>
+
+                    <div class="livro-nao-anunciado-icone">
+                        📖
+                    </div>
+
+                    <h2>Livro não anunciado</h2>
+
+                    <p
+                            class="oferta-descricao"
+                            th:text="${negociacao.descricaoOferta}">
+                        Descrição do livro oferecido
+                    </p>
+
+                </div>
+
+
+                <!-- Venda -->
+                <div
+                        class="negociacao-venda-info"
+                        th:if="${negociacao.tipoNegociacao == 'VENDA'}">
+
+                    <div class="venda-icone">
+                        ✓
+                    </div>
+
+                    <strong>Negociação de venda</strong>
+
+                    <span>
+                        Acompanhe abaixo a confirmação das duas partes.
+                    </span>
+
                 </div>
 
             </div>
-
             <hr>
 
             <div class="negociacao-participantes">
@@ -290,7 +383,12 @@
             <div class="negociacao-acoes">
 
                 <a
-                        th:href="@{/chat}"
+                        th:href="@{/chat(
+                            anuncio=${negociacao.anuncioId()},
+                            destinatario=${usuarioLogado.id() == negociacao.usuarioAnuncianteId()
+                                ? negociacao.usuarioCompradorId()
+                                : negociacao.usuarioAnuncianteId()}
+                        )}"
                         class="btn-voltar-chat">
                     Voltar para o chat
                 </a>
