@@ -29,4 +29,13 @@ public interface NegociacaoRepository {
     );
 
     List<Negociacao> buscarPorAnuncioOferecidoId(String anuncioOferecidoId);
+
+    List<Negociacao> buscarFinalizadasPorUsuario(
+            String uidUsuario
+    );
+
+    List<Negociacao> buscarFinalizadasPorUsuarioETipo(
+            String uidUsuario,
+            Negociacao.TipoNegociacao tipoNegociacao
+    );
 }

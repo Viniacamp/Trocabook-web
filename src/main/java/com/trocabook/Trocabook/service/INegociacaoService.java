@@ -66,4 +66,13 @@ public interface INegociacaoService {
             String uidNegociacao,
             String uidUsuario
     );
+
+    List<NegociacaoDTO> listarFinalizadasPorUsuario(
+            String uidUsuario
+    );
+
+    List<NegociacaoDTO> listarFinalizadasPorUsuarioETipo(
+            String uidUsuario,
+            Negociacao.TipoNegociacao tipoNegociacao
+    );
 }

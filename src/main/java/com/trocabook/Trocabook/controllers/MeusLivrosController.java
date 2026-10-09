@@ -24,8 +24,18 @@ public class MeusLivrosController {
     private final INegociacaoService negociacaoService;
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
-    private final Set<String> tiposValidos =
-            Set.of("VENDA", "TROCA", "AMBOS");
+    private final Set<String> tiposAnuncioValidos =
+            Set.of(
+                    "VENDA",
+                    "TROCA",
+                    "AMBOS"
+            );
+
+    private final Set<String> tiposNegociacaoValidos =
+            Set.of(
+                    "VENDA",
+                    "TROCA"
+            );
 
     public MeusLivrosController(
             IAnuncioService anuncioService,
@@ -62,43 +72,53 @@ public class MeusLivrosController {
 
         List<AnuncioDTO> livrosAnuncio;
 
-        if (tiposValidos.contains(filtroAnuncio)) {
+        if (tiposAnuncioValidos.contains(
+                filtroAnuncio
+        )) {
 
             Anuncio.TipoNegociacao tipo =
-                    Anuncio.TipoNegociacao.valueOf(filtroAnuncio);
+                    Anuncio.TipoNegociacao.valueOf(
+                            filtroAnuncio
+                    );
 
             livrosAnuncio =
-                    anuncioService.listarAnunciosAtivosPorUsuarioETipo(
-                            uidUsuario,
-                            tipo
-                    );
+                    anuncioService
+                            .listarAnunciosAtivosPorUsuarioETipo(
+                                    uidUsuario,
+                                    tipo
+                            );
 
         } else {
 
             livrosAnuncio =
-                    anuncioService.listarAnunciosAtivosPorUsuario(
-                            uidUsuario
-                    );
+                    anuncioService
+                            .listarAnunciosAtivosPorUsuario(
+                                    uidUsuario
+                            );
         }
 
         List<NegociacaoDTO> negociacoes;
 
-        if (tiposValidos.contains(filtroTroVen)) {
+        if (tiposNegociacaoValidos.contains(
+                filtroTroVen
+        )) {
 
-            // Aqui depende de como seu enum de negociação
-            // está definido atualmente.
             negociacoes =
-                    negociacaoService.listarPorUsuarioAnuncianteETipo(
-                            uidUsuario,
-                            Negociacao.TipoNegociacao.valueOf(filtroTroVen)
-                    );
+                    negociacaoService
+                            .listarFinalizadasPorUsuarioETipo(
+                                    uidUsuario,
+                                    Negociacao.TipoNegociacao.valueOf(
+                                            filtroTroVen
+                                    )
+                            );
 
         } else {
 
             negociacoes =
-                    negociacaoService.listarPorUsuarioAnunciante(
-                            uidUsuario
-                    );
+                    negociacaoService
+                            .listarFinalizadasPorUsuario(
+                                    uidUsuario
+                            );
         }
 
         model.addAttribute("anuncios", livrosAnuncio);

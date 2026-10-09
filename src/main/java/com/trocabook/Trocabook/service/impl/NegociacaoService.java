@@ -602,6 +602,44 @@ public class NegociacaoService implements INegociacaoService {
         return negociacaoAtualizada.paraDto();
     }
 
+    @Override
+    public List<NegociacaoDTO> listarFinalizadasPorUsuario(
+            String uidUsuario
+    ) {
+
+        return negociacaoRepository
+                .buscarFinalizadasPorUsuario(
+                        uidUsuario
+                )
+                .stream()
+                .map(Negociacao::paraDto)
+                .toList();
+    }
+
+    @Override
+    public List<NegociacaoDTO> listarFinalizadasPorUsuarioETipo(
+            String uidUsuario,
+            Negociacao.TipoNegociacao tipoNegociacao
+    ) {
+
+        if (tipoNegociacao
+                == Negociacao.TipoNegociacao.AMBOS) {
+
+            throw new IllegalArgumentException(
+                    "O histórico deve ser filtrado por TROCA ou VENDA"
+            );
+        }
+
+        return negociacaoRepository
+                .buscarFinalizadasPorUsuarioETipo(
+                        uidUsuario,
+                        tipoNegociacao
+                )
+                .stream()
+                .map(Negociacao::paraDto)
+                .toList();
+    }
+
     private void validarTipoNegociacao(
             AnuncioDTO anuncio,
             Negociacao.TipoNegociacao tipoNegociacao

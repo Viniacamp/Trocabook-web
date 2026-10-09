@@ -5,7 +5,9 @@ import com.trocabook.Trocabook.model.Negociacao;
 import com.trocabook.Trocabook.repository.NegociacaoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -320,6 +322,189 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
 
             throw new RuntimeException(
                     "Erro ao buscar negociação pelo id do anuncio oferecido",
+                    e
+            );
+        }
+    }
+
+    @Override
+    public List<Negociacao> buscarFinalizadasPorUsuario(
+            String uidUsuario
+    ) {
+        try {
+
+            var comoAnunciante = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo(
+                            "usuarioAnuncianteId",
+                            uidUsuario
+                    )
+                    .whereEqualTo(
+                            "status",
+                            Negociacao.StatusNegociacao.FINALIZADA.name()
+                    )
+                    .get()
+                    .get();
+
+            var comoComprador = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo(
+                            "usuarioCompradorId",
+                            uidUsuario
+                    )
+                    .whereEqualTo(
+                            "status",
+                            Negociacao.StatusNegociacao.FINALIZADA.name()
+                    )
+                    .get()
+                    .get();
+
+            Map<String, Negociacao> negociacoes =
+                    new LinkedHashMap<>();
+
+            comoAnunciante
+                    .getDocuments()
+                    .forEach(documento -> {
+
+                        Negociacao negociacao =
+                                documento.toObject(
+                                        Negociacao.class
+                                );
+
+                        negociacoes.put(
+                                negociacao.getId(),
+                                negociacao
+                        );
+                    });
+
+            comoComprador
+                    .getDocuments()
+                    .forEach(documento -> {
+
+                        Negociacao negociacao =
+                                documento.toObject(
+                                        Negociacao.class
+                                );
+
+                        negociacoes.put(
+                                negociacao.getId(),
+                                negociacao
+                        );
+                    });
+
+            return List.copyOf(
+                    negociacoes.values()
+            );
+
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException(
+                    "Thread interrompida ao buscar negociações finalizadas do usuário",
+                    e
+            );
+
+        } catch (ExecutionException e) {
+
+            throw new RuntimeException(
+                    "Erro ao buscar negociações finalizadas do usuário",
+                    e
+            );
+        }
+    }
+
+    @Override
+    public List<Negociacao> buscarFinalizadasPorUsuarioETipo(
+            String uidUsuario,
+            Negociacao.TipoNegociacao tipoNegociacao
+    ) {
+        try {
+
+            var comoAnunciante = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo(
+                            "usuarioAnuncianteId",
+                            uidUsuario
+                    )
+                    .whereEqualTo(
+                            "tipoNegociacao",
+                            tipoNegociacao.name()
+                    )
+                    .whereEqualTo(
+                            "status",
+                            Negociacao.StatusNegociacao.FINALIZADA.name()
+                    )
+                    .get()
+                    .get();
+
+            var comoComprador = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo(
+                            "usuarioCompradorId",
+                            uidUsuario
+                    )
+                    .whereEqualTo(
+                            "tipoNegociacao",
+                            tipoNegociacao.name()
+                    )
+                    .whereEqualTo(
+                            "status",
+                            Negociacao.StatusNegociacao.FINALIZADA.name()
+                    )
+                    .get()
+                    .get();
+
+            Map<String, Negociacao> negociacoes =
+                    new LinkedHashMap<>();
+
+            comoAnunciante
+                    .getDocuments()
+                    .forEach(documento -> {
+
+                        Negociacao negociacao =
+                                documento.toObject(
+                                        Negociacao.class
+                                );
+
+                        negociacoes.put(
+                                negociacao.getId(),
+                                negociacao
+                        );
+                    });
+
+            comoComprador
+                    .getDocuments()
+                    .forEach(documento -> {
+
+                        Negociacao negociacao =
+                                documento.toObject(
+                                        Negociacao.class
+                                );
+
+                        negociacoes.put(
+                                negociacao.getId(),
+                                negociacao
+                        );
+                    });
+
+            return List.copyOf(
+                    negociacoes.values()
+            );
+
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException(
+                    "Thread interrompida ao buscar negociações finalizadas por tipo",
+                    e
+            );
+
+        } catch (ExecutionException e) {
+
+            throw new RuntimeException(
+                    "Erro ao buscar negociações finalizadas por tipo",
                     e
             );
         }

@@ -102,11 +102,22 @@
     <aside class="filtro-lateral">
         <h3><i class="fas fa-filter"></i> Filtrar por</h3>
         <form th:action="@{/MeusLivros}" method="get">
-            <select name="filtroT/V" class="categoriaNegociacao" onchange="this.form.submit()">
+            <select name="filtroT/V"
+                    class="categoriaNegociacao"
+                    onchange="this.form.submit()">
+
                 <option th:value="todos">-- Todos --</option>
-                <option th:value="TROCA" th:selected="${filtroSelecionadoTroVen == 'TROCA'}">Troca</option>
-                <option th:value="VENDA" th:selected="${filtroSelecionadoTroVen == 'VENDA'}">Venda</option>
-                <option th:value="AMBOS" th:selected="${filtroSelecionadoTroVen == 'AMBOS'}">Ambos</option>
+
+                <option th:value="TROCA"
+                        th:selected="${filtroSelecionadoTroVen == 'TROCA'}">
+                    Troca
+                </option>
+
+                <option th:value="VENDA"
+                        th:selected="${filtroSelecionadoTroVen == 'VENDA'}">
+                    Venda
+                </option>
+
             </select>
             <input type="hidden"
                    name="filtroAnuncio"
@@ -114,13 +125,15 @@
         </form>
     </aside>
 
-    <p class="titulo-secao">Livros que você trocou/vendeu:</p>
+    <p class="titulo-secao">
+        Histórico de negociações:
+    </p>
 
     <div class="secao-livros">
 
         <div th:if="${negociacoes == null || negociacoes.isEmpty()}">
             <p class="nenhumLivro">
-                Nenhum Livro Negociado na Plataforma
+                Nenhuma negociação finalizada na plataforma
             </p>
         </div>
 
@@ -128,9 +141,13 @@
              th:if="${negociacoes != null && !negociacoes.isEmpty()}">
 
             <div th:each="negociacao : ${negociacoes}">
-                <img th:src="${negociacao.capa}"
-                     class="capa-livro"
-                     alt="Capa do livro"/>
+
+                <a th:href="@{'/negociacoes/' + ${negociacao.id}}">
+                    <img th:src="${negociacao.capa}"
+                         class="capa-livro"
+                         th:alt="'Capa de ' + ${negociacao.titulo}"/>
+                </a>
+
             </div>
 
         </div>
