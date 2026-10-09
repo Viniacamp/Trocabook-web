@@ -252,14 +252,35 @@
 
                     </div>
                     <div id="autoresAutomaticos">
+
                         <label>Autores:</label>
-                        <div id="autores" class="tags-container">
-                            <div th:each="autor, i : *{autores}">
-                                <input type="hidden" th:field="*{autores[__${i.index}__]}" th:value="${autor}" readonly>
-                                <span th:text="${autor}"></span>
-                            </div>
+
+                        <div id="autores" class="tags-container"></div>
+
+                        <div class="complementar-dados-container">
+
+                            <input
+                                    type="text"
+                                    id="novoAutorAutomatico"
+                                    placeholder="Adicionar outro autor">
+
+                            <button
+                                    type="button"
+                                    id="btnAdicionarAutorAutomatico"
+                                    class="btn-adicionar-dado">
+
+                                <i class="fas fa-plus"></i>
+                                Adicionar autor
+
+                            </button>
+
                         </div>
-                        <p class="text-danger" th:if="${erroAutor}" th:text="${erroAutor}"></p>
+
+                        <p class="text-danger"
+                           th:if="${erroAutor}"
+                           th:text="${erroAutor}">
+                        </p>
+
                     </div>
 
                     <div id="autoresManuais" style="display: none;">
@@ -274,14 +295,26 @@
                     </div>
 
                     <div id="categoriasAutomaticas">
+
                         <label>Categorias:</label>
-                        <div id="categorias" class="tags-container">
-                            <div th:each="categoria, i : *{categorias}">
-                                <input type="hidden" th:field="*{categorias[__${i.index}__]}" th:value="${categoria}" readonly>
-                                <span th:text="${categoria}"></span>
-                            </div>
-                        </div>
-                        <p class="text-danger" th:if="${erroCategoria}" th:text="${erroCategoria}"></p>
+
+                        <div id="categorias" class="tags-container"></div>
+
+                        <button
+                                type="button"
+                                id="btnComplementarCategorias"
+                                class="btn-selecionar-categorias">
+
+                            <i class="fas fa-list"></i>
+                            Adicionar categorias
+
+                        </button>
+
+                        <p class="text-danger"
+                           th:if="${erroCategoria}"
+                           th:text="${erroCategoria}">
+                        </p>
+
                     </div>
 
                     <div id="categoriasManuais" style="display: none;">
@@ -520,8 +553,13 @@
         document.getElementById("categoriasSelecionadas");
 
     let categoriasConfirmadas = [];
+    let autoresAutomaticos = [];
+    let categoriasAutomaticas = [];
+    let modoSelecaoCategorias = "MANUAL";
 
     btnSelecionarCategorias.addEventListener("click", function () {
+
+        modoSelecaoCategorias = "MANUAL";
 
         restaurarCheckboxesConfirmados();
 
@@ -583,13 +621,34 @@
 
     btnConfirmarCategorias.addEventListener("click", function () {
 
-        categoriasConfirmadas = [
+        const selecionadas = [
             ...document.querySelectorAll(
                 ".categoria-checkbox:checked"
             )
         ].map(checkbox => checkbox.value);
 
-        atualizarCategoriasSelecionadas();
+        if (modoSelecaoCategorias === "AUTOMATICO") {
+
+            const categoriasApiNaoPresentesNoModal =
+                categoriasAutomaticas.filter(
+                    categoria => !encontrarCategoria(categoria)
+                );
+
+            categoriasAutomaticas = [
+                ...new Set([
+                    ...categoriasApiNaoPresentesNoModal,
+                    ...selecionadas
+                ])
+            ];
+
+            atualizarCategoriasAutomaticas();
+
+        } else {
+
+            categoriasConfirmadas = selecionadas;
+
+            atualizarCategoriasSelecionadas();
+        }
 
         modalCategorias.style.display = "none";
     });
@@ -695,6 +754,11 @@
 
     function fecharModalCategorias() {
 
+        const categoriasAtuais =
+            modoSelecaoCategorias === "AUTOMATICO"
+                ? categoriasAutomaticas
+                : categoriasConfirmadas;
+
         document
             .querySelectorAll(
                 '.categoria-opcao[data-nova-categoria="true"]'
@@ -705,7 +769,7 @@
                     label.querySelector(".categoria-checkbox");
 
                 if (
-                    !categoriasConfirmadas.includes(
+                    !categoriasAtuais.includes(
                         checkbox.value
                     )
                 ) {
@@ -713,7 +777,26 @@
                 }
             });
 
-        restaurarCheckboxesConfirmados();
+        if (modoSelecaoCategorias === "AUTOMATICO") {
+
+            document
+                .querySelectorAll(".categoria-checkbox")
+                .forEach(checkbox => {
+
+                    checkbox.checked =
+                        categoriasAutomaticas.some(
+                            categoria =>
+                                categoria.localeCompare(
+                                    checkbox.value,
+                                    undefined,
+                                    { sensitivity: "base" }
+                                ) === 0
+                        );
+                });
+
+        } else {
+            restaurarCheckboxesConfirmados();
+        }
 
         checkboxNovaCategoria.checked = false;
 
@@ -724,6 +807,26 @@
 
 
     formAnuncio.addEventListener("submit", function (event) {
+        if (modoCadastro.value === "GOOGLE_BOOKS") {
+
+            if (autoresAutomaticos.length === 0) {
+                event.preventDefault();
+                window.alert(
+                    "Informe pelo menos um autor."
+                );
+                return;
+            }
+
+            if (categoriasAutomaticas.length === 0) {
+                event.preventDefault();
+                window.alert(
+                    "Selecione pelo menos uma categoria."
+                );
+                return;
+            }
+
+            return;
+        }
 
         if (modoCadastro.value !== "MANUAL") {
             return;
@@ -1095,46 +1198,46 @@
     }
 
     function preencherCampos(livro) {
-        console.log(livro)
-        document.getElementById("titulo").value = livro.titulo || "";
-        document.getElementById("capaLivro").src = livro.urlImagem || "";
-        document.getElementById("urlImagem").value = livro.urlImagem || "";
-        document.getElementById("capaLivro").style.display = "block";
-        document.getElementById("dataPublicacao").value = livro.dataPublicacao || "";
-        document.getElementById("lingua").value = livro.lingua || "en";
-        document.getElementById("googleBooksId").value = livro.googleBooksId || "";
 
+        document.getElementById("titulo").value =
+            livro.titulo || "";
 
-        const autoresDiv = document.getElementById("autores");
-        autoresDiv.innerHTML = "";
-        livro.autores.forEach((autor, i) => {
-            const span = document.createElement("span");
-            span.innerText = autor;
+        document.getElementById("capaLivro").src =
+            livro.urlImagem || "";
 
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = `autores[${i}]`;
-            hiddenInput.value = autor;
+        document.getElementById("urlImagem").value =
+            livro.urlImagem || "";
 
-            autoresDiv.appendChild(span);
-            autoresDiv.appendChild(hiddenInput);
-        });
+        document.getElementById("capaLivro").style.display =
+            "block";
 
+        document.getElementById("dataPublicacao").value =
+            livro.dataPublicacao || "";
 
-        const categoriasDiv = document.getElementById("categorias");
-        categoriasDiv.innerHTML = "";
-        livro.categorias.forEach((categoria, i) => {
-            const span = document.createElement("span");
-            span.innerText = categoria;
+        document.getElementById("lingua").value =
+            livro.lingua || "en";
 
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = `categorias[${i}]`;
-            hiddenInput.value = categoria;
+        document.getElementById("googleBooksId").value =
+            livro.googleBooksId || "";
 
-            categoriasDiv.appendChild(span);
-            categoriasDiv.appendChild(hiddenInput);
-        });
+        autoresAutomaticos =
+            Array.isArray(livro.autores)
+                ? livro.autores
+                    .filter(autor => autor && autor.trim())
+                    .map(autor => autor.trim())
+                : [];
+
+        categoriasAutomaticas =
+            Array.isArray(livro.categorias)
+                ? livro.categorias
+                    .filter(categoria =>
+                        categoria && categoria.trim()
+                    )
+                    .map(categoria => categoria.trim())
+                : [];
+
+        atualizarAutoresAutomaticos();
+        atualizarCategoriasAutomaticas();
 
         camposAnuncio.style.display = "block";
     }
@@ -1151,11 +1254,172 @@
         capaLivro.src = "";
         capaLivro.style.display = "none";
 
+        autoresAutomaticos = [];
+        categoriasAutomaticas = [];
+
         document.getElementById("autores").innerHTML = "";
         document.getElementById("categorias").innerHTML = "";
 
+        document.getElementById("novoAutorAutomatico").value = "";
+
         resultados.innerHTML = "";
     }
+
+    function atualizarAutoresAutomaticos() {
+
+        const autoresDiv =
+            document.getElementById("autores");
+
+        autoresDiv.innerHTML = "";
+
+        autoresAutomaticos.forEach((autor, indice) => {
+
+            const tag = document.createElement("span");
+            tag.className = "tag-editavel";
+
+            const texto = document.createElement("span");
+            texto.textContent = autor;
+
+            const remover = document.createElement("button");
+            remover.type = "button";
+            remover.innerHTML = "&times;";
+            remover.setAttribute(
+                "aria-label",
+                `Remover ${autor}`
+            );
+
+            remover.addEventListener("click", function () {
+
+                autoresAutomaticos =
+                    autoresAutomaticos.filter(
+                        item => item !== autor
+                    );
+
+                atualizarAutoresAutomaticos();
+            });
+
+            const hiddenInput =
+                document.createElement("input");
+
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `autores[${indice}]`;
+            hiddenInput.value = autor;
+
+            tag.appendChild(texto);
+            tag.appendChild(remover);
+
+            autoresDiv.appendChild(tag);
+            autoresDiv.appendChild(hiddenInput);
+        });
+    }
+
+    document
+        .getElementById("btnAdicionarAutorAutomatico")
+        .addEventListener("click", function () {
+
+            const input =
+                document.getElementById("novoAutorAutomatico");
+
+            const autor = input.value.trim();
+
+            if (!autor) {
+                window.alert("Informe o nome do autor.");
+                return;
+            }
+
+            const jaExiste =
+                autoresAutomaticos.some(
+                    existente =>
+                        existente.localeCompare(
+                            autor,
+                            undefined,
+                            { sensitivity: "base" }
+                        ) === 0
+                );
+
+            if (jaExiste) {
+                window.alert("Este autor já foi adicionado.");
+                return;
+            }
+
+            autoresAutomaticos.push(autor);
+
+            input.value = "";
+
+            atualizarAutoresAutomaticos();
+        });
+
+    function atualizarCategoriasAutomaticas() {
+
+        const categoriasDiv =
+            document.getElementById("categorias");
+
+        categoriasDiv.innerHTML = "";
+
+        categoriasAutomaticas.forEach((categoria, indice) => {
+
+            const tag = document.createElement("span");
+            tag.className = "tag-editavel";
+
+            const texto = document.createElement("span");
+            texto.textContent = categoria;
+
+            const remover = document.createElement("button");
+            remover.type = "button";
+            remover.innerHTML = "&times;";
+            remover.setAttribute(
+                "aria-label",
+                `Remover ${categoria}`
+            );
+
+            remover.addEventListener("click", function () {
+
+                categoriasAutomaticas =
+                    categoriasAutomaticas.filter(
+                        item => item !== categoria
+                    );
+
+                atualizarCategoriasAutomaticas();
+            });
+
+            const hiddenInput =
+                document.createElement("input");
+
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `categorias[${indice}]`;
+            hiddenInput.value = categoria;
+
+            tag.appendChild(texto);
+            tag.appendChild(remover);
+
+            categoriasDiv.appendChild(tag);
+            categoriasDiv.appendChild(hiddenInput);
+        });
+    }
+
+    document
+        .getElementById("btnComplementarCategorias")
+        .addEventListener("click", function () {
+
+            modoSelecaoCategorias = "AUTOMATICO";
+
+            document
+                .querySelectorAll(".categoria-checkbox")
+                .forEach(checkbox => {
+
+                    checkbox.checked =
+                        categoriasAutomaticas.some(
+                            categoria =>
+                                categoria.localeCompare(
+                                    checkbox.value,
+                                    undefined,
+                                    { sensitivity: "base" }
+                                ) === 0
+                        );
+                });
+
+            modalCategorias.style.display = "flex";
+        });
 
 
 </script>

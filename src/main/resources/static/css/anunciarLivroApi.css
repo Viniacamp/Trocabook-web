@@ -202,3 +202,50 @@
     margin-top: 10px;
     resize: vertical;
 }
+
+.complementar-dados-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.complementar-dados-container input {
+    flex: 1;
+    margin: 0 !important;
+    height: 42px;
+    box-sizing: border-box;
+}
+
+.complementar-dados-container .btn-adicionar-dado {
+    margin: 0 !important;
+    height: 42px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+#autores .tag-editavel,
+#categorias .tag-editavel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#autores .tag-editavel button,
+#categorias .tag-editavel button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #4a3c91;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: none;
+}

@@ -56,6 +56,11 @@ public class LivroService implements ILivroService {
 
     @Override
     public Livro cadastrar(LivroBuscaOutput livro) {
+        if (livro == null) {
+            throw new IllegalArgumentException(
+                    "Os dados do livro são obrigatórios."
+            );
+        }
 
         /*
          * Verifica se o livro já foi cadastrado.
@@ -69,11 +74,36 @@ public class LivroService implements ILivroService {
             return livroExistente;
         }
 
+
+        List<String> autores =
+                validarEFiltrarLista(
+                        livro.autores(),
+                        "O livro precisa ter pelo menos um autor."
+                );
+
+        List<String> categorias =
+                validarEFiltrarLista(
+                        livro.categorias(),
+                        "O livro precisa ter pelo menos uma categoria."
+                );
+
+        LivroBuscaOutput livroValidado =
+                new LivroBuscaOutput(
+                        livro.googleBooksId(),
+                        livro.titulo(),
+                        autores,
+                        livro.publicadora(),
+                        livro.dataPublicacao(),
+                        livro.urlImagem(),
+                        livro.lingua(),
+                        categorias
+                );
+
         /*
          * Traduz o título e as categorias em uma única chamada
          * para a MyMemory API.
          */
-        LivroBuscaOutput livroTraduzido = traduzirLivro(livro);
+        LivroBuscaOutput livroTraduzido = traduzirLivro(livroValidado);
 
         /*
          * Obtém os IDs dos autores.
@@ -136,11 +166,24 @@ public class LivroService implements ILivroService {
             String urlImagem
     ) {
 
+        List<String> autoresValidos =
+                validarEFiltrarLista(
+                        autores,
+                        "O livro precisa ter pelo menos um autor."
+                );
+
+        List<String> categoriasValidas =
+                validarEFiltrarLista(
+                        categorias,
+                        "O livro precisa ter pelo menos uma categoria."
+                );
+
         List<String> idsAutores =
-                obterIdsAutores(autores);
+                obterIdsAutores(autoresValidos);
 
         List<String> idsCategorias =
-                obterIdsCategorias(categorias);
+                obterIdsCategorias(categoriasValidas);
+
 
         Livro livro = new Livro();
 
@@ -287,6 +330,29 @@ public class LivroService implements ILivroService {
                     return novaCategoria.getId();
                 })
                 .toList();
+    }
+
+    private List<String> validarEFiltrarLista(
+            List<String> valores,
+            String mensagemErro
+    ) {
+
+        if (valores == null) {
+            throw new IllegalArgumentException(mensagemErro);
+        }
+
+        List<String> valoresValidos =
+                valores.stream()
+                        .filter(valor -> valor != null && !valor.isBlank())
+                        .map(String::trim)
+                        .distinct()
+                        .toList();
+
+        if (valoresValidos.isEmpty()) {
+            throw new IllegalArgumentException(mensagemErro);
+        }
+
+        return valoresValidos;
     }
 
 
