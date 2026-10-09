@@ -1,109 +1,111 @@
 /* ==========================================================================
-   TROCA BOOK - MÓDULO DE CHAT & MENSAGENS (chat-layout.css)
-   Layout base da janela de conversas, sidebar, lista e opções
+   TROCA BOOK - MÓDULO DE CHAT (chat-layout.css)
+   Estrutura base da página de chat
    ========================================================================== */
 
-/* Container geral do chat */
+
+/* ==========================================================================
+   CONTAINER PRINCIPAL
+   ========================================================================== */
+
 .main-container {
     display: flex;
+
     height: calc(100vh - 60px);
+
     padding-top: 5px;
     padding-bottom: 7px;
 }
 
-/* Sidebar lateral de conversas */
+
+/* ==========================================================================
+   SIDEBAR DE CONVERSAS
+   ========================================================================== */
+
 .chat-sidebar {
     width: 25%;
-    background-color: #ffffff;
+
     padding: 20px;
+
+    background-color: #ffffff;
+
     border-right: 1px solid #dddddd;
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
 }
 
-.chat-sidebar h2 {
-    margin-top: 0;
-}
 
-.chat-sidebar input {
-    width: 93%;
-    height: 32px;
-    border-radius: var(--radius-lg, 8px);
-    text-decoration: none;
-    border-style: solid;
-    border-color: var(--border-color, #E0E0E0);
-    font-family: var(--font-primary, 'Manrope', sans-serif);
-    font-size: 15px;
-    padding-left: 10px;
-}
+/* ==========================================================================
+   LISTA DE CONVERSAS
+   ========================================================================== */
 
-/* Lista de conversas */
 .chat-list {
     list-style: none;
+
     padding: 0;
 }
 
-.chat-list li {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
 
-.chat-list li.active,
-.chat-list li:hover {
-    background-color: #e4e4e4;
-}
+/* ==========================================================================
+   JANELA PRINCIPAL DO CHAT
+   ========================================================================== */
 
-.chat-list img {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-    border-radius: 50%;
-}
-
-/* Janela principal de chat */
 .chat-window {
-    flex-grow: 1;
+    flex: 1;
+
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    background-color: var(--bg-muted, #f1f1f1);
+
+    min-width: 0;
+
+    background-color: #ffffff;
+
+    overflow: hidden;
 }
 
-.chat-info {
-    text-align: center;
-    color: #888888;
-    margin-bottom: 20px;
-}
 
-/* Campo de envio de mensagem */
+/* ==========================================================================
+   CAMPO DE ENVIO DE MENSAGEM
+   ========================================================================== */
+
 .message-input {
     display: flex;
     align-items: center;
-    border-style: solid;
-    border-color: var(--border-color, #E0E0E0);
-    font-family: var(--font-primary, 'Manrope', sans-serif);
+
+    border: 1px solid var(--border-color, #E0E0E0);
     border-radius: var(--radius-lg, 8px);
+
     background-color: #ffffff;
+
+    font-family: var(--font-primary, 'Manrope', sans-serif);
 }
 
 .message-input input {
-    font-family: var(--font-primary, 'Manrope', sans-serif);
-    font-size: 15px;
-    flex-grow: 1;
+    flex: 1;
+
+    min-width: 0;
+
+    padding-left: 10px;
+    margin-right: 10px;
+
     border: none;
     border-radius: var(--radius-lg, 8px);
-    margin-right: 10px;
-    padding-left: 10px;
+    outline: none;
+
+    font-family: var(--font-primary, 'Manrope', sans-serif);
+    font-size: 15px;
 }
 
 .message-input button {
+    padding: 10px;
+
     background-color: #a385ff;
+
     border: none;
     border-radius: var(--radius-lg, 8px);
-    padding: 10px;
+
     cursor: pointer;
 }
 
@@ -112,73 +114,24 @@
     height: 20px;
 }
 
-/* Painel lateral de informações do livro */
+
+/* ==========================================================================
+   PAINEL LATERAL DO LIVRO
+   ========================================================================== */
+
 .book-info {
     width: 25%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-left: 1px solid #dddddd;
+
     display: flex;
     flex-direction: column;
-    gap: 10px;
-}
 
-.book-info img {
-    width: 100px;
-    height: auto;
-    align-self: center;
-}
+    padding: 20px;
 
-.book-info h3,
-.book-info p {
-    margin: 0;
-    font-size: 14px;
-    color: #333333;
-}
-
-/* Menu de opções (três pontinhos) */
-.menu-opcoes {
-    position: absolute;
-    top: 5px;
-    right: 8px;
-}
-
-.menu-opcoes i {
-    cursor: pointer;
-    color: #555555;
-    font-size: 18px;
-    opacity: 1;
-    padding: 4px;
-    transition: color 0.2s;
-}
-
-.menu-opcoes i:hover {
-    color: #000000;
-}
-
-.menu-dropdown {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 25px;
     background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: var(--radius-md, 6px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-}
 
-.menu-dropdown button {
-    display: block;
-    background: none;
-    border: none;
-    padding: 8px 12px;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    font-size: 14px;
-}
+    border-left: 1px solid #e2e2e2;
 
-.menu-dropdown button:hover {
-    background-color: #f2f2f2;
+    overflow-y: auto;
+
+    box-sizing: border-box;
 }
