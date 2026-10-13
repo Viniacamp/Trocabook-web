@@ -55,6 +55,8 @@ public class WebSecurityConfig {
                                 "/esqueci-senha",
                                 "/redefinir-senha"
                         ).permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

@@ -46,6 +46,8 @@ public class Usuario implements Serializable {
     @Max(5)
     private double avaliacao;
 
+    private Role role;
+
     public Usuario() {
     }
 
@@ -99,6 +101,7 @@ public class Usuario implements Serializable {
         this.telefone = outroUsuario.telefone;
         this.status = outroUsuario.status;
         this.avaliacao = outroUsuario.avaliacao;
+        this.role = outroUsuario.role;
     }
 
 
@@ -199,6 +202,18 @@ public class Usuario implements Serializable {
         this.avaliacao = avaliacao;
     }
 
+    public enum Role {
+        USER,
+        ADMIN
+    }
+
+    public Role getRole() {
+        return role != null ? role : Role.USER;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public static Usuario from(UsuarioInput input){
         return new Usuario(

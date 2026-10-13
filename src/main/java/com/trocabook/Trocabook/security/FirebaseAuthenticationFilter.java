@@ -2,12 +2,15 @@ package com.trocabook.Trocabook.security;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.trocabook.Trocabook.model.Usuario;
+import com.trocabook.Trocabook.repository.UsuarioRepository;
 import com.trocabook.Trocabook.service.impl.FirebaseAuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -22,32 +25,33 @@ import java.util.List;
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
     private final FirebaseAuthService firebaseAuthService;
+    private final UsuarioRepository usuarioRepository;
 
     private final SecurityContextRepository securityContextRepository =
             new HttpSessionSecurityContextRepository();
 
     public FirebaseAuthenticationFilter(
-            FirebaseAuthService firebaseAuthService) {
-
+            FirebaseAuthService firebaseAuthService,
+            UsuarioRepository usuarioRepository
+    ) {
         this.firebaseAuthService = firebaseAuthService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain)
-            throws ServletException, IOException {
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String authorization =
                 request.getHeader("Authorization");
 
         /*
-         * Se não houver token Firebase,
-         * deixa o Spring Security continuar normalmente.
-         *
-         * Isso permite que uma autenticação já existente
-         * na HttpSession seja utilizada.
+         * Se não houver token Firebase, deixa o Spring Security
+         * utilizar normalmente uma autenticação já existente
+         * na HttpSession.
          */
         if (authorization == null ||
                 !authorization.startsWith("Bearer ")) {
@@ -61,40 +65,54 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
         try {
 
             /*
-             * Valida o token recebido do Firebase.
+             * Valida o token e obtém a identidade autenticada
+             * pelo Firebase Authentication.
              */
             FirebaseToken firebaseToken =
                     firebaseAuthService.validarToken(token);
 
+            String uid = firebaseToken.getUid();
+
             /*
-             * Cria a autenticação do Spring Security.
+             * Busca os dados de autorização no Firestore.
              */
+            Usuario usuario =
+                    usuarioRepository.buscarPorUid(uid);
+
+            if (usuario == null) {
+                SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            /*
+             * Converte a role do Trocabook para uma authority
+             * reconhecida pelo Spring Security.
+             *
+             * USER  -> ROLE_USER
+             * ADMIN -> ROLE_ADMIN
+             */
+            SimpleGrantedAuthority authority =
+                    new SimpleGrantedAuthority(
+                            "ROLE_" + usuario.getRole().name()
+                    );
+
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             firebaseToken,
                             null,
-                            List.of()
+                            List.of(authority)
                     );
 
-            /*
-             * Cria um novo SecurityContext.
-             */
             SecurityContext context =
                     SecurityContextHolder.createEmptyContext();
 
             context.setAuthentication(authentication);
 
-            /*
-             * Coloca a autenticação no contexto atual.
-             */
             SecurityContextHolder.setContext(context);
 
             /*
-             * Salva o SecurityContext na HttpSession.
-             *
-             * Assim, as próximas requisições da aplicação Web
-             * poderão utilizar a autenticação sem precisar
-             * receber novamente o Firebase Token.
+             * Persiste a autenticação na sessão para a aplicação Web.
              */
             securityContextRepository.saveContext(
                     context,
@@ -116,4 +134,3 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

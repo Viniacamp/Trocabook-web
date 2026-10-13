@@ -31,6 +31,7 @@ public class UsuarioService implements IUsuarioService {
 
         Usuario entidade = Usuario.from(input);
         entidade.setId(userRecord.getUid());
+        entidade.setRole(Usuario.Role.USER);
 
         usuarioRepository.cadastrar(entidade);
 
@@ -49,15 +50,19 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public UsuarioOutput atualizar(String uid, UsuarioInput input) {
-        if (usuarioRepository.buscarPorUid(uid) == null){
+        Usuario usuarioExistente = usuarioRepository.buscarPorUid(uid);
+
+        if (usuarioExistente == null) {
             return null;
         }
 
         Usuario entidade = Usuario.from(input);
 
         entidade.setId(uid);
+        entidade.setRole(usuarioExistente.getRole());
 
         Usuario entidadeSalva = usuarioRepository.atualizar(entidade);
+
         return entidadeSalva.paraOutput();
     }
 
