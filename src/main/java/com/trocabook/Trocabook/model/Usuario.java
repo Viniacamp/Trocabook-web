@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.model;
 
+import com.trocabook.Trocabook.model.dto.AdminUsuarioOutput;
 import com.trocabook.Trocabook.model.dto.UsuarioInput;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import jakarta.validation.constraints.*;
@@ -41,7 +42,7 @@ public class Usuario implements Serializable {
     @NotBlank(message = "Preencha o telefone")
     private String telefone;
 
-    private String status;
+    private StatusUsuario status;
 
     @Max(5)
     private double avaliacao;
@@ -54,7 +55,7 @@ public class Usuario implements Serializable {
     public Usuario(String id, String nome, String cpf,
                    String emailPrincipal, String emailRecuperacao,
                    String fotoPerfil, String genero, String nascimento,
-                   String rg, String telefone, String status,
+                   String rg, String telefone, StatusUsuario status,
                    double avaliacao) {
 
         this.id = id;
@@ -186,11 +187,11 @@ public class Usuario implements Serializable {
         this.telefone = telefone;
     }
 
-    public String getStatus() {
+    public StatusUsuario getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusUsuario status) {
         this.status = status;
     }
 
@@ -205,6 +206,11 @@ public class Usuario implements Serializable {
     public enum Role {
         USER,
         ADMIN
+    }
+
+    public enum StatusUsuario {
+        ATIVO,
+        INATIVO
     }
 
     public Role getRole() {
@@ -234,6 +240,18 @@ public class Usuario implements Serializable {
                 this.getId(),
                 this.getNome(),
                 this.getFotoPerfil()
+        );
+    }
+
+    public AdminUsuarioOutput paraAdminOutput() {
+        return new AdminUsuarioOutput(
+                this.getId(),
+                this.getNome(),
+                this.getEmailPrincipal(),
+                this.getFotoPerfil(),
+                this.getStatus().name(),
+                this.getAvaliacao(),
+                this.getRole()
         );
     }
 

@@ -1,6 +1,8 @@
 package com.trocabook.Trocabook.service;
 
 import com.google.firebase.auth.FirebaseAuthException;
+import com.trocabook.Trocabook.model.dto.AdminUsuarioInput;
+import com.trocabook.Trocabook.model.dto.AdminUsuarioOutput;
 import com.trocabook.Trocabook.model.dto.UsuarioInput;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 
@@ -24,4 +26,10 @@ public interface IUsuarioService {
     List<UsuarioOutput> buscarMelhoresAvaliados();
 
     List<UsuarioOutput> buscarTodos();
+
+    List<AdminUsuarioOutput> buscarTodosComoAdmin();
+
+    AdminUsuarioOutput buscarPorUidComoAdmin(String uid);
+
+    AdminUsuarioOutput atualizarComoAdmin(String uid, AdminUsuarioInput input) throws FirebaseAuthException;
 }

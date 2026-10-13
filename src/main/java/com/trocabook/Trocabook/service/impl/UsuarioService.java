@@ -3,6 +3,8 @@ package com.trocabook.Trocabook.service.impl;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.trocabook.Trocabook.model.Usuario;
+import com.trocabook.Trocabook.model.dto.AdminUsuarioInput;
+import com.trocabook.Trocabook.model.dto.AdminUsuarioOutput;
 import com.trocabook.Trocabook.model.dto.UsuarioInput;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.repository.UsuarioRepository;
@@ -32,6 +34,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario entidade = Usuario.from(input);
         entidade.setId(userRecord.getUid());
         entidade.setRole(Usuario.Role.USER);
+        entidade.setStatus(Usuario.StatusUsuario.ATIVO);
 
         usuarioRepository.cadastrar(entidade);
 
@@ -41,7 +44,7 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioOutput buscarPorUid(String uid) {
         Usuario usuario = usuarioRepository.buscarPorUid(uid);
 
-        if (usuario == null){
+        if (usuario == null || usuario.getStatus() == Usuario.StatusUsuario.INATIVO){
             return null;
         }
 
@@ -52,7 +55,7 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioOutput atualizar(String uid, UsuarioInput input) {
         Usuario usuarioExistente = usuarioRepository.buscarPorUid(uid);
 
-        if (usuarioExistente == null) {
+        if (usuarioExistente == null || usuarioExistente.getStatus() == Usuario.StatusUsuario.INATIVO) {
             return null;
         }
 
@@ -60,6 +63,7 @@ public class UsuarioService implements IUsuarioService {
 
         entidade.setId(uid);
         entidade.setRole(usuarioExistente.getRole());
+        entidade.setStatus(usuarioExistente.getStatus());
 
         Usuario entidadeSalva = usuarioRepository.atualizar(entidade);
 
@@ -109,5 +113,64 @@ public class UsuarioService implements IUsuarioService {
                 .stream()
                 .map(Usuario::paraOutput)
                 .toList();
+    }
+
+    @Override
+    public List<AdminUsuarioOutput> buscarTodosComoAdmin() {
+        return usuarioRepository.buscarTodos()
+                .stream()
+                .map(Usuario::paraAdminOutput)
+                .toList();
+    }
+
+    @Override
+    public AdminUsuarioOutput buscarPorUidComoAdmin(String uid) {
+        Usuario usuario = usuarioRepository.buscarPorUid(uid);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        return usuario.paraAdminOutput();
+    }
+
+    @Override
+    public AdminUsuarioOutput atualizarComoAdmin(
+            String uid,
+            AdminUsuarioInput input
+    ) throws FirebaseAuthException {
+
+        Usuario usuario = usuarioRepository.buscarPorUid(uid);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        if (usuario.getRole() == Usuario.Role.ADMIN) {
+            throw new IllegalStateException(
+                    "Não é permitido alterar outro administrador."
+            );
+        }
+
+        Usuario.StatusUsuario statusAnterior =
+                usuario.getStatus();
+
+        if (statusAnterior != input.status()) {
+            boolean desabilitado =
+                    input.status() == Usuario.StatusUsuario.INATIVO;
+
+            firebaseAuthService.alterarStatusUsuario(
+                    uid,
+                    desabilitado
+            );
+        }
+
+        usuario.setStatus(input.status());
+        usuario.setAvaliacao(input.avaliacao());
+
+        Usuario usuarioAtualizado =
+                usuarioRepository.atualizar(usuario);
+
+        return usuarioAtualizado.paraAdminOutput();
     }
 }

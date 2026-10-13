@@ -39,4 +39,16 @@ public class FirebaseAuthService {
 
         return firebaseAuth.generatePasswordResetLink(email);
     }
+
+    public UserRecord alterarStatusUsuario(
+            String uid,
+            boolean desabilitado
+    ) throws FirebaseAuthException {
+
+        UserRecord.UpdateRequest request =
+                new UserRecord.UpdateRequest(uid)
+                        .setDisabled(desabilitado);
+
+        return firebaseAuth.updateUser(request);
+    }
 }
