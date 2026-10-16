@@ -146,7 +146,19 @@ loginForm.addEventListener("submit", async function (event) {
         }
 
 
-        window.location.href = "/";
+        const destinoResponse = await fetch(
+            "/api/auth/destino"
+        );
+
+        if (!destinoResponse.ok) {
+            throw new Error(
+                "Não foi possível determinar o destino do usuário."
+            );
+        }
+
+        const destino = await destinoResponse.text();
+
+        window.location.href = destino;
 
 
     } catch (error) {

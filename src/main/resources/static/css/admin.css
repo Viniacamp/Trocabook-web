@@ -1,0 +1,576 @@
+/* ==========================================================================
+   TROCA BOOK - MÓDULO ADMINISTRATIVO
+   ========================================================================== */
+
+/* --- 1. HEADER --- */
+
+#cabecalhoelementos {
+    position: relative;
+}
+
+.admin-header-title {
+    display: inline-block;
+    margin-left: 25px;
+
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+
+    vertical-align: middle;
+}
+
+.admin-logout-btn {
+    position: absolute;
+    top: 50%;
+    right: 35px;
+
+    transform: translateY(-50%);
+
+    padding: 9px 24px;
+
+    background-color: #ffffff;
+    color: var(--color-secondary);
+
+    border: none;
+    border-radius: var(--radius-md);
+
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.admin-logout-btn:hover {
+    transform: translateY(-50%) scale(1.03);
+    box-shadow: var(--shadow-card);
+}
+
+
+/* --- 2. NAVEGAÇÃO --- */
+
+.admin-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 40px;
+    padding: 14px 20px;
+
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+}
+
+.admin-nav a {
+    color: #333333;
+    text-decoration: none;
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+.admin-nav a:hover {
+    color: var(--color-secondary);
+}
+
+
+/* --- 3. CONTEÚDO --- */
+
+.admin-main {
+    width: 100%;
+    max-width: 1400px;
+    min-height: 650px;
+
+    margin: 0 auto;
+    padding: 40px 30px;
+}
+
+.admin-boas-vindas {
+    margin-bottom: 35px;
+}
+
+.admin-boas-vindas h1 {
+    margin: 0 0 8px;
+
+    color: #333333;
+    font-size: 2rem;
+}
+
+.admin-boas-vindas p {
+    margin: 0;
+
+    color: #666666;
+    text-align: left;
+}
+
+
+/* --- 4. CARDS ADMINISTRATIVOS --- */
+
+.admin-acoes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.admin-card {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 280px;
+    padding: 28px;
+
+    background-color: var(--bg-card);
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-card);
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.admin-card-icon {
+    margin-bottom: 18px;
+
+    font-size: 2rem;
+}
+
+.admin-card h2 {
+    margin: 0 0 12px;
+
+    color: #333333;
+    font-size: 1.3rem;
+}
+
+.admin-card p {
+    flex: 1;
+
+    margin: 0 0 25px;
+
+    color: #666666;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.admin-card-button {
+    display: block;
+
+    width: 100%;
+    padding: 11px 18px;
+
+    background-color: var(--color-primary);
+    color: #ffffff;
+
+    border-radius: var(--radius-md);
+
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+
+    transition:
+            background-color 0.2s ease,
+            transform 0.2s ease;
+}
+
+.admin-card-button:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/* --- 5. GERENCIAMENTO DE USUÁRIOS --- */
+
+.admin-usuarios {
+    width: 100%;
+}
+
+.admin-usuarios-filtros {
+    margin-bottom: 25px;
+}
+
+.admin-pesquisa {
+    width: 100%;
+    height: 45px;
+
+    padding: 0 15px;
+
+    background-color: var(--bg-card);
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+
+    outline: none;
+
+    transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.admin-pesquisa:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+}
+
+
+/* --- TABELA --- */
+
+.admin-tabela-container {
+    width: 100%;
+    overflow-x: auto;
+
+    background-color: var(--bg-card);
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-card);
+}
+
+.admin-tabela-usuarios {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.admin-tabela-usuarios th,
+.admin-tabela-usuarios td {
+    padding: 16px 18px;
+
+    border-bottom: 1px solid var(--border-color-light);
+
+    text-align: left;
+    vertical-align: middle;
+}
+
+.admin-tabela-usuarios th {
+    background-color: var(--bg-muted);
+
+    color: #333333;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.admin-tabela-usuarios td {
+    color: #555555;
+    font-size: 0.95rem;
+}
+
+.admin-tabela-usuarios tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-tabela-usuarios tbody tr:hover {
+    background-color: #fafafa;
+}
+
+
+/* --- STATUS --- */
+
+.admin-status {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.admin-status-ativo {
+    background-color: rgba(40, 167, 69, 0.12);
+    color: var(--color-success);
+}
+
+.admin-status-inativo {
+    background-color: rgba(217, 83, 79, 0.12);
+    color: var(--color-danger);
+}
+
+
+/* --- AÇÕES DA TABELA --- */
+
+/* --- AÇÕES DA TABELA --- */
+
+.admin-tabela-usuarios th:last-child,
+.admin-tabela-usuarios td:last-child {
+    min-width: 190px;
+}
+
+.admin-acoes-usuario {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.admin-btn {
+    padding: 8px 12px;
+
+    border: none;
+    border-radius: var(--radius-md);
+
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            opacity 0.2s ease;
+}
+
+.admin-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+.admin-btn-alterar {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.admin-btn-desativar {
+    background-color: var(--color-danger);
+    color: #ffffff;
+}
+
+.admin-btn-ativar {
+    background-color: var(--color-success);
+    color: #ffffff;
+}
+
+
+/* --- CARREGAMENTO / ERRO --- */
+
+.admin-estado-listagem {
+    padding: 30px;
+
+    color: #666666;
+
+    text-align: center;
+}
+
+.admin-estado-erro {
+    color: var(--color-danger);
+}
+
+/* --- 6. MODAIS ADMINISTRATIVOS --- */
+
+.admin-modal-overlay[hidden] {
+    display: none;
+}
+
+.admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.admin-modal {
+    width: 100%;
+    max-width: 500px;
+
+    background-color: var(--bg-card);
+
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card-hover);
+
+    overflow: hidden;
+}
+
+.admin-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-modal-header h2 {
+    margin: 0;
+
+    color: #333333;
+    font-size: 1.25rem;
+}
+
+.admin-modal-fechar {
+    padding: 0;
+
+    background: none;
+    border: none;
+
+    color: #666666;
+    font-size: 1.8rem;
+
+    cursor: pointer;
+}
+
+.admin-modal-body {
+    padding: 24px;
+}
+
+.admin-modal-body p {
+    text-align: left;
+}
+
+.admin-modal-usuario {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+    margin-bottom: 22px;
+}
+
+.admin-modal-usuario strong {
+    color: #333333;
+}
+
+.admin-modal-usuario span {
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.admin-modal-body label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #333333;
+    font-weight: 600;
+}
+
+.admin-modal-input {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+
+    outline: none;
+}
+
+.admin-modal-input:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+}
+
+.admin-modal-ajuda {
+    margin: 7px 0 0;
+
+    color: #777777;
+    font-size: 0.85rem;
+}
+
+.admin-modal-aviso {
+    margin-top: 15px;
+
+    color: #666666;
+    line-height: 1.5;
+}
+
+.admin-modal-erro {
+    margin-top: 15px;
+
+    color: var(--color-danger);
+    font-size: 0.9rem;
+}
+
+.admin-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+    padding: 16px 24px 22px;
+}
+
+.admin-btn-cancelar {
+    background-color: #eeeeee;
+    color: #444444;
+}
+
+.admin-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.admin-modal-aberto {
+    overflow: hidden;
+}
+
+/* --- 7. RESPONSIVIDADE --- */
+
+@media (max-width: 900px) {
+
+    .admin-acoes {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-nav {
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .admin-main {
+        padding: 25px 20px;
+    }
+
+    .admin-header-title {
+        margin-left: 10px;
+        font-size: 1rem;
+    }
+
+    .admin-logout-btn {
+        right: 15px;
+        padding: 8px 16px;
+    }
+
+    .admin-nav {
+        gap: 15px;
+        font-size: 0.9rem;
+    }
+
+    .admin-tabela-usuarios th,
+    .admin-tabela-usuarios td {
+        padding: 12px;
+    }
+
+    .admin-acoes-usuario {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

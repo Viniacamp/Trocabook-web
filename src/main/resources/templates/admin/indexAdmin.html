@@ -1,42 +1,120 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Home | Área do Administrador</title>
-    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
-    <link rel="stylesheet" type="text/css" href="/css/indexAdmin.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <title>Administração | Trocabook</title>
 </head>
+
 <body>
-    <h1>Bem-vindo a Área do Administrador</h1>
-<div class="home-cards">
-    <div class="home-card">
-        <a href="/dashboard-pagina">
-            <h3>Dashboard</h3>
-            <p>Acesse a visão geral do sistema</p>
-        </a>
-    </div>
+<div class="container">
 
-    <div class="home-card">
-        <a href="/cadastroAdmin">
-            <h3>Cadastrar Admin</h3>
-            <p>Novo por aqui? Realize seu cadastro</p>
-        </a>
-    </div>
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho">
+                <tr>
+                    <th id="cabecalhoelementos">
 
-    <div class="home-card">
-        <a href="/loginAdmin">
-            <h3>Login Admin</h3>
-            <p>Entre no painel de administração</p>
-        </a>
-    </div>
+                        <a href="/admin">
+                            <img src="/img/Design sem nome (7).svg"
+                                 alt="Trocabook">
+                        </a>
 
-    <div class="home-card">
-        <a href="/listaUsuarios-pagina">
-            <h3>Listar Usuários</h3>
-            <p>Visualize todos os usuários cadastrados na plataforma</p>
-        </a>
-    </div>
+                        <span class="admin-header-title">
+                        Administração
+                    </span>
+
+                        <button type="button"
+                                id="deslogar"
+                                class="admin-logout-btn">
+                            Sair
+                        </button>
+
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <a href="/admin">Início</a>
+        <a href="/admin/usuarios">Usuários</a>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/ajuda">Ajuda</a>
+    </nav>
+
+    <main class="admin-main">
+
+        <section class="admin-boas-vindas">
+            <h1>Administração</h1>
+            <p>Gerencie e acompanhe a plataforma Trocabook.</p>
+        </section>
+
+        <section class="admin-acoes">
+
+            <article class="admin-card">
+                <div class="admin-card-icon">
+                    👥
+                </div>
+
+                <h2>Gerenciar usuários</h2>
+
+                <p>
+                    Consulte os usuários cadastrados, altere informações
+                    administrativas e gerencie o status das contas.
+                </p>
+
+                <a href="/admin/usuarios"
+                   class="admin-card-button">
+                    Gerenciar usuários
+                </a>
+            </article>
+
+            <article class="admin-card">
+                <div class="admin-card-icon">
+                    📊
+                </div>
+
+                <h2>Dashboard</h2>
+
+                <p>
+                    Acompanhe indicadores de anúncios, negociações
+                    e utilização da plataforma.
+                </p>
+
+                <a href="/admin/dashboard"
+                   class="admin-card-button">
+                    Ver dashboard
+                </a>
+            </article>
+
+            <article class="admin-card">
+                <div class="admin-card-icon">
+                    ❓
+                </div>
+
+                <h2>Ajuda aos usuários</h2>
+
+                <p>
+                    Acesse os recursos administrativos relacionados
+                    ao suporte e à central de ajuda.
+                </p>
+
+                <a href="/admin/ajuda"
+                   class="admin-card-button">
+                    Acessar ajuda
+                </a>
+            </article>
+
+        </section>
+
+    </main>
+
 </div>
-
+<script type="module" src="/js/logout.js"></script>
 </body>
 </html>

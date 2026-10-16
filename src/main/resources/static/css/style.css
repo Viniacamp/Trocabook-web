@@ -21,3 +21,6 @@
 
 /* 6. Módulo de Chat: Layout Base de Mensagens e Painéis */
 @import url('./chat-layout.css');
+
+/* 7. Módulo Administrativo */
+@import url('./admin.css');

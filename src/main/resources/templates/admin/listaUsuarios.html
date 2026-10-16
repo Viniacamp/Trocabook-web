@@ -1,87 +1,234 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Usuários Cadastrados | Área do Administrador</title>
-    <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="/img/logo-trocabook.png">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/css/listarUsuarios.css">
+
+    <title>Usuários | Administração Trocabook</title>
 </head>
+
 <body>
-    <h1>Usuários Cadastrados na Plataforma</h1>
-    <div id="lista">
-        <!--não deletar a div-->
+<div class="container">
+
+    <header>
+        <div class="wrapper">
+            <table class="cabecalho">
+                <tr>
+                    <th id="cabecalhoelementos">
+
+                        <a href="/admin">
+                            <img src="/img/Design sem nome (7).svg"
+                                 alt="Trocabook">
+                        </a>
+
+                        <span class="admin-header-title">
+                            Administração
+                        </span>
+
+                        <button type="button"
+                                id="deslogar"
+                                class="admin-logout-btn">
+                            Sair
+                        </button>
+
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <a href="/admin">Início</a>
+        <a href="/admin/usuarios">Usuários</a>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/ajuda">Ajuda</a>
+    </nav>
+
+    <main class="admin-main">
+
+        <section class="admin-boas-vindas">
+            <h1>Gerenciamento de usuários</h1>
+            <p>
+                Consulte e gerencie os usuários cadastrados na plataforma.
+            </p>
+        </section>
+
+        <section class="admin-usuarios">
+
+            <div class="admin-usuarios-filtros">
+                <input
+                        type="search"
+                        id="pesquisaUsuario"
+                        class="admin-pesquisa"
+                        placeholder="Pesquisar por nome ou e-mail..."
+                        autocomplete="off">
+            </div>
+
+            <div id="usuariosCarregando"
+                 class="admin-estado-listagem">
+                Carregando usuários...
+            </div>
+
+            <div id="usuariosErro"
+                 class="admin-estado-listagem admin-estado-erro"
+                 hidden>
+                Não foi possível carregar os usuários.
+            </div>
+
+            <div class="admin-tabela-container">
+
+                <table class="admin-tabela-usuarios"
+                       id="tabelaUsuarios"
+                       hidden>
+
+                    <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>E-mail</th>
+                        <th>Avaliação</th>
+                        <th>Perfil</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="usuariosTabelaBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal: Alterar usuário -->
+    <div id="modalAlterarUsuario"
+         class="admin-modal-overlay"
+         hidden>
+
+        <div class="admin-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="tituloModalAlterar">
+
+            <div class="admin-modal-header">
+                <h2 id="tituloModalAlterar">Alterar usuário</h2>
+
+                <button type="button"
+                        class="admin-modal-fechar"
+                        data-fechar-modal="modalAlterarUsuario"
+                        aria-label="Fechar">
+                    &times;
+                </button>
+            </div>
+
+            <div class="admin-modal-body">
+
+                <div class="admin-modal-usuario">
+                    <strong id="alterarUsuarioNome"></strong>
+                    <span id="alterarUsuarioEmail"></span>
+                </div>
+
+                <label for="alterarUsuarioAvaliacao">
+                    Avaliação
+                </label>
+
+                <input type="number"
+                       id="alterarUsuarioAvaliacao"
+                       class="admin-modal-input"
+                       min="0"
+                       max="5"
+                       step="0.1">
+
+                <p class="admin-modal-ajuda">
+                    Informe uma avaliação entre 0 e 5.
+                </p>
+
+                <p id="alterarUsuarioErro"
+                   class="admin-modal-erro"
+                   hidden>
+                </p>
+
+            </div>
+
+            <div class="admin-modal-footer">
+                <button type="button"
+                        class="admin-btn admin-btn-cancelar"
+                        data-fechar-modal="modalAlterarUsuario">
+                    Cancelar
+                </button>
+
+                <button type="button"
+                        id="salvarAlteracaoUsuario"
+                        class="admin-btn admin-btn-alterar">
+                    Salvar
+                </button>
+            </div>
+
+        </div>
     </div>
 
+
+    <!-- Modal: Ativar / Desativar usuário -->
+    <div id="modalStatusUsuario"
+         class="admin-modal-overlay"
+         hidden>
+
+        <div class="admin-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="tituloModalStatus">
+
+            <div class="admin-modal-header">
+                <h2 id="tituloModalStatus"></h2>
+
+                <button type="button"
+                        class="admin-modal-fechar"
+                        data-fechar-modal="modalStatusUsuario"
+                        aria-label="Fechar">
+                    &times;
+                </button>
+            </div>
+
+            <div class="admin-modal-body">
+
+                <p id="mensagemModalStatus"></p>
+
+                <p id="avisoModalStatus"
+                   class="admin-modal-aviso">
+                </p>
+
+                <p id="statusUsuarioErro"
+                   class="admin-modal-erro"
+                   hidden>
+                </p>
+
+            </div>
+
+            <div class="admin-modal-footer">
+                <button type="button"
+                        class="admin-btn admin-btn-cancelar"
+                        data-fechar-modal="modalStatusUsuario">
+                    Cancelar
+                </button>
+
+                <button type="button"
+                        id="confirmarStatusUsuario"
+                        class="admin-btn">
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script type="module" src="/js/logout.js"></script>
+<script type="module" src="/js/admin/usuarios.js"></script>
 </body>
-<script>
-    document.addEventListener("DOMContentLoaded", function(){
-        fetch("/dados/listar")
-            .then(res => {
-                if (!res.ok){
-                    throw new Error("Erro ao listar")
-                }
-                return res.json()
-            })
-            .then(listaUsuarios => {
-                const divLista = document.querySelector("#lista")
-                listaUsuarios.forEach(usuario => {
-                    const divUsuario = document.createElement("div")
-
-                    const img = document.createElement("img")
-                    img.src = usuario.foto;
-                    img.className = "PerfilIcone"
-
-                    const nome = document.createElement("p")
-                    nome.innerHTML = usuario.nome;
-
-                    const link = document.createElement("a")
-                    link.href = "/alterarUsuario/" + usuario.id
-                    link.text = "alterar"
-
-                    const button = document.createElement("button")
-                    button.textContent = "deletar"
-                    button.className = "botaoDeletar";
-
-                    button.addEventListener("click", function() {
-                        fetch("http://localhost:8181/api/admin/excluir", {
-                            method: "POST",
-                            headers: {
-                                "Content-type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                operacao: "EXCLUSAO",
-                                cdUsuario: usuario.id,
-                                adminResponsavelId: JSON.parse(localStorage.getItem("admin")).id
-
-                            })
-                        })
-                            .then(res => {
-                                if (!res.ok){
-                                    throw new Error("Erro ao deletar usuário");
-                                }
-                                return res.json()
-
-                            })
-                            .then(data => {
-                                window.alert(data.message);
-                                window.location.href = "/listaUsuarios-pagina"
-                            })
-                    })
-
-                    divUsuario.appendChild(img);
-                    divUsuario.appendChild(nome);
-                    divUsuario.appendChild(link);
-                    divUsuario.appendChild(button);
-
-                    divLista.appendChild(divUsuario);
-
-
-                })
-            })
-
-
-    })
-
-</script>
 </html>
