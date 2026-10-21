@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.service.impl;
 
+import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.Negociacao;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
@@ -108,7 +109,7 @@ public class NegociacaoService implements INegociacaoService {
             );
 
             negociacaoAtualizada.setDataNegociacao(
-                    LocalDateTime.now().toString()
+                    Timestamp.now()
             );
 
             negociacaoAtualizada.setConfirmacaoAnunciante(false);
@@ -154,7 +155,7 @@ public class NegociacaoService implements INegociacaoService {
         );
 
         negociacao.setDataNegociacao(
-                LocalDateTime.now().toString()
+                Timestamp.now()
         );
 
         negociacao.setTipoNegociacao(

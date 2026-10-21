@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.model;
 
+import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class Negociacao implements Serializable {
 
     private String anuncioId;
 
-    private String dataNegociacao;
+    private Timestamp dataNegociacao;
 
     private TipoNegociacao tipoNegociacao;
 
@@ -45,7 +46,7 @@ public class Negociacao implements Serializable {
     public Negociacao() {
     }
 
-    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, String dataNegociacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador, String anuncioOferecidoId, String tituloLivroOferecido, String capaLivroOferecido, String descricaoOferta) {
+    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, Timestamp dataNegociacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador, String anuncioOferecidoId, String tituloLivroOferecido, String capaLivroOferecido, String descricaoOferta) {
         this.id = id;
         this.usuarioAnuncianteId = usuarioAnuncianteId;
         this.usuarioCompradorId = usuarioCompradorId;
@@ -99,11 +100,11 @@ public class Negociacao implements Serializable {
         this.anuncioId = anuncioId;
     }
 
-    public String getDataNegociacao() {
+    public Timestamp getDataNegociacao() {
         return dataNegociacao;
     }
 
-    public void setDataNegociacao(String dataNegociacao) {
+    public void setDataNegociacao(Timestamp dataNegociacao) {
         this.dataNegociacao = dataNegociacao;
     }
 
@@ -237,7 +238,7 @@ public class Negociacao implements Serializable {
                 negociacaoDTO.usuarioAnuncianteId(),
                 negociacaoDTO.usuarioCompradorId(),
                 negociacaoDTO.anuncioId(),
-                negociacaoDTO.dataNegociacao().toString(),
+                Timestamp.parseTimestamp(negociacaoDTO.dataNegociacao()),
                 TipoNegociacao.valueOf(negociacaoDTO.tipoNegociacao()),
                 StatusNegociacao.valueOf(negociacaoDTO.status()),
                 negociacaoDTO.nmAnunciante(),
@@ -261,7 +262,7 @@ public class Negociacao implements Serializable {
                 this.usuarioAnuncianteId,
                 this.usuarioCompradorId,
                 this.anuncioId,
-                LocalDateTime.parse(this.dataNegociacao),
+                this.dataNegociacao.toString(),
                 this.tipoNegociacao.name(),
                 this.status.name(),
                 this.nmAnunciante,

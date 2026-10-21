@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.config;
 
+import com.google.cloud.Timestamp;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.trocabook.Trocabook.model.Anuncio;
 import com.trocabook.Trocabook.model.Livro;
@@ -525,7 +526,7 @@ public class DataInitializer implements CommandLineRunner {
                 anunciante.id(),
                 comprador.id(),
                 anuncio.id(),
-                LocalDateTime.now(),
+                Timestamp.now().toString(),
                 tipoNegociacao.name(),
                 Negociacao.StatusNegociacao.FINALIZADA.name(),
                 anunciante.nome(),

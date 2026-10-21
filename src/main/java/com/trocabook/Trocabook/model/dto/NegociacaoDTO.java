@@ -1,14 +1,14 @@
 package com.trocabook.Trocabook.model.dto;
 
 
-import java.time.LocalDateTime;
+
 
 public record NegociacaoDTO(
         String id,
         String usuarioAnuncianteId,
         String usuarioCompradorId,
         String anuncioId,
-        LocalDateTime dataNegociacao,
+        String dataNegociacao,
         String tipoNegociacao,
         String status,
         String nmAnunciante,
