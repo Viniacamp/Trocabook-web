@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.service.impl;
 
+import com.google.cloud.Timestamp;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.trocabook.Trocabook.model.Usuario;
@@ -35,6 +36,7 @@ public class UsuarioService implements IUsuarioService {
         entidade.setId(userRecord.getUid());
         entidade.setRole(Usuario.Role.USER);
         entidade.setStatus(Usuario.StatusUsuario.ATIVO);
+        entidade.setDataCriacao(Timestamp.now());
 
         usuarioRepository.cadastrar(entidade);
 
@@ -64,6 +66,9 @@ public class UsuarioService implements IUsuarioService {
         entidade.setId(uid);
         entidade.setRole(usuarioExistente.getRole());
         entidade.setStatus(usuarioExistente.getStatus());
+        entidade.setDataCriacao(
+                usuarioExistente.getDataCriacao()
+        );
 
         Usuario entidadeSalva = usuarioRepository.atualizar(entidade);
 

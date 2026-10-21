@@ -4,7 +4,6 @@ import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class Negociacao implements Serializable {
 
@@ -17,6 +16,8 @@ public class Negociacao implements Serializable {
     private String anuncioId;
 
     private Timestamp dataNegociacao;
+
+    private Timestamp dataFinalizacao;
 
     private TipoNegociacao tipoNegociacao;
 
@@ -46,12 +47,13 @@ public class Negociacao implements Serializable {
     public Negociacao() {
     }
 
-    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, Timestamp dataNegociacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador, String anuncioOferecidoId, String tituloLivroOferecido, String capaLivroOferecido, String descricaoOferta) {
+    public Negociacao(String id, String usuarioAnuncianteId, String usuarioCompradorId, String anuncioId, Timestamp dataNegociacao, Timestamp dataFinalizacao, TipoNegociacao tipoNegociacao, StatusNegociacao statusNegociacao, String nmAnunciante, String fotoPerfilAnunciante, String nmComprador, String fotoPerfilComprador, String titulo, String capa, boolean confirmacaoAnunciante, boolean confirmacaoComprador, String anuncioOferecidoId, String tituloLivroOferecido, String capaLivroOferecido, String descricaoOferta) {
         this.id = id;
         this.usuarioAnuncianteId = usuarioAnuncianteId;
         this.usuarioCompradorId = usuarioCompradorId;
         this.anuncioId = anuncioId;
         this.dataNegociacao = dataNegociacao;
+        this.dataFinalizacao = dataFinalizacao;
         this.tipoNegociacao = tipoNegociacao;
         this.status = statusNegociacao;
         this.nmAnunciante = nmAnunciante;
@@ -220,6 +222,14 @@ public class Negociacao implements Serializable {
         this.descricaoOferta = descricaoOferta;
     }
 
+    public Timestamp getDataFinalizacao() {
+        return dataFinalizacao;
+    }
+
+    public void setDataFinalizacao(Timestamp dataFinalizacao) {
+        this.dataFinalizacao = dataFinalizacao;
+    }
+
     public enum StatusNegociacao {
         PENDENTE,
         EM_ANDAMENTO,
@@ -239,6 +249,7 @@ public class Negociacao implements Serializable {
                 negociacaoDTO.usuarioCompradorId(),
                 negociacaoDTO.anuncioId(),
                 Timestamp.parseTimestamp(negociacaoDTO.dataNegociacao()),
+                negociacaoDTO.dataFinalizacao() != null ? Timestamp.parseTimestamp(negociacaoDTO.dataFinalizacao()) : null,
                 TipoNegociacao.valueOf(negociacaoDTO.tipoNegociacao()),
                 StatusNegociacao.valueOf(negociacaoDTO.status()),
                 negociacaoDTO.nmAnunciante(),
@@ -263,6 +274,7 @@ public class Negociacao implements Serializable {
                 this.usuarioCompradorId,
                 this.anuncioId,
                 this.dataNegociacao.toString(),
+                this.dataFinalizacao != null ? this.dataFinalizacao.toString() : null,
                 this.tipoNegociacao.name(),
                 this.status.name(),
                 this.nmAnunciante,

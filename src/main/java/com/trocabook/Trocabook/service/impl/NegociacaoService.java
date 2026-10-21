@@ -1039,6 +1039,8 @@ public class NegociacaoService implements INegociacaoService {
             );
         }
 
+        negociacao.setDataFinalizacao(Timestamp.now());
+
         /*
          * Depois da conclusão, outras propostas
          * pendentes envolvendo os anúncios utilizados

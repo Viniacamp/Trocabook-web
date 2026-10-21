@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.model;
 
+import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.dto.AdminUsuarioOutput;
 import com.trocabook.Trocabook.model.dto.UsuarioInput;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
@@ -46,6 +47,8 @@ public class Usuario implements Serializable {
 
     @Max(5)
     private double avaliacao;
+
+    private Timestamp dataCriacao;
 
     private Role role;
 
@@ -219,6 +222,14 @@ public class Usuario implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Timestamp getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Timestamp dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public static Usuario from(UsuarioInput input){

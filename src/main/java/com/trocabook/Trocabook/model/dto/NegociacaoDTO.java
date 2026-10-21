@@ -9,6 +9,7 @@ public record NegociacaoDTO(
         String usuarioCompradorId,
         String anuncioId,
         String dataNegociacao,
+        String dataFinalizacao,
         String tipoNegociacao,
         String status,
         String nmAnunciante,
