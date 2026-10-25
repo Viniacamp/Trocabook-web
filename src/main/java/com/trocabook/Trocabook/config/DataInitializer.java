@@ -522,27 +522,27 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         NegociacaoDTO negociacaoDTO = new NegociacaoDTO(
-                null,
-                anunciante.id(),
-                comprador.id(),
-                anuncio.id(),
-                Timestamp.now().toString(),
-                tipoNegociacao.name(),
-                Negociacao.StatusNegociacao.FINALIZADA.name(),
-                anunciante.nome(),
-                anunciante.fotoPerfil(),
-                comprador.nome(),
-                comprador.fotoPerfil(),
-                anuncio.titulo(),
-                anuncio.capa(),
-                true,
-                true,
-                null,
-                null,
-                null,
-                descricaoOferta
+                null,                                           // 1. id
+                anunciante.id(),                                // 2. usuarioAnuncianteId
+                comprador.id(),                                 // 3. usuarioCompradorId
+                anuncio.id(),                                   // 4. anuncioId
+                Timestamp.now().toString(),                     // 5. dataNegociacao
+                Timestamp.now().toString(),                     // 6. dataFinalizacao
+                tipoNegociacao.name(),                          // 7. tipoNegociacao
+                Negociacao.StatusNegociacao.FINALIZADA.name(), // 8. status
+                anunciante.nome(),                              // 9. nmAnunciante
+                anunciante.fotoPerfil(),                        // 10. fotoPerfilAnunciante
+                comprador.nome(),                               // 11. nmComprador
+                comprador.fotoPerfil(),                         // 12. fotoPerfilComprador
+                anuncio.titulo(),                               // 13. titulo
+                anuncio.capa(),                                 // 14. capa
+                true,                                           // 15. confirmacaoAnunciante (boolean)
+                true,                                           // 16. confirmacaoComprador (boolean)
+                null,                                           // 17. anuncioOferecidoId
+                null,                                           // 18. tituloLivroOferecido
+                null,                                           // 19. capaLivroOferecido
+                descricaoOferta                                 // 20. descricaoOferta
         );
-
 
         negociacaoService.salvar(negociacaoDTO);
     }

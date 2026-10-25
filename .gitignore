@@ -1,5 +1,6 @@
 ### Segredos e Configuração Local ###
 # Ignora o arquivo de ambiente local que contém chaves secretas.
+src/main/resources/credentials/*.json
 .env
 
 HELP.md
