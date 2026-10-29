@@ -39,14 +39,15 @@ public class FileStorageServiceUsuario {
 
     public String armazenarArquivo(MultipartFile arquivo, Path diretorio, String tipo) throws IOException {
         String nomeOriginal = arquivo.getOriginalFilename();
-        String nomeSeguro = nomeOriginal.replaceAll("[^a-zA-Z0-9.\\-]", "_");
+        String nomeSeguro = (nomeOriginal != null) ? nomeOriginal.replaceAll("[^a-zA-Z0-9.\\-]", "_") : "arquivo";
         String nomeUnico = UUID.randomUUID().toString() + "_" + nomeSeguro;
 
         Path caminhoDestino = diretorio.resolve(nomeUnico);
 
         Files.copy(arquivo.getInputStream(), caminhoDestino);
 
-        return "http://localhost:8080/uploads/" + tipo + "/" + nomeUnico;
+        // CORREÇÃO: Retorna o caminho relativo sem o 'http://localhost:8080'
+        return "/uploads/" + tipo + "/" + nomeUnico;
     }
 
     public String armazenarArquivoUsuario(MultipartFile arquivo) throws IOException {

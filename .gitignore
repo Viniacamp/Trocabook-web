@@ -38,5 +38,5 @@ build/
 .vscode/
 
 ## CREDENTIALS ##
-credentials/
-keys/
+src/main/resources/credentials/
+src/main/resources/keys/
