@@ -3,14 +3,17 @@ package com.trocabook.Trocabook.service.feign;
 import com.trocabook.Trocabook.controllers.response.ChatResponse;
 import com.trocabook.Trocabook.model.dto.AtualizarMensagemDTO;
 import com.trocabook.Trocabook.model.dto.MensagemDTO;
+import org.springframework.context.annotation.Primary;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Primary
 @FeignClient(
         name = "chat-micro-servico",
-        url = "https://trocabookchatservice.onrender.com/api/chat/mensagens"
+        url = "${chat.service.url}",
+        fallback = ChatServiceFallback.class
 )
 public interface ChatService {
 
@@ -21,7 +24,7 @@ public interface ChatService {
 
     @GetMapping("/{id}")
     ChatResponse<MensagemDTO> buscarMensagemPorId(
-            @PathVariable String id
+            @PathVariable("id") String id
     );
 
     @GetMapping
@@ -38,12 +41,12 @@ public interface ChatService {
 
     @PutMapping("/{id}")
     ChatResponse<MensagemDTO> alterarMensagem(
-            @PathVariable String id,
+            @PathVariable("id") String id,
             @RequestBody AtualizarMensagemDTO dto
     );
 
     @DeleteMapping("/{id}")
     ChatResponse<Void> excluirMensagem(
-            @PathVariable String id
+            @PathVariable("id") String id
     );
 }
