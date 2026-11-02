@@ -31,7 +31,8 @@ public class WebSecurityConfig {
                                 "/chat/**",
                                 "/pesquisar/**",
                                 "/api/auth/**",
-                                "/deslogar"
+                                "/deslogar",
+                                "/cadastro"
                         )
                 )
 
@@ -51,6 +52,7 @@ public class WebSecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
+                                "/uploads/**", // Adicionado para permitir o acesso público às imagens salvas
                                 "/vendor/**",
                                 "/dados/**",
                                 "/esqueci-senha",
@@ -80,10 +82,12 @@ public class WebSecurityConfig {
                                 .policyDirectives(
                                         "default-src 'self'; " +
 
-                                                "script-src 'self' 'unsafe-inline' " +
+                                                "script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
                                                 "https://vlibras.gov.br " +
                                                 "https://www.google.com " +
                                                 "https://www.gstatic.com " +
+                                                "https://recaptcha.net " +
+                                                "https://www.recaptcha.net " +
                                                 "https://code.jquery.com " +
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://cdnjs.cloudflare.com; " +
@@ -94,22 +98,26 @@ public class WebSecurityConfig {
                                                 "https://vlibras.gov.br " +
                                                 "https://fonts.googleapis.com; " +
 
-                                                "font-src 'self' " +
+                                                "font-src 'self' data: " +
                                                 "https://cdnjs.cloudflare.com " +
                                                 "https://fonts.gstatic.com; " +
 
                                                 "frame-src 'self' " +
-                                                "https://www.google.com; " +
+                                                "https://www.google.com " +
+                                                "https://recaptcha.google.com " +
+                                                "https://www.recaptcha.net; " +
 
-                                                "img-src 'self' data: " +
+                                                "img-src 'self' data: blob: http://localhost:8080 http://localhost:8181 " + // Adicionado localhost para evitar o bloqueio de imagem
                                                 "https://vlibras.gov.br " +
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://books.google.com " +
                                                 "https://books.googleusercontent.com " +
-                                                "https://books.google.com/books/content; " +
+                                                "https://books.google.com/books/content " +
+                                                "https://www.gstatic.com; " +
 
                                                 "connect-src 'self' " +
                                                 "http://localhost:8181 " +
+                                                "https://trocabook-admin-service.azurewebsites.net " +
                                                 "https://trocabookchatservice.onrender.com " +
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://www.googleapis.com " +

@@ -69,24 +69,28 @@ public class CadastroController {
         /*
          * 1. Validação do reCAPTCHA
          */
-        boolean recaptchaValido =
-                recaptchaService.verifyRecaptcha(recaptchaToken);
+        boolean recaptchaValido = recaptchaService.verifyRecaptcha(recaptchaToken);
 
         if (!recaptchaValido) {
 
-            attributes.addFlashAttribute(
+            model.addAttribute(
                     "recaptchaError",
                     "Falha na verificação reCAPTCHA. Tente novamente."
             );
 
-            return "redirect:/cadastro";
+            model.addAttribute(
+                    "recaptchaSiteKey",
+                    recaptchaSiteKey
+            );
+
+            return "cadastro";
         }
 
 
         /*
-         * 2. Validação da foto
+         * 2. Validação da foto (Obrigatória)
          */
-        if (foto.isEmpty()) {
+        if (foto == null || foto.isEmpty()) {
 
             model.addAttribute(
                     "fotoErro",
@@ -98,7 +102,7 @@ public class CadastroController {
 
 
         /*
-         * 3. Verificação de e-mail
+         * 3. Verificação de e-mail duplicado
          */
         if (usuarioService.existeComEmail(usuarioDTO.getEmail())) {
 
@@ -111,7 +115,7 @@ public class CadastroController {
 
 
         /*
-         * 4. Verificação de CPF
+         * 4. Verificação de CPF duplicado
          */
         if (usuarioService.existeComCpf(usuarioDTO.getCPF())) {
 
@@ -138,31 +142,26 @@ public class CadastroController {
 
 
         /*
-         * 6. Salva a foto localmente
+         * 6. Salva a foto localmente/armazenamento
          */
-        String caminhoDaFoto =
-                fileStorageService.armazenarArquivoUsuario(foto);
+        String caminhoDaFoto = fileStorageService.armazenarArquivoUsuario(foto);
 
 
         /*
          * 7. Cria o objeto de entrada para o Firebase
-         *
-         * Os campos que ainda não existem no formulário
-         * são enviados como null.
          */
-        UsuarioInput input =
-                new UsuarioInput(
-                        usuarioDTO.getNmUsuario(),
-                        usuarioDTO.getCPF(),
-                        usuarioDTO.getEmail(),
-                        null,
-                        usuarioDTO.getSenha(),
-                        caminhoDaFoto,
-                        null,
-                        null,
-                        null,
-                        null
-                );
+        UsuarioInput input = new UsuarioInput(
+                usuarioDTO.getNmUsuario(),
+                usuarioDTO.getCPF(),
+                usuarioDTO.getEmail(),
+                null,
+                usuarioDTO.getSenha(),
+                caminhoDaFoto,
+                null,
+                null,
+                null,
+                null
+        );
 
 
         /*
@@ -172,9 +171,8 @@ public class CadastroController {
 
 
         /*
-         * 9. Cadastro concluído
+         * 9. Redireciona para o login
          */
         return "redirect:/login";
     }
 }
-

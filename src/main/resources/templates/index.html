@@ -15,7 +15,7 @@
         <div class="wrapper">
             <table class="cabecalho"><tr>
                 <th id="cabecalhoelementos">
-                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <a href="/"><img src="/img/Design sem nome (7).svg" alt="Trocabook Logo"></a>
                     <div class="autocomplete-wrapper">
                         <input type="text" id="pesquisa" placeholder="Pesquisar">
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
@@ -24,11 +24,13 @@
                     <th:block sec:authorize="isAuthenticated()">
                         <div class="user-menu-container">
                             <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
+                                <img th:src="${usuario.fotoPerfil}"
+                                     class="user-menu-icon"
+                                     onerror="this.onerror=null; this.src='/img/logo-trocabook.png';">
                                 <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
+                                <span class="arrow">▼</span></span>
                             </button>
-                            
+
                             <div id="userDropdown" class="dropdown-content">
                                 <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
                                 <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
@@ -59,7 +61,7 @@
     </script>
     <div class="banner">
         <h1 id="saudacao"></h1>
-        <br><img class="banner" src="/img/Banner.png">
+        <br><img class="banner" src="/img/Banner.png" alt="Banner promocional">
     </div>
     <table class="negociadores">
         <tr>
@@ -67,11 +69,14 @@
                 <div class="responsive-destaques">
                     <div th:each="destaque : ${destaques}">
                         <a th:href="@{'/destaque/' + ${destaque.id}}">
-                            <img th:src="${destaque.fotoPerfil}" alt="Usuário em destaque">
+                            <img th:src="${destaque.fotoPerfil}"
+                                 alt="Usuário em destaque"
+                                 onerror="this.onerror=null; this.src='/img/logo-trocabook.png';">
                         </a>
                     </div>
                 </div>
             </th>
+        </tr>
     </table>
 
     <div class="livros">
@@ -93,7 +98,8 @@
 
                     <img th:src="${anuncio.capa}"
                          class="capaLivros"
-                         alt="Capa do livro">
+                         alt="Capa do livro"
+                         onerror="this.onerror=null; this.src='/img/Design sem nome (7).svg';">
 
                     <p th:text="${anuncio.titulo}"></p>
 
@@ -111,7 +117,7 @@
                 <p style="text-align: right;
                       text-decoration: none;
                       color:#007BFF">
-                    &gt; Ver mais livros
+                    > Ver mais livros
                 </p>
             </a>
 
@@ -128,7 +134,8 @@
 
                 <img th:src="${anuncio.capa}"
                      class="capaLivros"
-                     alt="Capa do livro">
+                     alt="Capa do livro"
+                     onerror="this.onerror=null; this.src='/img/Design sem nome (7).svg';">
 
                 <p th:text="${anuncio.titulo}"></p>
 
@@ -146,7 +153,7 @@
             <p style="text-align: right;
                   text-decoration: none;
                   color:#007BFF">
-                &gt; Ver todos os anúncios
+                > Ver todos os anúncios
             </p>
         </a>
 
@@ -155,7 +162,7 @@
 
     <footer>
         <div class="rodapenovo">
-            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/"><img src="/img/Design sem nome.svg" alt="Logo Trocabook Rodapé"></a>
             <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
             <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
