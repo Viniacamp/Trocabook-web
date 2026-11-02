@@ -1,6 +1,7 @@
 package com.trocabook.Trocabook.service;
 
 import com.trocabook.Trocabook.model.Negociacao;
+import com.trocabook.Trocabook.model.dto.NegociacaoAnalyticsDTO;
 import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
 
 import java.util.List;
@@ -75,4 +76,6 @@ public interface INegociacaoService {
             String uidUsuario,
             Negociacao.TipoNegociacao tipoNegociacao
     );
+
+    List<NegociacaoAnalyticsDTO> listarAnalises();
 }

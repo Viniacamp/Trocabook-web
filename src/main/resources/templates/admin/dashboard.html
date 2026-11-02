@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <link rel="icon" type="image/png" href="/img/logo-trocabook.png">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 
-    <title>Administração | Trocabook</title>
+    <!-- Chart.js para renderização gráfica -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Dashboard | Administração Trocabook</title>
 </head>
 
 <body>
@@ -18,20 +23,11 @@
             <table class="cabecalho">
                 <tr>
                     <th id="cabecalhoelementos">
-
                         <a href="/admin">
-                            <img src="/img/Design sem nome (7).svg"
-                                 alt="Trocabook">
+                            <img src="/img/Design sem nome (7).svg" alt="Trocabook">
                         </a>
-
-                        <span class="admin-header-title">
-                            Administração
-                        </span>
-
-                        <a href="/" class="admin-voltar-site">
-                            Voltar ao Trocabook
-                        </a>
-
+                        <span class="admin-header-title">Administração</span>
+                        <button type="button" id="deslogar" class="admin-logout-btn">Sair</button>
                     </th>
                 </tr>
             </table>
@@ -41,19 +37,151 @@
     <nav class="admin-nav">
         <a href="/admin">Início</a>
         <a href="/admin/usuarios">Usuários</a>
-        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/dashboard" class="admin-nav-ativo">Dashboard</a>
         <a href="/admin/ajuda">Ajuda</a>
     </nav>
 
     <main class="admin-main">
 
         <section class="admin-boas-vindas">
-            <h1>Administração</h1>
-            <p>Gerencie e acompanhe a plataforma Trocabook.</p>
+            <h1>Dashboard de Analytics</h1>
+            <p>Indicadores descritivos, diagnósticos e projeções preditivas da plataforma.</p>
+        </section>
+
+        <!-- Navegação entre abas de análises -->
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn admin-tab-ativa" data-aba="anuncios">
+                📢 Anúncios
+            </button>
+            <button type="button" class="admin-tab-btn" data-aba="negociacoes">
+                🤝 Negociações
+            </button>
+            <button type="button" class="admin-tab-btn" data-aba="previsao">
+                📈 Previsão de Usuários
+            </button>
+        </div>
+
+        <!-- Indicador de Carregamento Geral -->
+        <div id="dashboardCarregando" class="admin-estado-listagem">
+            Carregando indicadores...
+        </div>
+
+        <!-- Indicador de Erro -->
+        <div id="dashboardErro" class="admin-estado-listagem admin-estado-erro" hidden>
+            Não foi possível carregar os dados desta análise.
+        </div>
+
+        <!-- ABA 1: ANÚNCIOS -->
+        <section id="abaAnuncios" class="admin-aba-conteudo">
+            <div class="admin-kpi-grid">
+                <article class="admin-kpi-card">
+                    <h3>Total de Anúncios</h3>
+                    <span id="kpiTotalAnuncios" class="admin-kpi-valor">-</span>
+                </article>
+                <article class="admin-kpi-card">
+                    <h3>Modalidade Principal</h3>
+                    <span id="kpiModalidadeTop" class="admin-kpi-valor">-</span>
+                </article>
+                <article class="admin-kpi-card">
+                    <h3>Categoria Mais Anunciada</h3>
+                    <span id="kpiCategoriaTop" class="admin-kpi-valor">-</span>
+                </article>
+            </div>
+
+            <div class="admin-graficos-grid">
+                <div class="admin-grafico-card">
+                    <h2>Evolução Mensal e Projeção de Anúncios</h2>
+                    <canvas id="chartEvolucaoAnuncios"></canvas>
+                </div>
+                <div class="admin-grafico-card">
+                    <h2>Distribuição por Tipo de Negociação</h2>
+                    <canvas id="chartTiposAnuncios"></canvas>
+                </div>
+            </div>
+
+            <div class="admin-insights-container">
+                <h2>Insights de Anúncios</h2>
+                <ul id="listaInsightsAnuncios" class="admin-lista-insights"></ul>
+            </div>
+        </section>
+
+        <!-- ABA 2: NEGOCIAÇÕES -->
+        <section id="abaNegociacoes" class="admin-aba-conteudo" hidden>
+            <div class="admin-kpi-grid">
+                <article class="admin-kpi-card">
+                    <h3>Total de Negociações</h3>
+                    <span id="kpiTotalNegociacoes" class="admin-kpi-valor">-</span>
+                </article>
+                <article class="admin-kpi-card">
+                    <h3>Tempo Médio de Finalização</h3>
+                    <span id="kpiTempoMedio" class="admin-kpi-valor">-</span>
+                </article>
+                <article class="admin-kpi-card">
+                    <h3>Taxa de Conclusão</h3>
+                    <span id="kpiTaxaConclusao" class="admin-kpi-valor">-</span>
+                </article>
+            </div>
+
+            <div class="admin-graficos-grid">
+                <div class="admin-grafico-card">
+                    <h2>Histórico Mensal de Negociações</h2>
+                    <canvas id="chartHistoricoNegociacoes"></canvas>
+                </div>
+                <div class="admin-grafico-card">
+                    <h2>Afinidade de Categorias (Trocas)</h2>
+                    <canvas id="chartAfinidadeCategorias"></canvas>
+                </div>
+            </div>
+
+            <div class="admin-insights-container">
+                <h2>Insights Diagnósticos de Negociações</h2>
+                <ul id="listaInsightsNegociacoes" class="admin-lista-insights"></ul>
+            </div>
+        </section>
+
+        <!-- ABA 3: PREVISÃO DE USUÁRIOS -->
+        <section id="abaPrevisao" class="admin-aba-conteudo" hidden>
+            <div class="admin-kpi-grid">
+                <article class="admin-kpi-card">
+                    <h3>Erro Médio Absoluto (MAE)</h3>
+                    <span id="kpiMaeUsuarios" class="admin-kpi-valor">-</span>
+                </article>
+                <article class="admin-kpi-card">
+                    <h3>Raiz do Erro Quadrático (RMSE)</h3>
+                    <span id="kpiRmseUsuarios" class="admin-kpi-valor">-</span>
+                </article>
+                <article class="admin-kpi-card">
+                    <h3>Projeção Próximo Mês</h3>
+                    <span id="kpiProjecaoProximoMes" class="admin-kpi-valor">-</span>
+                </article>
+            </div>
+
+            <div class="admin-graficos-grid">
+                <div class="admin-grafico-card admin-grafico-largura-total">
+                    <h2>Projeção Temporal de Cadastros de Usuários</h2>
+                    <canvas id="chartPrevisaoUsuarios"></canvas>
+                </div>
+            </div>
+
+            <div class="admin-tabela-container">
+                <h2>Resumo dos Horizontes de Previsão</h2>
+                <table class="admin-tabela-usuarios">
+                    <thead>
+                    <tr>
+                        <th>Horizonte (Meses)</th>
+                        <th>Quantidade Total Acumulada</th>
+                        <th>Média Mensal Estimada</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabelaResumoHorizontesBody"></tbody>
+                </table>
+            </div>
         </section>
 
     </main>
-
 </div>
+
+<script type="module" src="/js/logout.js"></script>
+<script type="module" src="/js/admin/dashboard.js"></script>
 </body>
 </html>

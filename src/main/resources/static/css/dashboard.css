@@ -1,106 +1,238 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
+/* ==========================================================================
+   TROCABOOK - MÓDULO DASHBOARD & ANALYTICS (dashboard.css)
+   ========================================================================== */
+
+/* --- 1. ITEM DE NAVEGAÇÃO ATIVO NO NAV PRINCIPAL --- */
+
+.admin-nav-ativo {
+    color: var(--color-secondary) !important;
+    border-bottom: 2px solid var(--color-secondary);
+}
+
+
+/* --- 2. NAVEGAÇÃO DE ABAS DO DASHBOARD --- */
+
+.admin-tabs {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* ocupa toda a altura da tela */
-    margin: 0;
+    gap: 12px;
+
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* Tabela centralizada */
-table {
-    width: 90%; /* aumenta a largura da tabela */
-    max-width: 1200px; /* opcional: evita que fique muito larga em telas gigantes */
-    border-collapse: collapse;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    text-align: center; /* centraliza conteúdo das células */
-}
+.admin-tab-btn {
+    padding: 10px 20px;
 
-/* Cabeçalho */
-thead th {
-    background-color: #007bff;
-    color: #fff;
-    padding: 12px 15px;
-    font-size: 16px;
-}
+    background-color: var(--bg-card);
+    color: #555555;
 
-/* Corpo da tabela */
-tbody td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 14px;
-    color: #333;
-}
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
 
-/* Efeito hover nas linhas */
-tbody tr:hover {
-    background-color: #f1f7ff;
-    transition: background-color 0.3s;
-}
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
 
-/* Linha final sem borda inferior */
-tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Botão do dashboard */
-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #007bff; /* cor base */
-    border: none;
-    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-top: 20px;
+
+    transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
 }
 
-/* Hover com gradiente */
-button:hover {
-    background-color: #3352ec;
+.admin-tab-btn:hover {
+    background-color: var(--bg-muted);
+    color: var(--color-secondary);
 }
 
-/* Foco acessível */
-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(104, 158, 254, 0.5);
+.admin-tab-ativa {
+    background-color: var(--color-secondary);
+    color: #ffffff !important;
+
+    border-color: var(--color-secondary);
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.25);
 }
 
-.container {
+
+/* --- 3. SEÇÕES DE ABAS --- */
+
+.admin-aba-conteudo[hidden] {
+    display: none;
+}
+
+.admin-aba-conteudo {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 90vh; /* ocupa 90% da altura da tela */
-    justify-content: center; /* centraliza verticalmente */
 }
 
-/* Responsividade */
+
+/* --- 4. GRID DE CARDS DE KPI --- */
+
+.admin-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.admin-kpi-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 22px 24px;
+
+    background-color: var(--bg-card);
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-card);
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.admin-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.admin-kpi-card h3 {
+    margin: 0 0 10px;
+
+    color: #666666;
+    font-size: 0.85rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+
+.admin-kpi-valor {
+    color: #333333;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: left;
+}
+
+
+/* --- 5. GRID DE GRÁFICOS & CANVAS CHART.JS --- */
+
+.admin-graficos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.admin-grafico-card {
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px;
+
+    background-color: var(--bg-card);
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-card);
+}
+
+.admin-grafico-card h2 {
+    margin: 0 0 20px;
+
+    color: #333333;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-align: left;
+}
+
+.admin-grafico-largura-total {
+    grid-column: 1 / -1;
+}
+
+.admin-grafico-card canvas {
+    width: 100% !important;
+    max-height: 360px;
+}
+
+
+/* --- 6. CONTAINER & LISTA DE INSIGHTS --- */
+
+.admin-insights-container {
+    margin-bottom: 30px;
+    padding: 24px;
+
+    background-color: var(--bg-card);
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-card);
+}
+
+.admin-insights-container h2 {
+    margin: 0 0 16px;
+
+    color: #333333;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-align: left;
+}
+
+.admin-lista-insights {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+    margin: 0;
+    padding-left: 20px;
+}
+
+.admin-lista-insights li {
+    color: #555555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: left;
+}
+
+
+/* --- 7. RESPONSIVIDADE DO DASHBOARD --- */
+
+@media (max-width: 992px) {
+
+    .admin-graficos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-tabs {
+        flex-wrap: wrap;
+    }
+
+    .admin-tab-btn {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+}
+
 @media (max-width: 600px) {
-    table, thead, tbody, th, td, tr {
-        display: block;
-        width: 100%;
+
+    .admin-kpi-valor {
+        font-size: 1.4rem;
     }
-    thead {
-        display: none;
-    }
-    tbody td {
-        padding: 10px;
-        text-align: right;
-        position: relative;
-    }
-    tbody td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        font-weight: bold;
-        text-transform: uppercase;
-        text-align: left;
+
+    .admin-grafico-card {
+        padding: 16px;
     }
 }

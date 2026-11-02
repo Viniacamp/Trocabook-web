@@ -4,14 +4,14 @@ import com.google.cloud.Timestamp;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.trocabook.Trocabook.model.Usuario;
-import com.trocabook.Trocabook.model.dto.AdminUsuarioInput;
-import com.trocabook.Trocabook.model.dto.AdminUsuarioOutput;
-import com.trocabook.Trocabook.model.dto.UsuarioInput;
-import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.model.dto.*;
 import com.trocabook.Trocabook.repository.UsuarioRepository;
 import com.trocabook.Trocabook.service.IUsuarioService;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -121,6 +121,15 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
+    public List<UsuarioAnalyticsDTO> buscarTodasDataCriacao(Usuario.Role role) {
+        return usuarioRepository.listarTodasDataCriacao(role)
+                .stream()
+                .map(this::transformarTimeStampParaLocalDateTime)
+                .map(this::converterDateTimeParaUsuarioAnalyticsDTO)
+                .toList();
+    }
+
+    @Override
     public List<AdminUsuarioOutput> buscarTodosComoAdmin() {
         return usuarioRepository.buscarTodos()
                 .stream()
@@ -177,5 +186,13 @@ public class UsuarioService implements IUsuarioService {
                 usuarioRepository.atualizar(usuario);
 
         return usuarioAtualizado.paraAdminOutput();
+    }
+
+    private LocalDateTime transformarTimeStampParaLocalDateTime(Timestamp timestamp){
+        return LocalDateTime.ofInstant(timestamp.toDate().toInstant(), ZoneId.of("America/Sao_Paulo"));
+    }
+
+    private UsuarioAnalyticsDTO converterDateTimeParaUsuarioAnalyticsDTO(LocalDateTime localDateTime){
+        return new UsuarioAnalyticsDTO(localDateTime);
     }
 }

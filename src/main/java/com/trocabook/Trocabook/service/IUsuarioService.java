@@ -1,10 +1,8 @@
 package com.trocabook.Trocabook.service;
 
 import com.google.firebase.auth.FirebaseAuthException;
-import com.trocabook.Trocabook.model.dto.AdminUsuarioInput;
-import com.trocabook.Trocabook.model.dto.AdminUsuarioOutput;
-import com.trocabook.Trocabook.model.dto.UsuarioInput;
-import com.trocabook.Trocabook.model.dto.UsuarioOutput;
+import com.trocabook.Trocabook.model.Usuario;
+import com.trocabook.Trocabook.model.dto.*;
 
 import java.util.List;
 
@@ -26,6 +24,8 @@ public interface IUsuarioService {
     List<UsuarioOutput> buscarMelhoresAvaliados();
 
     List<UsuarioOutput> buscarTodos();
+
+    List<UsuarioAnalyticsDTO> buscarTodasDataCriacao(Usuario.Role role);
 
     List<AdminUsuarioOutput> buscarTodosComoAdmin();
 

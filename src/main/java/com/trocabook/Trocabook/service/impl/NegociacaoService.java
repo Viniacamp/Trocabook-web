@@ -3,6 +3,7 @@ package com.trocabook.Trocabook.service.impl;
 import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.Negociacao;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
+import com.trocabook.Trocabook.model.dto.NegociacaoAnalyticsDTO;
 import com.trocabook.Trocabook.model.dto.NegociacaoDTO;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.repository.NegociacaoRepository;
@@ -12,7 +13,9 @@ import com.trocabook.Trocabook.service.IUsuarioService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -639,6 +642,55 @@ public class NegociacaoService implements INegociacaoService {
                 .stream()
                 .map(Negociacao::paraDto)
                 .toList();
+    }
+
+    @Override
+    public List<NegociacaoAnalyticsDTO> listarAnalises() {
+        return negociacaoRepository.listarTodos()
+                .stream()
+                .map(this::converterParaAnalytic)
+                .toList();
+    }
+
+    private NegociacaoAnalyticsDTO converterParaAnalytic(Negociacao negociacao) {
+        AnuncioDTO anuncioPrincipal = anuncioService.buscarPorUid(negociacao.getAnuncioId());
+
+        List<String> categoriasAnuncioPrincipal = anuncioPrincipal != null
+                ? anuncioPrincipal.categorias()
+                : List.of();
+
+        List<String> categoriasAnunciosOferecido = null;
+
+
+        LocalDateTime dataNegociacao = negociacao.getDataNegociacao() != null ? transformarTimeStampParaLocalDateTime(negociacao.getDataNegociacao()) :
+                null;
+
+        LocalDateTime dataFinalizacao = negociacao.getDataFinalizacao() != null ? transformarTimeStampParaLocalDateTime(negociacao.getDataNegociacao()) :
+                null;
+
+
+        if (negociacao.getAnuncioOferecidoId() != null) {
+            AnuncioDTO anuncioOferecido = anuncioService.buscarPorUid(negociacao.getAnuncioOferecidoId());
+            if (anuncioOferecido != null) {
+                categoriasAnunciosOferecido = anuncioOferecido.categorias();
+            }
+        }
+
+        return new NegociacaoAnalyticsDTO(
+                negociacao.getId(),
+                negociacao.getAnuncioId(),
+                negociacao.getAnuncioOferecidoId(),
+                categoriasAnuncioPrincipal,
+                categoriasAnunciosOferecido,
+                dataNegociacao,
+                dataFinalizacao,
+                negociacao.getTipoNegociacao().name(),
+                negociacao.getStatus().name()
+        );
+    }
+
+    private LocalDateTime transformarTimeStampParaLocalDateTime(Timestamp timestamp){
+        return LocalDateTime.ofInstant(timestamp.toDate().toInstant(), ZoneId.of("America/Sao_Paulo"));
     }
 
     private void validarTipoNegociacao(

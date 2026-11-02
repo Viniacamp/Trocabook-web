@@ -67,6 +67,31 @@ public class NegociacaoRepositoryImpl implements NegociacaoRepository {
     }
 
     @Override
+    public List<Negociacao> listarTodos() {
+        try {
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .get()
+                    .get();
+
+            return documentos
+                    .getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Negociacao.class))
+                    .toList();
+
+
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException
+                    ("Thread interrompida ao buscar todas as negociações", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Erro ao buscar todas as negociações", e);
+        }
+    }
+
+    @Override
     public List<Negociacao> buscarPorUidUsuarioAnunciante(String uidAnunciante) {
         try {
             var documentos = firestore

@@ -1,9 +1,11 @@
 package com.trocabook.Trocabook.service.impl;
 
+import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.Anuncio;
 import com.trocabook.Trocabook.model.Autor;
 import com.trocabook.Trocabook.model.Categoria;
 import com.trocabook.Trocabook.model.Livro;
+import com.trocabook.Trocabook.model.dto.AnuncioAnalyticsDTO;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.repository.AnuncioRepository;
@@ -95,7 +97,8 @@ public class AnuncioService implements IAnuncioService {
                 livro.getIdsAutores(),
                 livro.getIdsCategorias(),
                 descricao,
-                Anuncio.StatusAnuncio.ATIVO
+                Anuncio.StatusAnuncio.ATIVO,
+                Timestamp.now()
         );
 
         anuncioRepository.salvar(anuncio);
@@ -391,6 +394,14 @@ public class AnuncioService implements IAnuncioService {
                 .toList();
     }
 
+    @Override
+    public List<AnuncioAnalyticsDTO> listarParaAnalise() {
+        return anuncioRepository.listarTodos()
+                .stream()
+                .map(this::converterParaAnalytics)
+                .toList();
+    }
+
     private List<String> buscarNomesAutores(
             List<String> idsAutores
     ) {
@@ -433,6 +444,23 @@ public class AnuncioService implements IAnuncioService {
                 );
 
         return anuncio.paraDto(
+                autores,
+                categorias
+        );
+    }
+
+    private AnuncioAnalyticsDTO converterParaAnalytics(Anuncio anuncio){
+        List<String> autores =
+                buscarNomesAutores(
+                        anuncio.getAutores()
+                );
+
+        List<String> categorias =
+                buscarNomesCategorias(
+                        anuncio.getCategorias()
+                );
+
+        return anuncio.paraAnalytics(
                 autores,
                 categorias
         );

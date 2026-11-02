@@ -24,3 +24,6 @@
 
 /* 7. Módulo Administrativo */
 @import url('./admin.css');
+
+/* 8. Módulo Dashboard & Analytics */
+@import url('./dashboard.css');

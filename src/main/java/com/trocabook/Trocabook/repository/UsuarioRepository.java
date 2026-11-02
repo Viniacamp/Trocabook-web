@@ -1,6 +1,8 @@
 package com.trocabook.Trocabook.repository;
 
+import com.google.cloud.Timestamp;
 import com.trocabook.Trocabook.model.Usuario;
+
 
 import java.util.List;
 
@@ -23,6 +25,8 @@ public interface UsuarioRepository {
     Usuario buscarPorCpf(String cpf);
 
     List<Usuario> buscaTop6Avaliacao();
+
+    List<Timestamp> listarTodasDataCriacao(Usuario.Role role);
 
 
 }

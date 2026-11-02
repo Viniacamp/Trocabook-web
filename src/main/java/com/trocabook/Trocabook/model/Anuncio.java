@@ -1,11 +1,16 @@
 package com.trocabook.Trocabook.model;
 
+import com.google.cloud.Timestamp;
+import com.trocabook.Trocabook.model.dto.AnuncioAnalyticsDTO;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class Anuncio implements Serializable {
 
@@ -36,10 +41,12 @@ public class Anuncio implements Serializable {
 
     private StatusAnuncio status;
 
+    private Timestamp dataCriacao;
+
     public Anuncio() {
     }
 
-    public Anuncio(String id, String uidUsuario, String uidLivro, String nomeUsuario, TipoNegociacao tipoNegociacao, String titulo, String fotoPerfil, String capa, List<String> autores, List<String> categorias, String descricao, StatusAnuncio status) {
+    public Anuncio(String id, String uidUsuario, String uidLivro, String nomeUsuario, TipoNegociacao tipoNegociacao, String titulo, String fotoPerfil, String capa, List<String> autores, List<String> categorias, String descricao, StatusAnuncio status, Timestamp dataCriacao) {
         this.id = id;
         this.uidUsuario = uidUsuario;
         this.uidLivro = uidLivro;
@@ -53,6 +60,7 @@ public class Anuncio implements Serializable {
         this.categorias = categorias;
         this.descricao = descricao;
         this.status = status;
+        this.dataCriacao = dataCriacao;
     }
 
     public String getId() {
@@ -159,6 +167,14 @@ public class Anuncio implements Serializable {
         this.status = status;
     }
 
+    public Timestamp getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Timestamp dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
     public enum TipoNegociacao {
         TROCA, VENDA, AMBOS
     }
@@ -185,6 +201,19 @@ public class Anuncio implements Serializable {
                 this.status != null
                         ? this.status.name()
                         : StatusAnuncio.ATIVO.name()
+        );
+    }
+
+    public AnuncioAnalyticsDTO paraAnalytics(List<String> autores, List<String> categorias){
+        return new AnuncioAnalyticsDTO(
+                this.id,
+                this.uidUsuario,
+                this.uidLivro,
+                this.tituloBusca,
+                autores,
+                categorias,
+                tipoNegociacao.name(),
+                this.dataCriacao != null ? LocalDateTime.ofInstant(this.dataCriacao.toDate().toInstant(), ZoneId.of("America/Sao_Paulo")) : null
         );
     }
 

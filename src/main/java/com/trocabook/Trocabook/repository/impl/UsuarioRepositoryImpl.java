@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.repository.impl;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
@@ -250,6 +251,36 @@ public class UsuarioRepositoryImpl
         } catch (ExecutionException e) {
             throw new RuntimeException(
                     "Erro ao buscar usuários por avaliação no Firebase.", e
+            );
+        }
+    }
+
+    @Override
+    public List<Timestamp> listarTodasDataCriacao(Usuario.Role role) {
+        try {
+
+            var documentos = firestore
+                    .collection(COLECAO)
+                    .whereEqualTo("role", role.name())
+                    .get()
+                    .get();
+
+            return documentos.getDocuments()
+                    .stream()
+                    .map(d -> d.getTimestamp("dataCriacao"))
+                    .filter(java.util.Objects::nonNull)
+                    .toList();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            throw new RuntimeException(
+                    "Operação interrompida ao buscar as datas de criação.", e
+            );
+
+        } catch (ExecutionException e) {
+            throw new RuntimeException(
+                    "Erro ao buscar as datas de criação no Firebase.", e
             );
         }
     }

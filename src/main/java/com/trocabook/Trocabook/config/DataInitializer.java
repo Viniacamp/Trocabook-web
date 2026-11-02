@@ -527,6 +527,7 @@ public class DataInitializer implements CommandLineRunner {
                 comprador.id(),
                 anuncio.id(),
                 Timestamp.now().toString(),
+                Timestamp.now().toString(),
                 tipoNegociacao.name(),
                 Negociacao.StatusNegociacao.FINALIZADA.name(),
                 anunciante.nome(),

@@ -1,6 +1,7 @@
 package com.trocabook.Trocabook.service;
 
 import com.trocabook.Trocabook.model.Anuncio;
+import com.trocabook.Trocabook.model.dto.AnuncioAnalyticsDTO;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public interface IAnuncioService {
     List<AnuncioDTO> listarAnunciosAtivosTrocaveis(
             String uidUsuario
     );
+
+    List<AnuncioAnalyticsDTO> listarParaAnalise();
 
     AnuncioDTO finalizar(String uidAnuncio);
 

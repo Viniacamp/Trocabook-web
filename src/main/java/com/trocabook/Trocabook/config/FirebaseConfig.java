@@ -9,27 +9,25 @@ import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfig {
+
     @Value("${firebase.credentials.path}")
-    private String caminhoCredencial;
+    private Resource caminhoCredencial;
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
 
-        try (FileInputStream serviceAccount =
-                     new FileInputStream(caminhoCredencial)) {
+        try (InputStream serviceAccount = caminhoCredencial.getInputStream()) {
 
-            FirebaseOptions firebaseOptions =
-                    FirebaseOptions.builder()
-                            .setCredentials(
-                                    GoogleCredentials.fromStream(serviceAccount)
-                            )
-                            .build();
+            FirebaseOptions firebaseOptions = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
 
             if (!FirebaseApp.getApps().isEmpty()) {
                 return FirebaseApp.getInstance();
@@ -40,13 +38,12 @@ public class FirebaseConfig {
     }
 
     @Bean
-    public Firestore firestore(FirebaseApp firebaseApp){
+    public Firestore firestore(FirebaseApp firebaseApp) {
         return FirestoreClient.getFirestore(firebaseApp);
     }
 
     @Bean
-    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp){
+    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
         return FirebaseAuth.getInstance(firebaseApp);
     }
-
 }

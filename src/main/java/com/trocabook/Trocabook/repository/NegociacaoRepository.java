@@ -11,6 +11,8 @@ public interface NegociacaoRepository {
 
     Negociacao buscarPorUid(String uid);
 
+    List<Negociacao> listarTodos();
+
     List<Negociacao> buscarPorUidUsuarioAnunciante(String uidAnunciante);
 
     List<Negociacao> buscarPorUidUsuarioComprador(String uidComprador);
