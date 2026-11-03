@@ -28,7 +28,7 @@
                         <div class="user-menu-container">
                             <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
                                 <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span></span>
                                 <span class="arrow">▼</span>
                             </button>
                             
@@ -226,17 +226,12 @@
                                 accept="image/jpeg,image/png,image/gif"
                                 style="display: none;">
 
-                        <p
-                                class="text-danger"
-                                th:if="${erroFoto}"
-                                th:text="${erroFoto}">
-                        </p>
+                        <p id="erroFoto" class="text-danger" style="display: none;"></p>
 
                     </div>
                     <label for="titulo">Título:</label>
-                    <!-- Agora é editável -->
                     <input type="text" id="titulo" th:field="*{titulo}" placeholder="Título do livro" readonly>
-                    <p class="text-danger" th:if="${erroTitulo}" th:text="${erroTitulo}"></p>
+                    <p id="erroTitulo" class="text-danger" style="display: none;"></p>
                     <div id="dataPublicacaoContainer">
 
                         <label for="dataPublicacao">
@@ -275,10 +270,7 @@
 
                         </div>
 
-                        <p class="text-danger"
-                           th:if="${erroAutor}"
-                           th:text="${erroAutor}">
-                        </p>
+                        <p id="erroAutor" class="text-danger" style="display: none;"></p>
 
                     </div>
 
@@ -309,10 +301,7 @@
 
                         </button>
 
-                        <p class="text-danger"
-                           th:if="${erroCategoria}"
-                           th:text="${erroCategoria}">
-                        </p>
+                        <p id="erroCategoriaAuto" class="text-danger" style="display: none;"></p>
 
                     </div>
 
@@ -339,11 +328,7 @@
                         <!-- Valores enviados ao Spring -->
                         <div id="categoriasManuaisHidden"></div>
 
-                        <p
-                                class="text-danger"
-                                th:if="${erroCategoria}"
-                                th:text="${erroCategoria}">
-                        </p>
+                        <p id="erroCategoriaManual" class="text-danger" style="display: none;"></p>
 
                     </div>
 
@@ -360,7 +345,7 @@
                         <option value="VENDA">Venda</option>
                         <option value="AMBOS">Ambos</option>
                     </select>
-                    <p class="text-danger" th:if="${erroTipo}" th:text="${erroTipo}"></p>
+                    <p id="erroTipo" class="text-danger" style="display: none;"></p>
 
                     <input type="hidden" th:field="*{lingua}" id="lingua"/>
                     <input type="hidden" th:field="*{googleBooksId}" id="googleBooksId"/>
@@ -479,6 +464,37 @@
 
                 </div>
 
+            </div>
+
+
+            <div id="modalLoading" class="modal-loading" style="display: none;">
+                <div class="modal-loading-card">
+                    <div class="window-bar">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <div class="address-bar"></div>
+                    </div>
+
+
+                    <div class="loading-body">
+                        <div class="spinner-container">
+                            <i class="fas fa-hourglass-half spinning-icon"></i>
+                            <div class="spinning-circle"></div>
+                        </div>
+                        <p>Por favor aguarde um momento<br>enquanto a busca é concluída</p>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div id="snackbarAnuncio" class="snackbar-container" style="display: none;">
+                <div class="snackbar-content">
+                    <i class="fas fa-check-circle snackbar-icon"></i>
+                    <span>Anúncio criado com sucesso!</span>
+                    <a href="/MeusLivros" class="btn-snackbar-action">Ver meus livros</a>
+                </div>
             </div>
         </div>
     </div>

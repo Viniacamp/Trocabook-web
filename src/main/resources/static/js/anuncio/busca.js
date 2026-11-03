@@ -54,6 +54,7 @@ export function preencherCampos(livro) {
 }
 
 export function limparDadosLivro() {
+    const tituloBuscado = dom.inputBusca()
     const titulo = dom.titulo();
     const dataPublicacao = dom.dataPublicacao();
     const lingua = dom.lingua();
@@ -65,6 +66,7 @@ export function limparDadosLivro() {
     const novoAutor = dom.novoAutorAutomatico();
     const resultados = dom.resultadosBusca();
 
+    if (tituloBuscado) tituloBuscado.value = "";
     if (titulo) titulo.value = "";
     if (dataPublicacao) dataPublicacao.value = "";
     if (lingua) lingua.value = "";
@@ -89,6 +91,7 @@ export function buscarLivro() {
     const titulo = inputBusca ? inputBusca.value : "";
     const csrfToken = getCsrfToken();
     const divResultados = dom.resultadosBusca();
+    const modalLoading = dom.modalLoading();
 
     if (!divResultados) return;
 
@@ -100,7 +103,10 @@ export function buscarLivro() {
         return;
     }
 
-    window.alert("Iniciando Busca, isso pode demorar um pouco aguarde...");
+    // Exibe o modal animado de carregamento
+    if (modalLoading) {
+        modalLoading.style.display = "flex";
+    }
 
     fetch("/buscar", {
         method: "POST",
@@ -143,6 +149,12 @@ export function buscarLivro() {
         })
         .catch(err => {
             divResultados.innerHTML = `<p>Erro: ${err.message}</p>`;
+        })
+        .finally(() => {
+            // Garante que o modal será ocultado após o término da requisição (sucesso ou erro)
+            if (modalLoading) {
+                modalLoading.style.display = "none";
+            }
         });
 }
 
@@ -158,6 +170,13 @@ export function inicializarBusca() {
     }
 
     if (inputBusca) {
+        inputBusca.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Evita a submissão acidental de formulários pai
+                buscarLivro();
+            }
+        });
+
         inputBusca.addEventListener("focus", function () {
             const resultados = dom.resultadosBusca();
             if (resultados && resultados.innerHTML.trim() !== "") {

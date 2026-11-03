@@ -70,36 +70,54 @@ export function criarInputsManuais(inputId, containerId, nomeCampo) {
     });
 }
 
+export function adicionarAutorPeloInput() {
+    const input = dom.novoAutorAutomatico();
+    if (!input) return;
+
+    const autor = input.value.trim();
+
+    if (!autor) {
+        window.alert("Informe o nome do autor.");
+        return;
+    }
+
+    const jaExiste = getAutoresAutomaticos().some(
+        existente =>
+            existente.localeCompare(autor, undefined, {
+                sensitivity: "base"
+            }) === 0
+    );
+
+    if (jaExiste) {
+        window.alert("Este autor já foi adicionado.");
+        return;
+    }
+
+    adicionarAutorAutomatico(autor);
+    input.value = "";
+    atualizarAutoresAutomaticos();
+}
+
 export function inicializarAutores() {
     const btnAdicionar = dom.btnAdicionarAutorAutomatico();
+    const inputNovoAutor = dom.novoAutorAutomatico();
 
     if (btnAdicionar) {
-        btnAdicionar.addEventListener("click", function () {
-            const input = dom.novoAutorAutomatico();
-            if (!input) return;
+        btnAdicionar.addEventListener("click", function (event) {
+            adicionarAutorPeloInput();
+        });
+    }
 
-            const autor = input.value.trim();
+    if (inputNovoAutor) {
+        inputNovoAutor.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                const autorDigitado = inputNovoAutor.value.trim();
 
-            if (!autor) {
-                window.alert("Informe o nome do autor.");
-                return;
+                if (autorDigitado.length > 0) {
+                    event.preventDefault();
+                    adicionarAutorPeloInput();
+                }
             }
-
-            const jaExiste = getAutoresAutomaticos().some(
-                existente =>
-                    existente.localeCompare(autor, undefined, {
-                        sensitivity: "base"
-                    }) === 0
-            );
-
-            if (jaExiste) {
-                window.alert("Este autor já foi adicionado.");
-                return;
-            }
-
-            adicionarAutorAutomatico(autor);
-            input.value = "";
-            atualizarAutoresAutomaticos();
         });
     }
 }

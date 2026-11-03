@@ -1,31 +1,64 @@
 package com.trocabook.Trocabook.config;
 
 import feign.RequestInterceptor;
-import feign.RequestTemplate;
+import feign.RetryableException;
+import feign.Retryer;
+import feign.Util;
+import feign.codec.ErrorDecoder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 
-/**
- * Configuração do <b>OpenFeign</b> responsável por adicionar a chave de API
- * da <b>Google Books API</b> às requisições realizadas pelo cliente Feign.
- *
- * <p>A chave é obtida a partir da propriedade {@code google.books.api.key},
- * permitindo que o valor não fique diretamente exposto no código-fonte.</p>
- *
- * @author PedroAmaralMa
- */
-public class GoogleAPIBooksFeignConfig implements RequestInterceptor {
-    /** Chave de acesso utilizada para autenticar as requisições da Google Books API. */
+
+import java.io.IOException;
+
+
+public class GoogleAPIBooksFeignConfig {
+
     @Value("${google.books.api.key}")
     private String chaveApi;
 
-    /**
-     * Adiciona a chave de API como parâmetro da requisição enviada pela
-     * Google Books API.
-     *
-     * @param template template da requisição que será interceptada
-     */
-    @Override
-    public void apply(RequestTemplate template) {
-        template.query("key", chaveApi);
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return template -> template.query("key", chaveApi);
+    }
+
+    @Bean
+    public Retryer retryer() {
+        return new Retryer.Default(1000, 3000, 3);
+    }
+
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return (methodKey, response) -> {
+            int status = response.status();
+
+            // Erros transitórios de rede ou servidor
+            if (status == 429 || status == 500 || status == 502 || status == 503 || status == 504) {
+                return new RetryableException(
+                        status,
+                        "Erro transitório na Google Books API (HTTP " + status + ")",
+                        response.request().httpMethod(),
+                        (Long) null,
+                        response.request()
+                );
+            }
+
+            // Lê o array de bytes com tratamento de IOException
+            byte[] bodyBytes = new byte[0];
+            if (response.body() != null) {
+                try {
+                    bodyBytes = Util.toByteArray(response.body().asInputStream());
+                } catch (IOException ignored) {
+                }
+            }
+
+            return new feign.FeignException.FeignClientException(
+                    status,
+                    "Erro ao consultar Google Books API: HTTP " + status,
+                    response.request(),
+                    bodyBytes,
+                    response.headers()
+            );
+        };
     }
 }

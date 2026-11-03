@@ -3,6 +3,21 @@
  */
 
 export const dom = {
+
+    // Erros
+    erroFoto: () => document.getElementById("erroFoto"),
+    erroTitulo: () => document.getElementById("erroTitulo"),
+    erroAutor: () => document.getElementById("erroAutor"),
+    erroCategoriaAuto: () => document.getElementById("erroCategoriaAuto"),
+    erroCategoriaManual: () => document.getElementById("erroCategoriaManual"),
+    erroTipo: () => document.getElementById("erroTipo"),
+
+    // Snackbar
+    snackbarAnuncio: () => document.getElementById("snackbarAnuncio"),
+    
+    // Carregamento
+    modalLoading: () => document.getElementById("modalLoading"),
+
     // Busca
     inputBusca: () => document.getElementById("tituloBuscado"),
     resultadosBusca: () => document.getElementById("resultadosLivros"),

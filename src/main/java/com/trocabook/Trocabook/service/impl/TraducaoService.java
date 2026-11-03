@@ -22,17 +22,18 @@ public class TraducaoService implements ITraducaoService {
             List<String> categorias,
             String linguaOriginal
     ) {
-
         String texto = titulo
                 + " ||| "
                 + String.join(" ### ", categorias);
 
-        System.out.println(texto);
-        System.out.println(linguaOriginal);
-        return myMemoryAPIService
-                .traduzir(texto,
-                        linguaOriginal + "|" + LINGUA_TRADUCAO)
-                .responseData()
-                .translatedText();
+        try {
+            return myMemoryAPIService
+                    .traduzir(texto, linguaOriginal + "|" + LINGUA_TRADUCAO)
+                    .responseData()
+                    .translatedText();
+        } catch (Exception e) {
+            System.err.println("[TraducaoService] Falha ao traduzir via MyMemory API: " + e.getMessage());
+            return texto;
+        }
     }
 }
