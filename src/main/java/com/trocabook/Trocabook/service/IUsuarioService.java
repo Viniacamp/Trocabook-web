@@ -21,6 +21,8 @@ public interface IUsuarioService {
 
     UsuarioOutput buscarPorEmail(String email);
 
+    void atualizarFcmToken(String uid, String fcmToken);
+
     List<UsuarioOutput> buscarMelhoresAvaliados();
 
     List<UsuarioOutput> buscarTodos();

@@ -26,7 +26,7 @@ export function gerarAssinaturaMensagens(mensagens) {
 
     return JSON.stringify(
         mensagens.map(msg => ({
-            id: msg.id,
+            id: msg.id || msg._id,
             conteudo: msg.conteudo,
             uidRemetente: msg.uidRemetente
         }))
@@ -48,11 +48,18 @@ export function renderizarMensagens(mensagens) {
 export function adicionarMensagemNoContainer(msg) {
     if (!elements.messagesContainer) return;
 
+    const msgId = msg.id || msg._id || '';
+
+    // Evita duplicar elemento se já estiver presente no DOM
+    if (msgId && document.querySelector(`[data-id="${msgId}"]`)) {
+        return;
+    }
+
     const souEu = msg.uidRemetente === getUidUsuarioLogado();
 
     const div = document.createElement('div');
     div.className = `message ${souEu ? 'user' : 'negociador'}`;
-    div.setAttribute('data-id', msg.id || '');
+    div.setAttribute('data-id', msgId);
 
     /* =====================================================
        AVATAR DA MENSAGEM RECEBIDA
@@ -99,7 +106,8 @@ export function adicionarMensagemNoContainer(msg) {
 
         const icon = document.createElement('i');
         icon.className = 'fa-solid fa-ellipsis-vertical';
-        icon.onclick = function () {
+        icon.onclick = function (e) {
+            if (e) e.stopPropagation();
             abrirMenuMensagem(this);
         };
 
@@ -109,14 +117,16 @@ export function adicionarMensagemNoContainer(msg) {
         const botaoEditar = document.createElement('button');
         botaoEditar.type = 'button';
         botaoEditar.textContent = 'Editar';
-        botaoEditar.onclick = function () {
+        botaoEditar.onclick = function (e) {
+            if (e) e.stopPropagation();
             editarMensagem(this);
         };
 
         const botaoExcluir = document.createElement('button');
         botaoExcluir.type = 'button';
         botaoExcluir.textContent = 'Excluir';
-        botaoExcluir.onclick = function () {
+        botaoExcluir.onclick = function (e) {
+            if (e) e.stopPropagation();
             excluirMensagem(this);
         };
 
@@ -142,10 +152,7 @@ export async function enviarMensagem(event) {
 
     const conversaAtual = getConversaAtual();
 
-    if (
-        !conversaAtual.uidAnuncio ||
-        !conversaAtual.uidDestinatario
-    ) {
+    if (!conversaAtual.uidAnuncio || !conversaAtual.uidDestinatario) {
         return;
     }
 
@@ -167,8 +174,7 @@ export async function enviarMensagem(event) {
     try {
         const data = await enviarMensagemApi(mensagem);
 
-        if (data && data.status === 'success') {
-            adicionarMensagemNoContainer(data.data);
+        if (data && (data.status === 'success' || data.status === 'Sucesso' || data.data)) {
             input.value = '';
             input.focus();
         } else {
@@ -194,20 +200,25 @@ export function abrirMenuMensagem(icon) {
 
 export async function editarMensagem(botao) {
     const msgDiv = botao.closest('.message');
-    const idMensagem = msgDiv.getAttribute('data-id');
-    const p = msgDiv.querySelector('p');
+    const idMensagem = msgDiv ? msgDiv.getAttribute('data-id') : null;
 
-    const novoConteudo = prompt('Editar mensagem:', p.textContent);
+    if (!idMensagem) {
+        alert('ID da mensagem não encontrado para edição.');
+        return;
+    }
+
+    const p = msgDiv.querySelector('p');
+    const novoConteudo = prompt('Editar mensagem:', p ? p.textContent : '');
 
     if (novoConteudo === null || novoConteudo.trim() === '') {
         return;
     }
 
     try {
-        const { ok, data } = await editarMensagemApi(idMensagem, novoConteudo);
+        const { ok, data } = await editarMensagemApi(idMensagem, novoConteudo.trim());
 
-        if (ok && data.status === 'success') {
-            p.textContent = novoConteudo;
+        if (ok) {
+            if (p) p.textContent = novoConteudo.trim();
             const icon = msgDiv.querySelector('.menu-opcoes i');
             if (icon) {
                 abrirMenuMensagem(icon);
@@ -223,7 +234,12 @@ export async function editarMensagem(botao) {
 
 export async function excluirMensagem(botao) {
     const msgDiv = botao.closest('.message');
-    const idMensagem = msgDiv.getAttribute('data-id');
+    const idMensagem = msgDiv ? msgDiv.getAttribute('data-id') : null;
+
+    if (!idMensagem) {
+        alert('ID da mensagem não encontrado para exclusão.');
+        return;
+    }
 
     if (!confirm('Deseja realmente excluir esta mensagem?')) {
         return;
@@ -232,7 +248,7 @@ export async function excluirMensagem(botao) {
     try {
         const { ok, data } = await excluirMensagemApi(idMensagem);
 
-        if (ok && data.status === 'success') {
+        if (ok) {
             msgDiv.remove();
         } else {
             alert('Erro ao excluir mensagem.');
@@ -258,10 +274,7 @@ export function pararAtualizacaoMensagens() {
 export async function atualizarMensagens(onNegociacaoAtualizada) {
     const conversaAtual = getConversaAtual();
 
-    if (
-        !conversaAtual.uidAnuncio ||
-        !conversaAtual.uidDestinatario
-    ) {
+    if (!conversaAtual.uidAnuncio || !conversaAtual.uidDestinatario) {
         return;
     }
 

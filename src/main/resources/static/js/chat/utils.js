@@ -14,3 +14,10 @@ export function formatarTipoNegociacao(tipo) {
             return tipo || '';
     }
 }
+
+export function obterTopicoConversa(uidAnuncio, uidRemetente, uidDestinatario) {
+    const u1 = uidRemetente.localeCompare(uidDestinatario) < 0 ? uidRemetente : uidDestinatario;
+    const u2 = uidRemetente.localeCompare(uidDestinatario) < 0 ? uidDestinatario : uidRemetente;
+
+    return `/topic/conversa.${uidAnuncio}.${u1}.${u2}`;
+}

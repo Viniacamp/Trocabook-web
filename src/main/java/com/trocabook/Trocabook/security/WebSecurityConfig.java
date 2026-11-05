@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                                 "/chat/**",
                                 "/pesquisar/**",
                                 "/api/auth/**",
+                                "/api/fcm/**",
                                 "/deslogar",
                                 "/cadastro"
                         )
@@ -56,7 +57,8 @@ public class WebSecurityConfig {
                                 "/vendor/**",
                                 "/dados/**",
                                 "/esqueci-senha",
-                                "/redefinir-senha"
+                                "/redefinir-senha",
+                                "/firebase-messaging-sw.js"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -92,6 +94,8 @@ public class WebSecurityConfig {
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://cdnjs.cloudflare.com; " +
 
+                                                "worker-src 'self' blob:; " +
+
                                                 "style-src 'self' 'unsafe-inline' " +
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://cdnjs.cloudflare.com " +
@@ -117,13 +121,21 @@ public class WebSecurityConfig {
 
                                                 "connect-src 'self' " +
                                                 "http://localhost:8181 " +
+                                                "http://localhost:8282 " +
+                                                "ws://localhost:8282 " +
                                                 "https://trocabook-admin-service.azurewebsites.net " +
+                                                "https://trocabook-chat-service.azurewebsites.net " +
+                                                "wss://trocabook-chat-service.azurewebsites.net" +
                                                 "https://trocabookchatservice.onrender.com " +
+                                                "wss://trocabookchatservice.onrender.com " +
                                                 "https://cdn.jsdelivr.net " +
+                                                "https://cdnjs.cloudflare.com " +
                                                 "https://www.googleapis.com " +
                                                 "https://www.gstatic.com " +
                                                 "https://identitytoolkit.googleapis.com " +
                                                 "https://securetoken.googleapis.com " +
+                                                "https://fcmregistrations.googleapis.com " +
+                                                "https://firebaseinstallations.googleapis.com " +
                                                 "https://www.google.com " +
                                                 "https://vlibras.gov.br " +
                                                 "https://api.mymemory.translated.net; " +

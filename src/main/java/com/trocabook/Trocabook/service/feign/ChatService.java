@@ -12,7 +12,7 @@ import java.util.List;
 @Primary
 @FeignClient(
         name = "chat-micro-servico",
-        url = "${chat.service.url}",
+        url = "${chat.service.url}/api/chat/mensagens",
         fallback = ChatServiceFallback.class
 )
 public interface ChatService {

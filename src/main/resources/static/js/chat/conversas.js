@@ -12,6 +12,8 @@ import {
 } from './state.js';
 import { atualizarConversasApi } from './api.js';
 
+let callbackSelecaoConversa = null;
+
 export function renderizarListaConversas(conversas, onSelectConversa) {
     if (!elements.chatList) return;
 
@@ -78,6 +80,10 @@ export function pararAtualizacaoConversas() {
 }
 
 export async function atualizarConversas(onSelectConversa) {
+    if (typeof onSelectConversa === 'function') {
+        callbackSelecaoConversa = onSelectConversa;
+    }
+
     try {
         const conversas = await atualizarConversasApi();
         if (!conversas) {
@@ -99,7 +105,8 @@ export async function atualizarConversas(onSelectConversa) {
         }
 
         setAssinaturaConversas(novaAssinatura);
-        renderizarListaConversas(conversas, onSelectConversa);
+        // Usa a referência mantida no módulo para nunca perder os handlers de clique
+        renderizarListaConversas(conversas, callbackSelecaoConversa);
     } catch (erro) {
         console.error('Erro ao atualizar conversas:', erro);
     }

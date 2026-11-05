@@ -3,6 +3,10 @@
  * Coordena inicialização, abertura de conversas e integração dos módulos.
  */
 
+import { getMessagingSeguro } from '../firebase.js';
+import { conectarWebSocket, subscreverTopicoConversa } from './websocket.js';
+import { onMessage } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js';
+
 import {
     elements,
     mostrarCarregamentoConversa,
@@ -14,7 +18,8 @@ import {
 import {
     setUidUsuarioLogado,
     setConversaAtual,
-    setAssinaturaMensagens
+    setAssinaturaMensagens,
+    getConversaAtual, getUidUsuarioLogado
 } from './state.js';
 import {
     carregarDadosConversa
@@ -24,12 +29,14 @@ import {
     gerarAssinaturaMensagens,
     enviarMensagem,
     iniciarAtualizacaoMensagens,
-    pararAtualizacaoMensagens
+    pararAtualizacaoMensagens,
+    atualizarMensagens
 } from './mensagens.js';
 import {
     iniciarAtualizacaoConversas,
     pararAtualizacaoConversas,
-    filtrarConversas
+    filtrarConversas,
+    atualizarConversas
 } from './conversas.js';
 import {
     renderizarNegociacao,
@@ -103,9 +110,11 @@ export async function abrirConversa(uidAnuncio, uidDestinatario, elemento = null
         /* ---------------------------------------------
            Inicia atualização automática das mensagens
            --------------------------------------------- */
-        iniciarAtualizacaoMensagens((anuncioAtualizado, negociacaoAtualizada) => {
-            renderizarNegociacao(anuncioAtualizado, negociacaoAtualizada);
-        });
+        subscreverTopicoConversa(
+            uidAnuncio,
+            getUidUsuarioLogado(),
+            uidDestinatario
+        );
 
         destacarConversaAtual(uidAnuncio, uidDestinatario);
 
@@ -147,7 +156,39 @@ function inicializarEventos() {
     });
 }
 
-export function inicializarChat() {
+
+async function configurarNotificacoesEmPrimeiroPlano() {
+    try {
+        const messaging = await getMessagingSeguro();
+        if (!messaging) return;
+
+        onMessage(messaging, (payload) => {
+            console.log("Notificação Push recebida em primeiro plano:", payload);
+
+            // Atualiza sempre a lista de conversas da barra lateral
+            atualizarConversas((uidAnuncio, uidDestinatario, elemento) => {
+                abrirConversa(uidAnuncio, uidDestinatario, elemento);
+            });
+
+            // Se a conversa aberta for a mesma da notificação, força atualização imediata das mensagens
+            const conversaAtual = getConversaAtual();
+            const dados = payload.data || {};
+
+            if (
+                conversaAtual.uidAnuncio === dados.anuncio &&
+                conversaAtual.uidDestinatario === dados.destinatario
+            ) {
+                atualizarMensagens((anuncioAtualizado, negociacaoAtualizada) => {
+                    renderizarNegociacao(anuncioAtualizado, negociacaoAtualizada);
+                });
+            }
+        });
+    } catch (error) {
+        console.warn("Não foi possível configurar ouvinte Push em primeiro plano:", error);
+    }
+}
+
+export async function inicializarChat() {
     // Define o usuário logado
     const uidUsuario = elements.uidRemetenteInput ? elements.uidRemetenteInput.value : '';
     setUidUsuarioLogado(uidUsuario);
@@ -155,8 +196,17 @@ export function inicializarChat() {
     // Inicializa eventos da UI e modais
     inicializarEventos();
 
+    // Configura Push em primeiro plano
+    configurarNotificacoesEmPrimeiroPlano();
+
+    try {
+        await conectarWebSocket();
+    } catch (e) {
+        console.warn("Falha ao conectar WebSocket, usando fallback...");
+    }
+
     // Inicia o polling da lista de conversas
-    iniciarAtualizacaoConversas((uidAnuncio, uidDestinatario, elemento) => {
+    await atualizarConversas((uidAnuncio, uidDestinatario, elemento) => {
         abrirConversa(uidAnuncio, uidDestinatario, elemento);
     });
 

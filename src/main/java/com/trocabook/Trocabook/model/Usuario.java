@@ -52,6 +52,8 @@ public class Usuario implements Serializable {
 
     private Role role;
 
+    private String fcmToken;
+
     public Usuario() {
     }
 
@@ -106,6 +108,7 @@ public class Usuario implements Serializable {
         this.status = outroUsuario.status;
         this.avaliacao = outroUsuario.avaliacao;
         this.role = outroUsuario.role;
+        this.fcmToken = outroUsuario.fcmToken;
     }
 
 
@@ -204,6 +207,14 @@ public class Usuario implements Serializable {
 
     public void setAvaliacao(double avaliacao) {
         this.avaliacao = avaliacao;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public enum Role {

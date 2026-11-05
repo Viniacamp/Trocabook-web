@@ -7,6 +7,9 @@ import com.trocabook.Trocabook.model.Usuario;
 import com.trocabook.Trocabook.model.dto.*;
 import com.trocabook.Trocabook.repository.UsuarioRepository;
 import com.trocabook.Trocabook.service.IUsuarioService;
+import com.trocabook.Trocabook.service.feign.ChatNotificacaoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +19,18 @@ import java.util.List;
 
 @Service
 public class UsuarioService implements IUsuarioService {
+    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
+
     private final UsuarioRepository usuarioRepository;
 
     private final FirebaseAuthService firebaseAuthService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, FirebaseAuthService firebaseAuthService) {
+    private final ChatNotificacaoService chatNotificacaoService;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, FirebaseAuthService firebaseAuthService, ChatNotificacaoService chatNotificacaoService) {
         this.usuarioRepository = usuarioRepository;
         this.firebaseAuthService = firebaseAuthService;
+        this.chatNotificacaoService = chatNotificacaoService;
     }
 
     @Override
@@ -103,6 +111,31 @@ public class UsuarioService implements IUsuarioService {
         }
 
         return usuario.paraOutput();
+    }
+
+    @Override
+    public void atualizarFcmToken(String uid, String fcmToken) {
+        Usuario usuario = usuarioRepository.buscarPorUid(uid);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuário não encontrado para atualizar o token FCM.");
+        }
+
+        usuario.setFcmToken(fcmToken);
+        usuarioRepository.atualizar(usuario);
+
+        try {
+            UsuarioStatusNotificacaoDTO dto = new UsuarioStatusNotificacaoDTO(
+                    usuario.getId(),
+                    usuario.getEmailPrincipal(),
+                    fcmToken
+            );
+
+            chatNotificacaoService.sincronizarStatusUsuario(dto);
+            log.info("Token FCM do usuário '{}' sincronizado com o microsserviço de chat.", uid);
+        } catch (Exception e) {
+            log.error("Falha ao sincronizar status do usuário com o microsserviço de chat: {}", e.getMessage(), e);
+            // Tratado em log para não derrubar a requisição do usuário se o chat estiver offline
+        }
     }
 
     @Override

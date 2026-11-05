@@ -10,7 +10,7 @@ import java.util.List;
 
 @FeignClient(
         name = "chat-micro-servico-render",
-        url = "${chat.service.fallback-url}"
+        url = "${chat.service.fallback-url}/api/chat/mensagens"
 )
 public interface ChatRenderClient {
 

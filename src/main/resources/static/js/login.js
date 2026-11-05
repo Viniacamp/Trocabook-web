@@ -1,4 +1,5 @@
-import { auth } from "./firebase.js";
+import { auth, getMessagingSeguro, VAPID_KEY } from "./firebase.js";
+import { getToken } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 import { exigirNaoAutenticado } from "./auth.js";
 
 import {
@@ -6,13 +7,50 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
 /*
- * Impede que um usuário já autenticado
- * permaneça na página de login.
+- Impede que um usuário já autenticado
+
+- permaneça na página de login.
+
  */
 exigirNaoAutenticado();
 
 /*
- * Elementos da página
+- Registra o token de notificação FCM do navegador no backend.
+
+ */
+async function registrarFcmToken(idToken) {
+    try {
+        const messaging = await getMessagingSeguro();
+
+        if (!messaging) {
+            // Navegador não suporta FCM ou permissão bloqueada, ignora sem quebrar o login
+            return;
+        }
+
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") return;
+
+        const fcmToken = await getToken(messaging, { vapidKey: VAPID_KEY });
+
+        if (fcmToken) {
+            await fetch("/api/fcm/token", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ fcmToken })
+            });
+            console.log("Token FCM registrado com sucesso no backend.");
+        }
+    } catch (error) {
+        console.warn("Falha ao registrar FCM Token (fluxo de login mantido):", error);
+    }
+}
+
+/*
+- Elementos da página
+
  */
 const loginForm = document.getElementById("loginForm");
 const loginButton = document.getElementById("loginButton");
@@ -21,7 +59,8 @@ const togglePassword = document.getElementById("togglePassword");
 const passwordField = document.getElementById("senha");
 
 /*
- * Login
+- Login
+
  */
 loginForm.addEventListener("submit", async function (event) {
 
@@ -36,7 +75,8 @@ loginForm.addEventListener("submit", async function (event) {
         passwordField.value;
 
     /*
-     * Validação básica
+    - Validação básica
+
      */
     if (!email || !senha) {
 
@@ -54,7 +94,8 @@ loginForm.addEventListener("submit", async function (event) {
     try {
 
         /*
-         * Executa o reCAPTCHA
+        - Executa o reCAPTCHA
+
          */
         const recaptchaSiteKey =
             document.getElementById("recaptchaSiteKey").value;
@@ -68,15 +109,16 @@ loginForm.addEventListener("submit", async function (event) {
                         recaptchaSiteKey,
                         { action: "login" }
                     )
-                    .then(resolve)
-                    .catch(reject);
+                        .then(resolve)
+                        .catch(reject);
 
                 });
 
             });
 
         /*
-         * Coloca o token do reCAPTCHA no formulário.
+        - Coloca o token do reCAPTCHA no formulário.
+
          */
         document.getElementById(
             "g-recaptcha-response"
@@ -84,7 +126,8 @@ loginForm.addEventListener("submit", async function (event) {
 
 
         /*
-         * Autentica o usuário no Firebase.
+        - Autentica o usuário no Firebase.
+
          */
         await signInWithEmailAndPassword(
             auth,
@@ -94,7 +137,8 @@ loginForm.addEventListener("submit", async function (event) {
 
 
         /*
-         * Obtém o usuário autenticado.
+        - Obtém o usuário autenticado.
+
          */
         const user = auth.currentUser;
 
@@ -106,22 +150,30 @@ loginForm.addEventListener("submit", async function (event) {
 
 
         /*
-         * Obtém o Firebase ID Token.
+        - Obtém o Firebase ID Token.
+
          */
         const idToken =
             await user.getIdToken();
 
 
         /*
-         * Envia o token para o backend.
+        - Envia o token para o backend.
+
          *
-         * O FirebaseAuthenticationFilter irá:
+        - O FirebaseAuthenticationFilter irá:
+
          *
-         * 1. receber o Bearer Token;
-         * 2. validar o token no Firebase;
-         * 3. criar a Authentication;
-         * 4. disponibilizar o FirebaseToken
-         *    no SecurityContext.
+        - receber o Bearer Token;
+
+        - 2. validar o token no Firebase;
+
+        - 3. criar a Authentication;
+
+        - 4. disponibilizar o FirebaseToken
+
+        -    no SecurityContext.
+
          */
         const response = await fetch(
             "/api/auth/autenticacao",
@@ -135,8 +187,10 @@ loginForm.addEventListener("submit", async function (event) {
 
 
         /*
-         * Verifica se o backend aceitou
-         * a autenticação.
+        - Verifica se o backend aceitou
+
+        - a autenticação.
+
          */
         if (!response.ok) {
 
@@ -144,6 +198,13 @@ loginForm.addEventListener("submit", async function (event) {
                 "O backend não conseguiu autenticar o usuário."
             );
         }
+
+
+        /*
+        - Registra o token FCM em segundo plano (sem travar o login)
+
+         */
+        registrarFcmToken(idToken);
 
 
         const destinoResponse = await fetch(
@@ -186,7 +247,8 @@ loginForm.addEventListener("submit", async function (event) {
 
 
 /*
- * Mostrar / ocultar senha
+- Mostrar / ocultar senha
+
  */
 togglePassword.addEventListener("click", function () {
 
