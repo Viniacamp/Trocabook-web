@@ -14,7 +14,9 @@ let subscricaoAtiva = null;
  */
 export function conectarWebSocket() {
     return new Promise((resolve, reject) => {
-        const socket = new SockJS('http://localhost:8282/ws-chat');
+        const chatServiceUrl = window.CHAT_SERVICE_URL || 'http://localhost:8282';
+
+        const socket = new SockJS(`${chatServiceUrl}/ws-chat`);
         stompClient = Stomp.over(socket);
 
         stompClient.debug = null;

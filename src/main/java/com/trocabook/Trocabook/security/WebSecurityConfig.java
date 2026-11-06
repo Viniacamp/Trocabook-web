@@ -125,7 +125,7 @@ public class WebSecurityConfig {
                                                 "ws://localhost:8282 " +
                                                 "https://trocabook-admin-service.azurewebsites.net " +
                                                 "https://trocabook-chat-service.azurewebsites.net " +
-                                                "wss://trocabook-chat-service.azurewebsites.net" +
+                                                "wss://trocabook-chat-service.azurewebsites.net " +
                                                 "https://trocabookchatservice.onrender.com " +
                                                 "wss://trocabookchatservice.onrender.com " +
                                                 "https://cdn.jsdelivr.net " +

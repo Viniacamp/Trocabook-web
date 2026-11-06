@@ -710,6 +710,12 @@
         src="/js/logout.js">
 </script>
 
+
+<script th:inline="javascript">
+    window.CHAT_SERVICE_URL = /*[[${chatServiceUrl}]]*/ 'http://localhost:8282';
+</script>
+
+
 <script src="/js/menu-logado.js">
 </script>
 

@@ -12,6 +12,7 @@ import com.trocabook.Trocabook.model.dto.*;
 import com.trocabook.Trocabook.service.*;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -26,6 +27,8 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/chat")
 public class ChatController {
+    @Value("${chat.service.url:http://localhost:8282}")
+    private String chatServiceUrl;
 
     private final IConversaService conversaService;
     private final IUsuarioService usuarioService;
@@ -69,6 +72,7 @@ public class ChatController {
 
         model.addAttribute("usuarioLogado", usuarioLogado);
         model.addAttribute("conversas", conversas);
+        model.addAttribute("chatServiceUrl", chatServiceUrl);
 
         if (conversas.isEmpty()) {
             model.addAttribute("mensagemVazia", "Nenhuma conversa iniciada");
@@ -77,7 +81,7 @@ public class ChatController {
         model.addAttribute("anuncioInicial", uidAnuncio);
         model.addAttribute("destinatarioInicial", uidDestinatario);
 
-        return "/chat/chat";
+        return "chat/chat";
     }
 
     @PostMapping("/negociacoes")
