@@ -5,6 +5,7 @@ import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.impl.EmailService;
 import com.trocabook.Trocabook.service.IUsuarioService;
 import com.trocabook.Trocabook.service.impl.FirebaseAuthService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,10 @@ public class PasswordResetController {
     private final FirebaseAuthService firebaseAuthService;
     private final EmailService emailService;
     private final TemplateEngine templateEngine;
+
+    // Injeta a URL base do Azure (URL exata corrigida)
+    @Value("${app.base-url:https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net}")
+    private String baseUrl;
 
     public PasswordResetController(
             IUsuarioService usuarioService,
@@ -79,12 +84,12 @@ public class PasswordResetController {
                 return "redirect:/esqueci-senha";
             }
 
-            String resetUrl =
-                    "http://localhost:8080/redefinir-senha?oobCode="
-                            + URLEncoder.encode(
-                            oobCode,
-                            StandardCharsets.UTF_8
-                    );
+            // Usa a baseUrl dinâmica com o domínio correto
+            String resetUrl = baseUrl + "/redefinir-senha?oobCode="
+                    + URLEncoder.encode(
+                    oobCode,
+                    StandardCharsets.UTF_8
+            );
 
             Context context = new Context();
 
