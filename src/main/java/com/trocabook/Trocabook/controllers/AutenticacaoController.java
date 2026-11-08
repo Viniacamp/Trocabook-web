@@ -10,43 +10,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RestController
 @RequestMapping("/api/auth")
 public class AutenticacaoController {
 
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
-    public AutenticacaoController(
-            UsuarioAutenticadoService usuarioAutenticadoService
-    ) {
+    public AutenticacaoController(UsuarioAutenticadoService usuarioAutenticadoService) {
         this.usuarioAutenticadoService = usuarioAutenticadoService;
     }
 
     @PostMapping("/autenticacao")
-    public ResponseEntity<UsuarioOutput> autenticar(
-            HttpSession sessao
-    ) {
-
-        UsuarioOutput usuario =
-                usuarioAutenticadoService.getUsuarioOutput(sessao);
-
+    public ResponseEntity<UsuarioOutput> autenticar(HttpSession sessao) {
+        UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
         return ResponseEntity.ok(usuario);
     }
 
     @GetMapping("/destino")
     public ResponseEntity<String> destino(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.ok("/");
+        }
 
-        boolean admin = authentication
-                .getAuthorities()
-                .stream()
-                .anyMatch(authority ->
-                        authority.getAuthority().equals("ROLE_ADMIN")
-                );
+        boolean admin = authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
 
-        return ResponseEntity.ok(
-                admin ? "/admin" : "/"
-        );
+        return ResponseEntity.ok(admin ? "/admin" : "/");
     }
 }

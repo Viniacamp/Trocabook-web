@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,6 +27,9 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
     private final FirebaseAuthService firebaseAuthService;
     private final UsuarioRepository usuarioRepository;
+
+    private static final String SESSION_USER_ROLE = "CACHED_USER_ROLE";
+    private static final String SESSION_USER_UID = "CACHED_USER_UID";
 
     private final SecurityContextRepository securityContextRepository =
             new HttpSessionSecurityContextRepository();
@@ -50,17 +54,9 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String authorization =
-                request.getHeader("Authorization");
+        String authorization = request.getHeader("Authorization");
 
-        /*
-         * Se não houver token Firebase, deixa o Spring Security
-         * utilizar normalmente uma autenticação já existente
-         * na HttpSession.
-         */
-        if (authorization == null ||
-                !authorization.startsWith("Bearer ")) {
-
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -68,39 +64,33 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
         String token = authorization.substring(7);
 
         try {
-
-            /*
-             * Valida o token e obtém a identidade autenticada
-             * pelo Firebase Authentication.
-             */
-            FirebaseToken firebaseToken =
-                    firebaseAuthService.validarToken(token);
-
+            FirebaseToken firebaseToken = firebaseAuthService.validarToken(token);
             String uid = firebaseToken.getUid();
+            HttpSession session = request.getSession(true);
 
-            /*
-             * Busca os dados de autorização no Firestore.
-             */
-            Usuario usuario =
-                    usuarioRepository.buscarPorUid(uid);
+            String roleName;
+            String cachedUid = (String) session.getAttribute(SESSION_USER_UID);
 
-            if (usuario == null) {
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+            // 🚀 CACHE: Se os dados do usuário já estiverem na sessão para esse UID, evita consultar o Firestore
+            if (cachedUid != null && cachedUid.equals(uid)) {
+                roleName = (String) session.getAttribute(SESSION_USER_ROLE);
+            } else {
+                // Caso contrário, busca no Firestore apenas 1 vez e salva na sessão
+                Usuario usuario = usuarioRepository.buscarPorUid(uid);
+
+                if (usuario == null) {
+                    SecurityContextHolder.clearContext();
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+
+                roleName = usuario.getRole().name();
+                session.setAttribute(SESSION_USER_UID, uid);
+                session.setAttribute(SESSION_USER_ROLE, roleName);
             }
 
-            /*
-             * Converte a role do Trocabook para uma authority
-             * reconhecida pelo Spring Security.
-             *
-             * USER  -> ROLE_USER
-             * ADMIN -> ROLE_ADMIN
-             */
             SimpleGrantedAuthority authority =
-                    new SimpleGrantedAuthority(
-                            "ROLE_" + usuario.getRole().name()
-                    );
+                    new SimpleGrantedAuthority("ROLE_" + roleName);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
@@ -109,35 +99,18 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                             List.of(authority)
                     );
 
-            SecurityContext context =
-                    SecurityContextHolder.createEmptyContext();
-
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authentication);
-
             SecurityContextHolder.setContext(context);
 
-            /*
-             * Persiste a autenticação na sessão para a aplicação Web.
-             */
-            securityContextRepository.saveContext(
-                    context,
-                    request,
-                    response
-            );
+            securityContextRepository.saveContext(context, request, response);
 
         } catch (FirebaseAuthException e) {
-
             SecurityContextHolder.clearContext();
-
-            response.setStatus(
-                    HttpServletResponse.SC_UNAUTHORIZED
-            );
-
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         filterChain.doFilter(request, response);
     }
-
-
 }

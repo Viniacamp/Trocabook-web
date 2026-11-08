@@ -1,10 +1,7 @@
 package com.trocabook.Trocabook.controllers;
 
-
 import java.util.List;
 
-import com.trocabook.Trocabook.service.IInteracaoService;
-import com.trocabook.Trocabook.service.IRecomendacaoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +13,8 @@ import com.trocabook.Trocabook.config.ApplicationInstance;
 import com.trocabook.Trocabook.model.dto.AnuncioDTO;
 import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
+import com.trocabook.Trocabook.service.IInteracaoService;
+import com.trocabook.Trocabook.service.IRecomendacaoService;
 import com.trocabook.Trocabook.service.IUsuarioService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 
@@ -31,7 +30,14 @@ public class IndexController {
 	private final IRecomendacaoService recomendacaoService;
 	private final ApplicationInstance applicationInstance;
 
-	public IndexController(UsuarioAutenticadoService usuarioAutenticadoService, IUsuarioService usuarioService, IAnuncioService anuncioService, IInteracaoService interacaoService, IRecomendacaoService recomendacaoService, ApplicationInstance applicationInstance) {
+	public IndexController(
+			UsuarioAutenticadoService usuarioAutenticadoService,
+			IUsuarioService usuarioService,
+			IAnuncioService anuncioService,
+			IInteracaoService interacaoService,
+			IRecomendacaoService recomendacaoService,
+			ApplicationInstance applicationInstance
+	) {
 		this.usuarioAutenticadoService = usuarioAutenticadoService;
 		this.usuarioService = usuarioService;
 		this.anuncioService = anuncioService;
@@ -43,47 +49,43 @@ public class IndexController {
 	@GetMapping("/")
 	public String index(Model model, HttpSession sessao) {
 
-		List<AnuncioDTO> todosAnuncios =
-				anuncioService.listarAtivos();
-
+		List<AnuncioDTO> todosAnuncios = anuncioService.listarAtivos();
 		List<AnuncioDTO> recomendacoes;
+		UsuarioOutput usuario = null;
 
 		try {
-			UsuarioOutput usuario =
-					usuarioAutenticadoService.getUsuarioOutput(sessao);
-
+			usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
 			model.addAttribute("usuario", usuario);
-
-			recomendacoes =
-					recomendacaoService.buscarRecomendacoes(
-							usuario.id(),
-							5,
-							todosAnuncios
-					);
-
-		} catch (IllegalStateException ex) {
-			recomendacoes =
-					recomendacaoService.buscarAleatorios(
-							todosAnuncios,
-							5
-					);
+		} catch (Exception ignored) {
+			// Usuário não autenticado
 		}
 
-		List<UsuarioOutput> destaques =
-				usuarioService.buscarMelhoresAvaliados();
+		if (usuario != null) {
+			try {
+				// Tenta buscar a recomendação personalizada
+				recomendacoes = recomendacaoService.buscarRecomendacoes(
+						usuario.id(),
+						5,
+						todosAnuncios
+				);
+			} catch (Exception ex) {
+				// Se a API externa falhar ou der timeout, usa recomendações aleatórias sem travar a página
+				recomendacoes = recomendacaoService.buscarAleatorios(todosAnuncios, 5);
+			}
+		} else {
+			recomendacoes = recomendacaoService.buscarAleatorios(todosAnuncios, 5);
+		}
 
-		List<AnuncioDTO> anuncios =
-				todosAnuncios.stream()
-						.limit(10)
-						.toList();
+		List<UsuarioOutput> destaques = usuarioService.buscarMelhoresAvaliados();
+
+		List<AnuncioDTO> anuncios = todosAnuncios.stream()
+				.limit(10)
+				.toList();
 
 		model.addAttribute("recomendacoes", recomendacoes);
 		model.addAttribute("destaques", destaques);
 		model.addAttribute("anuncios", anuncios);
-		model.addAttribute(
-				"applicationInstance",
-				applicationInstance.getId()
-		);
+		model.addAttribute("applicationInstance", applicationInstance.getId());
 
 		return "index";
 	}
@@ -95,43 +97,32 @@ public class IndexController {
 		return "redirect:/login";
 	}
 
-
 	@GetMapping("/pesquisar")
 	@ResponseBody
-	public List<AnuncioDTO> pesquisar(@RequestParam(name="titulo", required = false) String nm_livro){
+	public List<AnuncioDTO> pesquisar(@RequestParam(name = "titulo", required = false) String nm_livro) {
 		if (nm_livro == null || nm_livro.isBlank()) {
 			return List.of();
 		}
-		return anuncioService
-				.buscarAnunciosAtivosPorTitulo(nm_livro);
+		return anuncioService.buscarAnunciosAtivosPorTitulo(nm_livro);
 	}
 
 	@PostMapping("/pesquisar/interacao")
 	@ResponseBody
 	public void registrarInteracaoPesquisa(
 			@RequestParam String termo,
-			HttpSession sessao) {
-
+			HttpSession sessao
+	) {
 		if (termo == null || termo.isBlank()) {
 			return;
 		}
 
 		try {
-			UsuarioOutput usuario =
-					usuarioAutenticadoService.getUsuarioOutput(sessao);
-
+			UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(sessao);
 			if (usuario != null) {
-				interacaoService.registrarPesquisa(
-						usuario.id(),
-						termo
-				);
+				interacaoService.registrarPesquisa(usuario.id(), termo);
 			}
-
-		} catch (IllegalStateException ex) {
-			// Usuário não autenticado:
-			// não registra interação personalizada.
+		} catch (Exception ignored) {
+			// Ignora se não estiver autenticado
 		}
 	}
-	
-
 }

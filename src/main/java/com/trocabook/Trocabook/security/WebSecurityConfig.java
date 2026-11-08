@@ -53,9 +53,10 @@ public class WebSecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
-                                "/uploads/**", // Adicionado para permitir o acesso público às imagens salvas
+                                "/uploads/**",
                                 "/vendor/**",
                                 "/dados/**",
+                                "/api/auth/**", // Garantido para o fluxo de autenticação
                                 "/esqueci-senha",
                                 "/redefinir-senha",
                                 "/firebase-messaging-sw.js"
@@ -111,7 +112,8 @@ public class WebSecurityConfig {
                                                 "https://recaptcha.google.com " +
                                                 "https://www.recaptcha.net; " +
 
-                                                "img-src 'self' data: blob: http://localhost:8080 http://localhost:8181 " + // Adicionado localhost para evitar o bloqueio de imagem
+                                                "img-src 'self' data: blob: http://localhost:8080 http://localhost:8181 " +
+                                                "https://*.azurewebsites.net " +
                                                 "https://vlibras.gov.br " +
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://books.google.com " +
@@ -123,9 +125,8 @@ public class WebSecurityConfig {
                                                 "http://localhost:8181 " +
                                                 "http://localhost:8282 " +
                                                 "ws://localhost:8282 " +
-                                                "https://trocabook-admin-service.azurewebsites.net " +
-                                                "https://trocabook-chat-service.azurewebsites.net " +
-                                                "wss://trocabook-chat-service.azurewebsites.net " +
+                                                "https://*.azurewebsites.net " +
+                                                "wss://*.azurewebsites.net " +
                                                 "https://trocabookchatservice.onrender.com " +
                                                 "wss://trocabookchatservice.onrender.com " +
                                                 "https://cdn.jsdelivr.net " +
