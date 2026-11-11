@@ -85,6 +85,15 @@ async function enviarMensagem(pagina, conteudo) {
   await expect(campoMensagem).toHaveValue('');
 }
 
+async function clicarRapidoEVerificarBloqueio(pagina, seletorBotao) {
+  return pagina.locator(seletorBotao).evaluate(botao => {
+    botao.click();
+    const foiDesabilitado = botao.disabled;
+    botao.click();
+    return foiDesabilitado;
+  });
+}
+
 async function monitorarConexoesSockJs(pagina) {
   await pagina.addInitScript(() => {
     const conexoes = [];
@@ -213,24 +222,42 @@ test('chat real: histórico, entrega WebSocket, mensagens concorrentes e reconex
       expect(idMensagem).toBeTruthy();
       await expect(localizarTextoMensagem(paginaB, conteudoOriginal)).toHaveCount(1, { timeout: 15_000 });
 
-      const menuOpcoes = await abrirOpcoesMensagem(paginaA, conteudoOriginal);
-      paginaA.once('dialog', async dialogo => {
-        expect(dialogo.type()).toBe('prompt');
-        await dialogo.accept(conteudoEditado);
-      });
+      const menuAntesDoCliqueFora = await abrirOpcoesMensagem(paginaA, conteudoOriginal);
+      await expect(menuAntesDoCliqueFora).toBeVisible();
+      await paginaA.locator('#chatHeader').click();
+      await expect(menuAntesDoCliqueFora).toBeHidden();
+      expect(await menuAntesDoCliqueFora.evaluate(menu => menu.contains(document.activeElement))).toBeFalsy();
 
+      const menuOpcoes = await abrirOpcoesMensagem(paginaA, conteudoOriginal);
+      await menuOpcoes.getByRole('button', { name: 'Editar' }).click();
+      const modalEdicao = paginaA.locator('#modalEditarMensagem');
+      const campoEdicao = paginaA.locator('#inputEditarMensagem');
+      await expect(modalEdicao).toBeVisible();
+      await expect(campoEdicao).toHaveValue(conteudoOriginal);
+      await campoEdicao.fill(conteudoEditado);
+      const requisicoesEdicao = [];
+      paginaA.on('request', requisicao => {
+        if (requisicao.method() === 'PUT'
+          && new URL(requisicao.url()).pathname === `/chat/mensagens/${idMensagem}`) {
+          requisicoesEdicao.push(requisicao);
+        }
+      });
       const requisicaoEdicao = paginaA.waitForResponse(resposta => {
         const requisicao = resposta.request();
         return requisicao.method() === 'PUT'
           && new URL(resposta.url()).pathname === `/chat/mensagens/${idMensagem}`;
       });
-      await menuOpcoes.getByRole('button', { name: 'Editar' }).click();
+      const cliqueEdicaoBloqueado = await clicarRapidoEVerificarBloqueio(paginaA, '#btnSalvarEdicao');
+      expect(cliqueEdicaoBloqueado).toBeTruthy();
 
       const respostaEdicao = await requisicaoEdicao;
       expect(respostaEdicao.ok()).toBeTruthy();
       const dadosEdicao = await respostaEdicao.json();
       expect(dadosEdicao.status).toBe('success');
       expect(dadosEdicao.data.conteudo).toBe(conteudoEditado);
+      expect(requisicoesEdicao).toHaveLength(1);
+      await expect(modalEdicao).toBeHidden();
+      await expect(paginaA.locator('#btnSalvarEdicao')).toBeEnabled();
       await expect(localizarTextoMensagem(paginaA, conteudoEditado)).toHaveCount(1);
       await expect(localizarTextoMensagem(paginaB, conteudoEditado)).toHaveCount(1, { timeout: 15_000 });
       await expect(localizarTextoMensagem(paginaB, conteudoOriginal)).toHaveCount(0);
@@ -253,7 +280,6 @@ test('chat real: histórico, entrega WebSocket, mensagens concorrentes e reconex
       expect(idMensagem).toBeTruthy();
       await expect(localizarTextoMensagem(paginaB, conteudoExclusao)).toHaveCount(1, { timeout: 15_000 });
 
-      let mensagemConfirmacao = '';
       let requisicoesExclusao = 0;
       paginaA.on('request', requisicao => {
         if (requisicao.method() === 'DELETE'
@@ -263,30 +289,33 @@ test('chat real: histórico, entrega WebSocket, mensagens concorrentes e reconex
       });
 
       const menuOpcoes = await abrirOpcoesMensagem(paginaA, conteudoExclusao);
-      paginaA.once('dialog', async dialogo => {
-        mensagemConfirmacao = dialogo.message();
-        await dialogo.dismiss();
-      });
       await menuOpcoes.getByRole('button', { name: 'Excluir' }).click();
-      expect(mensagemConfirmacao).toBe('Deseja realmente excluir esta mensagem?');
+      const modalExclusao = paginaA.locator('#modalExcluirMensagem');
+      await expect(modalExclusao).toBeVisible();
+      await expect(modalExclusao).toContainText('Deseja realmente excluir esta mensagem?');
+      await paginaA.locator('#btnCancelarExclusao').click();
+      await expect(modalExclusao).toBeHidden();
       await expect(localizarTextoMensagem(paginaA, conteudoExclusao)).toHaveCount(1);
       expect(requisicoesExclusao).toBe(0);
 
-      paginaA.once('dialog', async dialogo => {
-        mensagemConfirmacao = dialogo.message();
-        await dialogo.accept();
-      });
+      const menuConfirmacao = await abrirOpcoesMensagem(paginaA, conteudoExclusao);
+      await menuConfirmacao.getByRole('button', { name: 'Excluir' }).click();
+      await expect(modalExclusao).toBeVisible();
+      await expect(modalExclusao).toContainText('Deseja realmente excluir esta mensagem?');
       const respostaExclusao = paginaA.waitForResponse(resposta => {
         return resposta.request().method() === 'DELETE'
           && new URL(resposta.url()).pathname === `/chat/mensagens/${idMensagem}`;
       });
-      await menuOpcoes.getByRole('button', { name: 'Excluir' }).click();
+      const cliqueExclusaoBloqueado = await clicarRapidoEVerificarBloqueio(paginaA, '#btnConfirmarExclusao');
+      expect(cliqueExclusaoBloqueado).toBeTruthy();
 
       const resposta = await respostaExclusao;
       expect(resposta.ok()).toBeTruthy();
       const dadosExclusao = await resposta.json();
       expect(dadosExclusao.status).toBe('success');
-      expect(mensagemConfirmacao).toBe('Deseja realmente excluir esta mensagem?');
+      expect(requisicoesExclusao).toBe(1);
+      await expect(modalExclusao).toBeHidden();
+      await expect(paginaA.locator('#btnConfirmarExclusao')).toBeEnabled();
       await expect(localizarTextoMensagem(paginaA, conteudoExclusao)).toHaveCount(0);
       await expect(localizarTextoMensagem(paginaB, conteudoExclusao)).toHaveCount(0, { timeout: 15_000 });
 

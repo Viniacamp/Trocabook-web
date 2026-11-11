@@ -20,6 +20,90 @@ import {
 } from './api.js';
 
 let atualizacaoMensagensId = 0;
+let mensagemEmEdicaoId = null;
+let mensagemEmEdicaoDiv = null;
+let mensagemEmExclusaoId = null;
+let mensagemEmExclusaoDiv = null;
+
+export function configurarModaisMensagem() {
+    const fecharModais = () => {
+        if (elements.modalEditarMensagem) elements.modalEditarMensagem.style.display = 'none';
+        if (elements.modalExcluirMensagem) elements.modalExcluirMensagem.style.display = 'none';
+        mensagemEmEdicaoId = null;
+        mensagemEmEdicaoDiv = null;
+        mensagemEmExclusaoId = null;
+        mensagemEmExclusaoDiv = null;
+    };
+
+    document.addEventListener('click', evento => {
+        const alvo = evento.target;
+        if (alvo instanceof Element && alvo.closest('.menu-opcoes')) return;
+
+        document.querySelectorAll('.menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    });
+
+    document.querySelectorAll('#modalEditarMensagem .modal-troca-fechar, #btnCancelarEdicao').forEach(btn => {
+        btn.addEventListener('click', fecharModais);
+    });
+
+    document.querySelectorAll('#modalExcluirMensagem .modal-troca-fechar, #btnCancelarExclusao').forEach(btn => {
+        btn.addEventListener('click', fecharModais);
+    });
+
+    if (elements.btnSalvarEdicao) {
+        elements.btnSalvarEdicao.addEventListener('click', async () => {
+            if (!mensagemEmEdicaoId || !mensagemEmEdicaoDiv) return;
+            if (elements.btnSalvarEdicao.disabled) return;
+            const novoConteudo = elements.inputEditarMensagem ? elements.inputEditarMensagem.value.trim() : '';
+            if (!novoConteudo) {
+                alert('A mensagem não pode estar vazia.');
+                return;
+            }
+
+            elements.btnSalvarEdicao.disabled = true;
+            try {
+                const { ok, data } = await editarMensagemApi(mensagemEmEdicaoId, novoConteudo);
+                if (ok) {
+                    const p = mensagemEmEdicaoDiv.querySelector('p');
+                    if (p) p.textContent = novoConteudo;
+                    fecharModais();
+                } else {
+                    alert('Erro ao alterar mensagem.');
+                }
+            } catch (erro) {
+                console.error('Erro ao editar mensagem:', erro);
+                alert('Não foi possível alterar a mensagem.');
+            } finally {
+                elements.btnSalvarEdicao.disabled = false;
+            }
+        });
+    }
+
+    if (elements.btnConfirmarExclusao) {
+        elements.btnConfirmarExclusao.addEventListener('click', async () => {
+            if (!mensagemEmExclusaoId || !mensagemEmExclusaoDiv) return;
+            if (elements.btnConfirmarExclusao.disabled) return;
+
+            elements.btnConfirmarExclusao.disabled = true;
+            try {
+                const { ok, data } = await excluirMensagemApi(mensagemEmExclusaoId);
+                if (ok) {
+                    mensagemEmExclusaoDiv.remove();
+                    fecharModais();
+                } else {
+                    alert('Erro ao excluir mensagem.');
+                }
+            } catch (erro) {
+                console.error('Erro ao excluir mensagem:', erro);
+                alert('Não foi possível excluir a mensagem.');
+            } finally {
+                elements.btnConfirmarExclusao.disabled = false;
+            }
+        });
+    }
+}
 
 export function gerarAssinaturaMensagens(mensagens) {
     if (!mensagens || !Array.isArray(mensagens)) {
@@ -187,67 +271,53 @@ export function abrirMenuMensagem(icon) {
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 }
 
-export async function editarMensagem(botao) {
+export function editarMensagem(botao) {
     const msgDiv = botao.closest('.message');
     const idMensagem = msgDiv ? msgDiv.getAttribute('data-id') : null;
 
     if (!idMensagem) {
         console.error("Elemento HTML da mensagem sem data-id:", msgDiv);
-        alert('ID da mensagem não encontrado para edição. Verifique o console.');
+        alert('ID da mensagem não encontrado para edição.');
         return;
     }
 
     const p = msgDiv.querySelector('p');
-    const novoConteudo = prompt('Editar mensagem:', p ? p.textContent : '');
+    mensagemEmEdicaoId = idMensagem;
+    mensagemEmEdicaoDiv = msgDiv;
 
-    if (novoConteudo === null || novoConteudo.trim() === '') {
-        return;
+    if (elements.inputEditarMensagem) {
+        elements.inputEditarMensagem.value = p ? p.textContent : '';
     }
-
-    try {
-        const { ok, data } = await editarMensagemApi(idMensagem, novoConteudo.trim());
-
-        if (ok) {
-            if (p) p.textContent = novoConteudo.trim();
-            const icon = msgDiv.querySelector('.menu-opcoes i');
-            if (icon) {
-                abrirMenuMensagem(icon);
-            }
-        } else {
-            alert('Erro ao alterar mensagem.');
+    if (elements.modalEditarMensagem) {
+        elements.modalEditarMensagem.style.display = 'flex';
+        if (elements.inputEditarMensagem) {
+            elements.inputEditarMensagem.focus();
         }
-    } catch (erro) {
-        console.error('Erro ao editar mensagem:', erro);
-        alert('Não foi possível alterar a mensagem.');
     }
+
+    const menu = botao.closest('.menu-dropdown');
+    if (menu) menu.style.display = 'none';
 }
 
-export async function excluirMensagem(botao) {
+export function excluirMensagem(botao) {
     const msgDiv = botao.closest('.message');
     const idMensagem = msgDiv ? msgDiv.getAttribute('data-id') : null;
 
     if (!idMensagem) {
         console.error("Elemento HTML da mensagem sem data-id:", msgDiv);
-        alert('ID da mensagem não encontrado para exclusão. Verifique o console.');
+        alert('ID da mensagem não encontrado para exclusão.');
         return;
     }
 
-    if (!confirm('Deseja realmente excluir esta mensagem?')) {
-        return;
+    mensagemEmExclusaoId = idMensagem;
+    mensagemEmExclusaoDiv = msgDiv;
+
+    if (elements.modalExcluirMensagem) {
+        elements.modalExcluirMensagem.style.display = 'flex';
     }
 
-    try {
-        const { ok, data } = await excluirMensagemApi(idMensagem);
-
-        if (ok) {
-            msgDiv.remove();
-        } else {
-            alert('Erro ao excluir mensagem.');
-        }
-    } catch (erro) {
-        console.error('Erro ao excluir mensagem:', erro);
-        alert('Não foi possível excluir a mensagem.');
-    }
+    const menu = botao.closest('.menu-dropdown');
+    if (menu) menu.style.display = 'none';
 }
 
 export function iniciarAtualizacaoMensagens(onNegociacaoAtualizada) {

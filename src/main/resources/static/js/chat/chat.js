@@ -34,7 +34,8 @@ import {
     enviarMensagem,
     iniciarAtualizacaoMensagens,
     pararAtualizacaoMensagens,
-    atualizarMensagens
+    atualizarMensagens,
+    configurarModaisMensagem
 } from './mensagens.js';
 import {
     iniciarAtualizacaoConversas,
@@ -159,6 +160,9 @@ function inicializarEventos() {
 
     // Configuração dos modais de negociação
     configurarModaisNegociacao();
+
+    // Configuração dos modais de edição e exclusão de mensagem
+    configurarModaisMensagem();
 
     // Finaliza polling ao sair da página
     window.addEventListener('beforeunload', () => {

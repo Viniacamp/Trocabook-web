@@ -649,6 +649,112 @@
 
     </div>
 
+    <!-- ===================================================== -->
+    <!-- MODAL - EDITAR MENSAGEM                                -->
+    <!-- ===================================================== -->
+
+    <div
+            id="modalEditarMensagem"
+            class="modal-troca"
+            style="display: none;">
+
+        <div class="modal-troca-conteudo">
+
+            <button
+                    type="button"
+                    class="modal-troca-fechar">
+                &times;
+            </button>
+
+            <div class="modal-troca-icone">
+                <i class="fa-solid fa-pen"></i>
+            </div>
+
+            <h3>
+                Editar mensagem
+            </h3>
+
+            <textarea
+                    id="inputEditarMensagem"
+                    class="descricao-oferta"
+                    maxlength="1000"
+                    placeholder="Digite a nova mensagem...">
+            </textarea>
+
+            <div class="modal-troca-acoes">
+
+                <button
+                        type="button"
+                        id="btnCancelarEdicao"
+                        class="btn-negociacao btn-secundario">
+                    Cancelar
+                </button>
+
+                <button
+                        type="button"
+                        id="btnSalvarEdicao"
+                        class="btn-negociacao">
+                    Salvar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL - EXCLUIR MENSAGEM                               -->
+    <!-- ===================================================== -->
+
+    <div
+            id="modalExcluirMensagem"
+            class="modal-troca"
+            style="display: none;">
+
+        <div class="modal-troca-conteudo">
+
+            <button
+                    type="button"
+                    class="modal-troca-fechar">
+                &times;
+            </button>
+
+            <div class="modal-troca-icone" style="background: #fff5f5; color: #c94c4c;">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+
+            <h3>
+                Excluir mensagem
+            </h3>
+
+            <p>
+                Deseja realmente excluir esta mensagem? Esta ação não pode ser desfeita.
+            </p>
+
+            <div class="modal-troca-acoes">
+
+                <button
+                        type="button"
+                        id="btnCancelarExclusao"
+                        class="btn-negociacao btn-secundario">
+                    Cancelar
+                </button>
+
+                <button
+                        type="button"
+                        id="btnConfirmarExclusao"
+                        class="btn-negociacao btn-recusar">
+                    Excluir
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
 
     <!-- ===================================================== -->
     <!-- FOOTER                                                 -->

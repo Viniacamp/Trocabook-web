@@ -32,7 +32,16 @@ export const elements = {
     get listaLivrosOferta() { return document.getElementById('listaLivrosOferta'); },
     get descricaoOfertaAnunciada() { return document.getElementById('descricaoOfertaAnunciada'); },
     get descricaoOfertaManual() { return document.getElementById('descricaoOfertaManual'); },
-    get contadorDescricaoOferta() { return document.getElementById('contadorDescricaoOferta'); }
+    get contadorDescricaoOferta() { return document.getElementById('contadorDescricaoOferta'); },
+
+    get modalEditarMensagem() { return document.getElementById('modalEditarMensagem'); },
+    get inputEditarMensagem() { return document.getElementById('inputEditarMensagem'); },
+    get btnSalvarEdicao() { return document.getElementById('btnSalvarEdicao'); },
+    get btnCancelarEdicao() { return document.getElementById('btnCancelarEdicao'); },
+
+    get modalExcluirMensagem() { return document.getElementById('modalExcluirMensagem'); },
+    get btnConfirmarExclusao() { return document.getElementById('btnConfirmarExclusao'); },
+    get btnCancelarExclusao() { return document.getElementById('btnCancelarExclusao'); },
 };
 
 export function mostrarCarregamentoConversa(uidAnuncio, uidDestinatario) {
