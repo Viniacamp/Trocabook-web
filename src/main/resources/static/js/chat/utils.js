@@ -16,8 +16,8 @@ export function formatarTipoNegociacao(tipo) {
 }
 
 export function obterTopicoConversa(uidAnuncio, uidRemetente, uidDestinatario) {
-    const u1 = uidRemetente.localeCompare(uidDestinatario) < 0 ? uidRemetente : uidDestinatario;
-    const u2 = uidRemetente.localeCompare(uidDestinatario) < 0 ? uidDestinatario : uidRemetente;
-
+    // Ordenação lexicográfica pura (Array.sort sem comparador usa Unicode),
+    // idêntica ao String.compareTo() do Java usado no TrocabookChatService.
+    const [u1, u2] = [uidRemetente, uidDestinatario].sort();
     return `/topic/conversa.${uidAnuncio}.${u1}.${u2}`;
 }

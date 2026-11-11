@@ -7,10 +7,10 @@ import com.trocabook.Trocabook.model.Usuario;
 import com.trocabook.Trocabook.model.dto.*;
 import com.trocabook.Trocabook.repository.UsuarioRepository;
 import com.trocabook.Trocabook.service.IUsuarioService;
+import com.trocabook.Trocabook.service.feign.ChatNotificacaoRenderClient;
 import com.trocabook.Trocabook.service.feign.ChatNotificacaoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,10 +27,13 @@ public class UsuarioService implements IUsuarioService {
 
     private final ChatNotificacaoService chatNotificacaoService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, FirebaseAuthService firebaseAuthService, ChatNotificacaoService chatNotificacaoService) {
+    private final ChatNotificacaoRenderClient chatNotificacaoRenderClient;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, FirebaseAuthService firebaseAuthService, ChatNotificacaoService chatNotificacaoService, ChatNotificacaoRenderClient chatNotificacaoRenderClient) {
         this.usuarioRepository = usuarioRepository;
         this.firebaseAuthService = firebaseAuthService;
         this.chatNotificacaoService = chatNotificacaoService;
+        this.chatNotificacaoRenderClient = chatNotificacaoRenderClient;
     }
 
     @Override
@@ -123,18 +126,25 @@ public class UsuarioService implements IUsuarioService {
         usuario.setFcmToken(fcmToken);
         usuarioRepository.atualizar(usuario);
 
+        UsuarioStatusNotificacaoDTO dto = new UsuarioStatusNotificacaoDTO(
+                usuario.getId(),
+                usuario.getEmailPrincipal(),
+                fcmToken
+        );
         try {
-            UsuarioStatusNotificacaoDTO dto = new UsuarioStatusNotificacaoDTO(
-                    usuario.getId(),
-                    usuario.getEmailPrincipal(),
-                    fcmToken
-            );
+
 
             chatNotificacaoService.sincronizarStatusUsuario(dto);
             log.info("Token FCM do usuário '{}' sincronizado com o microsserviço de chat.", uid);
         } catch (Exception e) {
             log.error("Falha ao sincronizar status do usuário com o microsserviço de chat: {}", e.getMessage(), e);
-            // Tratado em log para não derrubar a requisição do usuário se o chat estiver offline
+            log.info("Tentando conexão com render");
+            try {
+                chatNotificacaoRenderClient.sincronizarStatusUsuario(dto);
+                log.info("Token FCM do usuário '{}' sincronizado com o microsserviço de chat render.", uid);
+            } catch (Exception ex) {
+                log.error("Falha ao sincronizar status do usuário com o microsserviço de chat render: {}", ex.getMessage(), e);
+            }
         }
     }
 

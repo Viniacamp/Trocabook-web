@@ -4,7 +4,11 @@
  */
 
 import { getMessagingSeguro } from '../firebase.js';
-import { conectarWebSocket, subscreverTopicoConversa } from './websocket.js';
+import {
+    conectarWebSocket,
+    definirCallbackStatusWebSocket,
+    subscreverTopicoConversa
+} from './websocket.js';
 import { onMessage } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js';
 
 import {
@@ -110,11 +114,18 @@ export async function abrirConversa(uidAnuncio, uidDestinatario, elemento = null
         /* ---------------------------------------------
            Inicia atualização automática das mensagens
            --------------------------------------------- */
-        subscreverTopicoConversa(
+        const inscritoNoWebSocket = subscreverTopicoConversa(
             uidAnuncio,
             getUidUsuarioLogado(),
             uidDestinatario
         );
+        if (inscritoNoWebSocket) {
+            pararAtualizacaoMensagens();
+        } else {
+            iniciarAtualizacaoMensagens((anuncioAtualizado, negociacaoAtualizada) => {
+                renderizarNegociacao(anuncioAtualizado, negociacaoAtualizada);
+            });
+        }
 
         destacarConversaAtual(uidAnuncio, uidDestinatario);
 
@@ -199,14 +210,28 @@ export async function inicializarChat() {
     // Configura Push em primeiro plano
     configurarNotificacoesEmPrimeiroPlano();
 
-    try {
-        await conectarWebSocket();
-    } catch (e) {
-        console.warn("Falha ao conectar WebSocket, usando fallback...");
-    }
+    definirCallbackStatusWebSocket(conectado => {
+        const conversaAtual = getConversaAtual();
+        if (!conversaAtual.uidAnuncio || !conversaAtual.uidDestinatario) return;
+
+        if (conectado) {
+            pararAtualizacaoMensagens();
+        } else {
+            iniciarAtualizacaoMensagens((anuncioAtualizado, negociacaoAtualizada) => {
+                renderizarNegociacao(anuncioAtualizado, negociacaoAtualizada);
+            });
+        }
+    });
+
+    conectarWebSocket().catch(erro => {
+        console.warn("Falha ao conectar WebSocket; o polling será usado como fallback.", erro);
+    });
 
     // Inicia o polling da lista de conversas
     await atualizarConversas((uidAnuncio, uidDestinatario, elemento) => {
+        abrirConversa(uidAnuncio, uidDestinatario, elemento);
+    });
+    iniciarAtualizacaoConversas((uidAnuncio, uidDestinatario, elemento) => {
         abrirConversa(uidAnuncio, uidDestinatario, elemento);
     });
 

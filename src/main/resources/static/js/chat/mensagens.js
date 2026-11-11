@@ -19,6 +19,8 @@ import {
     excluirMensagemApi
 } from './api.js';
 
+let atualizacaoMensagensId = 0;
+
 export function gerarAssinaturaMensagens(mensagens) {
     if (!mensagens || !Array.isArray(mensagens)) {
         return '[]';
@@ -48,7 +50,12 @@ export function renderizarMensagens(mensagens) {
 export function adicionarMensagemNoContainer(msg) {
     if (!elements.messagesContainer) return;
 
-    const msgId = msg.id || msg._id || '';
+    // Tenta todas as variações possíveis de nomes de campos de ID vindos do back-end
+    const msgId = msg.id || msg._id || msg.idMensagem || msg.uuid || '';
+
+    if (!msgId) {
+        console.warn("Aviso: Mensagem recebida sem ID visível:", msg);
+    }
 
     // Evita duplicar elemento se já estiver presente no DOM
     if (msgId && document.querySelector(`[data-id="${msgId}"]`)) {
@@ -59,11 +66,12 @@ export function adicionarMensagemNoContainer(msg) {
 
     const div = document.createElement('div');
     div.className = `message ${souEu ? 'user' : 'negociador'}`;
-    div.setAttribute('data-id', msgId);
 
-    /* =====================================================
-       AVATAR DA MENSAGEM RECEBIDA
-       ===================================================== */
+    if (msgId) {
+        div.setAttribute('data-id', msgId);
+    }
+
+    // Restante do código do avatar, balão e menu...
     if (!souEu) {
         const img = document.createElement('img');
         img.src = (elements.chatUsuarioFoto && elements.chatUsuarioFoto.src) || '/img/user.png';
@@ -72,9 +80,6 @@ export function adicionarMensagemNoContainer(msg) {
         div.appendChild(img);
     }
 
-    /* =====================================================
-       BALÃO
-       ===================================================== */
     const balao = document.createElement('div');
     balao.className = 'message-balao';
 
@@ -82,24 +87,6 @@ export function adicionarMensagemNoContainer(msg) {
     p.textContent = msg.conteudo || '';
     balao.appendChild(p);
 
-    const mensagemAceite = msg.conteudo === '✅ Proposta aceita. A negociação está em andamento.';
-    const conversaAtual = getConversaAtual();
-
-    if (
-        mensagemAceite &&
-        conversaAtual.negociacao &&
-        conversaAtual.negociacao.id
-    ) {
-        const linkNegociacao = document.createElement('a');
-        linkNegociacao.href = `/negociacoes/${encodeURIComponent(conversaAtual.negociacao.id)}`;
-        linkNegociacao.className = 'mensagem-link-negociacao';
-        linkNegociacao.textContent = 'Ver negociação';
-        balao.appendChild(linkNegociacao);
-    }
-
-    /* =====================================================
-       MENU DA MENSAGEM DO USUÁRIO
-       ===================================================== */
     if (souEu) {
         const menuOpcoes = document.createElement('div');
         menuOpcoes.className = 'menu-opcoes';
@@ -172,13 +159,15 @@ export async function enviarMensagem(event) {
     };
 
     try {
+        // Limpa o input imediatamente para melhor experiência do usuário
+        input.value = '';
+        input.focus();
+
         const data = await enviarMensagemApi(mensagem);
 
-        if (data && (data.status === 'success' || data.status === 'Sucesso' || data.data)) {
-            input.value = '';
-            input.focus();
-        } else {
-            alert('Erro ao enviar mensagem.');
+
+        if (data && data.data && data.data.id) {
+            adicionarMensagemNoContainer(data.data);
         }
     } catch (erro) {
         console.error('Erro ao enviar mensagem:', erro);
@@ -203,7 +192,8 @@ export async function editarMensagem(botao) {
     const idMensagem = msgDiv ? msgDiv.getAttribute('data-id') : null;
 
     if (!idMensagem) {
-        alert('ID da mensagem não encontrado para edição.');
+        console.error("Elemento HTML da mensagem sem data-id:", msgDiv);
+        alert('ID da mensagem não encontrado para edição. Verifique o console.');
         return;
     }
 
@@ -237,7 +227,8 @@ export async function excluirMensagem(botao) {
     const idMensagem = msgDiv ? msgDiv.getAttribute('data-id') : null;
 
     if (!idMensagem) {
-        alert('ID da mensagem não encontrado para exclusão.');
+        console.error("Elemento HTML da mensagem sem data-id:", msgDiv);
+        alert('ID da mensagem não encontrado para exclusão. Verifique o console.');
         return;
     }
 
@@ -261,6 +252,7 @@ export async function excluirMensagem(botao) {
 
 export function iniciarAtualizacaoMensagens(onNegociacaoAtualizada) {
     pararAtualizacaoMensagens();
+    atualizarMensagens(onNegociacaoAtualizada);
     const timer = setInterval(() => {
         atualizarMensagens(onNegociacaoAtualizada);
     }, 4000);
@@ -268,23 +260,32 @@ export function iniciarAtualizacaoMensagens(onNegociacaoAtualizada) {
 }
 
 export function pararAtualizacaoMensagens() {
+    atualizacaoMensagensId++;
     clearIntervaloMensagens();
 }
 
 export async function atualizarMensagens(onNegociacaoAtualizada) {
+    const atualizacaoId = atualizacaoMensagensId;
     const conversaAtual = getConversaAtual();
+    const uidAnuncio = conversaAtual.uidAnuncio;
+    const uidDestinatario = conversaAtual.uidDestinatario;
 
-    if (!conversaAtual.uidAnuncio || !conversaAtual.uidDestinatario) {
+    if (!uidAnuncio || !uidDestinatario) {
         return;
     }
 
     try {
         const atualizacao = await atualizarMensagensApi(
-            conversaAtual.uidAnuncio,
-            conversaAtual.uidDestinatario
+            uidAnuncio,
+            uidDestinatario
         );
 
-        if (!atualizacao) {
+        if (
+            !atualizacao ||
+            atualizacaoId !== atualizacaoMensagensId ||
+            uidAnuncio !== getConversaAtual().uidAnuncio ||
+            uidDestinatario !== getConversaAtual().uidDestinatario
+        ) {
             return;
         }
 

@@ -30,6 +30,9 @@ public class ChatController {
     @Value("${chat.service.url:http://localhost:8282}")
     private String chatServiceUrl;
 
+    @Value("${chat.service.fallback-url:http://localhost:8282}")
+    private String chatServiceFallbackUrl;
+
     private final IConversaService conversaService;
     private final IUsuarioService usuarioService;
     private final IAnuncioService anuncioService;
@@ -73,6 +76,7 @@ public class ChatController {
         model.addAttribute("usuarioLogado", usuarioLogado);
         model.addAttribute("conversas", conversas);
         model.addAttribute("chatServiceUrl", chatServiceUrl);
+        model.addAttribute("chatServiceFallbackUrl", chatServiceFallbackUrl);
 
         if (conversas.isEmpty()) {
             model.addAttribute("mensagemVazia", "Nenhuma conversa iniciada");

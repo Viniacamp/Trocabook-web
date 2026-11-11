@@ -69,8 +69,12 @@ export function renderizarListaConversas(conversas, onSelectConversa) {
 
 export function iniciarAtualizacaoConversas(onSelectConversa) {
     pararAtualizacaoConversas();
+    if (typeof onSelectConversa === 'function') {
+        callbackSelecaoConversa = onSelectConversa;
+    }
+
     const timer = setInterval(() => {
-        atualizarConversas(onSelectConversa);
+        atualizarConversas(callbackSelecaoConversa);
     }, 4000);
     setIntervaloConversas(timer);
 }

@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = "chat-service",
-        url = "${chat.service.url}/api/chat/notificacoes/status-usuario",
-        fallback = ChatNotificacaoServiceFallback.class
-)
+        url = "${chat.service.url}/api/chat/notificacoes/status-usuario")
 public interface ChatNotificacaoService {
 
     @PostMapping

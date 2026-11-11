@@ -21,15 +21,10 @@ public interface ChatRenderClient {
     ChatResponse<MensagemDTO> buscarMensagemPorId(@PathVariable("id") String id);
 
     @GetMapping
-    ChatResponse<List<MensagemDTO>> listarMensagensEntreUsuarios(
+    ChatResponse<List<MensagemDTO>> listarMensagens(
             @RequestParam("remetente") String uidRemetente,
-            @RequestParam("destinatario") String uidDestinatario,
-            @RequestParam("anuncio") String uidAnuncio
-    );
-
-    @GetMapping
-    ChatResponse<List<MensagemDTO>> listarMensagensPorUsuarioDataEnvioDecrescente(
-            @RequestParam("remetente") String uidRemetente
+            @RequestParam(value = "destinatario", required = false) String uidDestinatario,
+            @RequestParam(value = "anuncio", required = false) String uidAnuncio
     );
 
     @PutMapping("/{id}")
