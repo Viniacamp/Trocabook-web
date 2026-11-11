@@ -39,3 +39,11 @@ build/
 ## CREDENTIALS ##
 src/main/resources/credentials/
 src/main/resources/keys/
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

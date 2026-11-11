@@ -1,0 +1,26 @@
+{
+  "name": "trocabook-web",
+  "version": "1.0.0",
+  "description": "Somos alunos da Fatec Diadema e criamos a **Trocabook**, uma plataforma inovadora para a venda e troca de livros. Nosso objetivo é promover a reutilização de livros, reduzindo o desperdício de recursos naturais e tornando a leitura mais acessível.",
+  "main": "index.js",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Viniacamp/Trocabook-web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Viniacamp/Trocabook-web/issues"
+  },
+  "homepage": "https://github.com/Viniacamp/Trocabook-web#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "dotenv": "^18.0.10"
+  }
+}
