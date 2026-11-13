@@ -1,5 +1,6 @@
 package com.trocabook.Trocabook.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -74,6 +75,16 @@ public class WebSecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
+                )
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (request.getRequestURI().startsWith("/api/")) {
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Não autenticado");
+                            } else {
+                                response.sendRedirect("/login");
+                            }
+                        })
                 )
 
                 .headers(headers -> headers
