@@ -21,6 +21,7 @@ import com.trocabook.Trocabook.model.dto.UsuarioOutput;
 import com.trocabook.Trocabook.service.IAnuncioService;
 import com.trocabook.Trocabook.service.ILivroService;
 import com.trocabook.Trocabook.service.impl.FileStorageServiceUsuario;
+import com.trocabook.Trocabook.service.impl.IaService;
 import com.trocabook.Trocabook.service.impl.UsuarioAutenticadoService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,17 +33,20 @@ public class AnunciarLivroController {
     private final IAnuncioService anuncioService;
     private final UsuarioAutenticadoService usuarioAutenticadoService;
     private final FileStorageServiceUsuario fileStorageServiceUsuario;
+    private final IaService iaService;
 
     public AnunciarLivroController(
             ILivroService livroService,
             IAnuncioService anuncioService,
             UsuarioAutenticadoService usuarioAutenticadoService,
-            FileStorageServiceUsuario fileStorageServiceUsuario
+            FileStorageServiceUsuario fileStorageServiceUsuario,
+            IaService iaService
     ) {
         this.livroService = livroService;
         this.anuncioService = anuncioService;
         this.usuarioAutenticadoService = usuarioAutenticadoService;
         this.fileStorageServiceUsuario = fileStorageServiceUsuario;
+        this.iaService = iaService;
     }
 
     @GetMapping("/AnunciarLivro")
@@ -107,7 +111,6 @@ public class AnunciarLivroController {
             }
         }
 
-
         if (!erros.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
         }
@@ -151,6 +154,40 @@ public class AnunciarLivroController {
     @ResponseBody
     public List<LivroBuscaOutput> buscar(@RequestBody LivroBuscaOutput livro) {
         return livroService.pesquisarLivros(livro.titulo());
+    }
+
+    @PostMapping("/api/ia/gerar-descricao")
+    @ResponseBody
+    public ResponseEntity<?> gerarDescricaoComIa(
+            @RequestBody Map<String, String> payload,
+            HttpSession session
+    ) {
+        UsuarioOutput usuario = usuarioAutenticadoService.getUsuarioOutput(session);
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("erro", "Usuário não autenticado."));
+        }
+
+        String titulo = payload.get("titulo");
+        if (titulo == null || titulo.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("erro", "Preencha ou selecione o título do livro antes de gerar a descrição."));
+        }
+
+        try {
+            String descricaoGerada = iaService.gerarDescricaoAnuncio(
+                    titulo,
+                    payload.get("autores"),
+                    payload.get("categorias"),
+                    payload.get("tipoNegociacao"),
+                    payload.get("rascunho")
+            );
+            return ResponseEntity.ok(Map.of("descricao", descricaoGerada));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("erro", e.getMessage()));
+        }
     }
 
     private void configurarModel(Model model, AnunciarLivroRequest attributeValue, UsuarioOutput usuario) {

@@ -9,6 +9,7 @@ import { inicializarAutores } from './autores.js';
 import { inicializarCategorias } from './categorias.js';
 import { inicializarImagem } from './imagem.js';
 import { inicializarValidacao } from './validacao.js';
+import { inicializarIaDescricao } from './ia.js';
 
 export function inicializarAnuncio() {
     inicializarModo();
@@ -17,6 +18,7 @@ export function inicializarAnuncio() {
     inicializarCategorias();
     inicializarImagem();
     inicializarValidacao();
+    inicializarIaDescricao();
 }
 
 if (document.readyState === "loading") {
