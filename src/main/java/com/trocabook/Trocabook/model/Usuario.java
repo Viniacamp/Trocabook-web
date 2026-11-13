@@ -194,7 +194,7 @@ public class Usuario implements Serializable {
     }
 
     public StatusUsuario getStatus() {
-        return status;
+        return status != null ? status : StatusUsuario.ATIVO;
     }
 
     public void setStatus(StatusUsuario status) {
