@@ -19,26 +19,26 @@
                     <th id="cabecalhoelementos">
                         <a href="/"><img src="/img/Design sem nome (7).svg"></a>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="pesquisa" placeholder="Pesquisar">
+                            <input type="text" id="pesquisa" placeholder="Pesquisar por título, autor ou tema...">
                             <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                         </div>
 
                         <th:block sec:authorize="isAuthenticated()">
-                        <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
-                            </button>
-                            
-                            <div id="userDropdown" class="dropdown-content">
-                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                                <a href="/chat">Chat</a>
-                                <hr class="divider">
-                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            <div class="user-menu-container">
+                                <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                    <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
+                                    <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span></span>
+                                    <span class="arrow">▼</span>
+                                </button>
+
+                                <div id="userDropdown" class="dropdown-content">
+                                    <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                    <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                    <a href="/chat">Chat</a>
+                                    <hr class="divider">
+                                    <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                                </div>
                             </div>
-                        </div>
                         </th:block>
                         <th:block sec:authorize="!isAuthenticated()">
                             <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
@@ -65,17 +65,29 @@
     <div class="container-livros">
         <aside class="filtro-lateral">
             <h3><i class="fas fa-filter"></i> Filtrar por</h3>
-            <form th:action="@{/livros}" method="get">
-                <select name="livroTipo" class="categoriaNegociacao" onchange="this.form.submit()">
-                    <option value="">-- Todos --</option>
+            <form id="formFiltroLivros" th:action="@{/livros}" method="get">
+                <input type="text" name="busca" th:value="${busca}"
+                       placeholder="Título, autor ou tema..."
+                       style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+
+                <select name="livroTipo" class="categoriaNegociacao" onchange="exibirCarregamentoLivros(); this.form.submit();">
+                    <option value="todos">-- Todos --</option>
                     <option value="TROCA" th:selected="${filtroLivros == 'TROCA'}">Troca</option>
                     <option value="VENDA" th:selected="${filtroLivros == 'VENDA'}">Venda</option>
                     <option value="AMBOS" th:selected="${filtroLivros == 'AMBOS'}">Ambos</option>
                 </select>
+
+                <button type="submit" id="btnBuscarLivros" style="width: 100%; margin-top: 10px; padding: 8px; cursor: pointer;">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
             </form>
         </aside>
 
         <section class="livros-grid">
+            <div th:if="${#lists.isEmpty(listaAnuncios)}" style="grid-column: 1 / -1; text-align: center; padding: 30px;">
+                <p>Nenhum anúncio encontrado para essa busca.</p>
+            </div>
+
             <div th:each="anuncio : ${listaAnuncios}" class="livro-card">
 
                 <img th:src="${anuncio.capa}" class="capaLivros">
@@ -97,6 +109,14 @@
         </section>
     </div>
 
+    <!-- Overlay de carregamento ao pesquisar/filtrar na vitrine -->
+    <div id="loadingVitrine" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #fff; padding: 28px 36px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2.2rem; color: #7b61ff; margin-bottom: 12px;"></i>
+            <p style="margin: 0; font-weight: 600; color: #333;">Buscando livros disponíveis...</p>
+        </div>
+    </div>
+
     <footer>
         <div class="rodapenovo">
             <a href="/"><img src="/img/Design sem nome.svg"></a>
@@ -107,6 +127,24 @@
     </footer>
 </div>
 </body>
+<script>
+    function exibirCarregamentoLivros() {
+        const overlay = document.getElementById("loadingVitrine");
+        const btn = document.getElementById("btnBuscarLivros");
+        if (overlay) overlay.style.display = "flex";
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+        }
+    }
+
+    const formFiltro = document.getElementById("formFiltroLivros");
+    if (formFiltro) {
+        formFiltro.addEventListener("submit", function () {
+            exibirCarregamentoLivros();
+        });
+    }
+</script>
 <script src="/js/pesquisa.js"></script>
 <script type="module" src="/js/logout.js"></script>
 <script src="/js/menu-logado.js"></script>

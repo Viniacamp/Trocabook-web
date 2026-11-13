@@ -36,6 +36,7 @@ public class AnuncioService implements IAnuncioService {
     private final AutorRepository autorRepository;
     private final CategoriaRepository categoriaRepository;
     private final CacheManager cacheManager;
+    private final IaService iaService;
 
     public AnuncioService(
             IUsuarioService usuarioService,
@@ -43,7 +44,8 @@ public class AnuncioService implements IAnuncioService {
             AnuncioRepository anuncioRepository,
             AutorRepository autorRepository,
             CategoriaRepository categoriaRepository,
-            CacheManager cacheManager
+            CacheManager cacheManager,
+            IaService iaService
     ) {
         this.usuarioService = usuarioService;
         this.livroService = livroService;
@@ -51,6 +53,7 @@ public class AnuncioService implements IAnuncioService {
         this.autorRepository = autorRepository;
         this.categoriaRepository = categoriaRepository;
         this.cacheManager = cacheManager;
+        this.iaService = iaService;
     }
 
     @Override
@@ -164,7 +167,6 @@ public class AnuncioService implements IAnuncioService {
                 .toList();
     }
 
-
     @Override
     public List<AnuncioDTO> listarAnunciosAtivosPorUsuario(
             String uidUsuario
@@ -235,7 +237,6 @@ public class AnuncioService implements IAnuncioService {
 
     @Override
     public List<AnuncioDTO> buscarAnunciosAtivosPorTitulo(String titulo) {
-
         if (titulo == null || titulo.isBlank()) {
             return List.of();
         }
@@ -248,6 +249,85 @@ public class AnuncioService implements IAnuncioService {
                 .buscarPorTitulo(tituloNormalizado, Anuncio.StatusAnuncio.ATIVO)
                 .stream()
                 .map(this::converterParaDto)
+                .toList();
+    }
+
+    @Override
+    public List<AnuncioDTO> buscarInteligenteAnunciosAtivos(String consulta) {
+        if (consulta == null || consulta.isBlank()) {
+            return List.of();
+        }
+
+        String consultaNorm = iaService.normalizarTexto(consulta);
+        List<AnuncioDTO> ativos = listarAtivos();
+
+        if (ativos.isEmpty()) {
+            return List.of();
+        }
+
+        boolean pareceFraseSemantica = consultaNorm.split("\\s+").length >= 3 || consultaNorm.contains("?");
+        List<String> termosExpandidos = pareceFraseSemantica
+                ? iaService.extrairTermosBuscaSemantica(consulta)
+                : iaService.extrairTokensLocais(consulta);
+
+        record AnuncioPontuado(AnuncioDTO anuncio, int pontos) {}
+
+        List<AnuncioPontuado> ranqueados = ativos.stream()
+                .map(anuncio -> {
+                    int pontos = 0;
+                    String tituloNorm = iaService.normalizarTexto(anuncio.titulo());
+                    String descNorm = iaService.normalizarTexto(anuncio.descricao());
+                    String autoresNorm = anuncio.autores() != null
+                            ? iaService.normalizarTexto(String.join(" ", anuncio.autores()))
+                            : "";
+                    String categoriasNorm = anuncio.categorias() != null
+                            ? iaService.normalizarTexto(String.join(" ", anuncio.categorias()))
+                            : "";
+
+                    if (tituloNorm.contains(consultaNorm)) pontos += 100;
+                    if (autoresNorm.contains(consultaNorm)) pontos += 80;
+                    if (categoriasNorm.contains(consultaNorm)) pontos += 60;
+                    if (descNorm.contains(consultaNorm)) pontos += 40;
+
+                    for (String termo : termosExpandidos) {
+                        if (termo.length() < 2) continue;
+                        if (tituloNorm.contains(termo)) pontos += 25;
+                        if (autoresNorm.contains(termo)) pontos += 20;
+                        if (categoriasNorm.contains(termo)) pontos += 15;
+                        if (descNorm.contains(termo)) pontos += 10;
+                    }
+
+                    return new AnuncioPontuado(anuncio, pontos);
+                })
+                .filter(item -> item.pontos() > 0)
+                .sorted((a, b) -> Integer.compare(b.pontos(), a.pontos()))
+                .toList();
+
+        if (ranqueados.isEmpty() && !pareceFraseSemantica) {
+            List<String> termosIa = iaService.extrairTermosBuscaSemantica(consulta);
+            ranqueados = ativos.stream()
+                    .map(anuncio -> {
+                        int pontos = 0;
+                        String tudo = iaService.normalizarTexto(
+                                anuncio.titulo() + " " +
+                                        (anuncio.autores() != null ? String.join(" ", anuncio.autores()) : "") + " " +
+                                        (anuncio.categorias() != null ? String.join(" ", anuncio.categorias()) : "") + " " +
+                                        anuncio.descricao()
+                        );
+                        for (String termo : termosIa) {
+                            if (termo.length() >= 2 && tudo.contains(termo)) {
+                                pontos += 15;
+                            }
+                        }
+                        return new AnuncioPontuado(anuncio, pontos);
+                    })
+                    .filter(item -> item.pontos() > 0)
+                    .sorted((a, b) -> Integer.compare(b.pontos(), a.pontos()))
+                    .toList();
+        }
+
+        return ranqueados.stream()
+                .map(AnuncioPontuado::anuncio)
                 .toList();
     }
 
@@ -306,7 +386,6 @@ public class AnuncioService implements IAnuncioService {
             allEntries = true
     )
     public AnuncioDTO finalizar(String uidAnuncio) {
-
         Anuncio anuncio =
                 anuncioRepository.buscarPorUid(
                         uidAnuncio
@@ -320,7 +399,6 @@ public class AnuncioService implements IAnuncioService {
 
         if (anuncio.getStatus()
                 == Anuncio.StatusAnuncio.FINALIZADO) {
-
             return converterParaDto(anuncio);
         }
 
@@ -349,7 +427,6 @@ public class AnuncioService implements IAnuncioService {
     )
     public void deletar(String uid) {
         anuncioRepository.deletar(uid);
-
         removerDoCache(uid);
     }
 
@@ -359,7 +436,6 @@ public class AnuncioService implements IAnuncioService {
             key = "'ativos'"
     )
     public List<AnuncioDTO> listarAtivos() {
-
         return anuncioRepository
                 .listarAtivos()
                 .stream()
@@ -371,7 +447,6 @@ public class AnuncioService implements IAnuncioService {
     public List<AnuncioDTO> listarAnunciosAtivosTrocaveis(
             String uidUsuario
     ) {
-
         if (uidUsuario == null || uidUsuario.isBlank()) {
             return List.of();
         }
@@ -449,7 +524,7 @@ public class AnuncioService implements IAnuncioService {
         );
     }
 
-    private AnuncioAnalyticsDTO converterParaAnalytics(Anuncio anuncio){
+    private AnuncioAnalyticsDTO converterParaAnalytics(Anuncio anuncio) {
         List<String> autores =
                 buscarNomesAutores(
                         anuncio.getAutores()

@@ -21,7 +21,7 @@
                 <th id="cabecalhoelementos">
                     <a href="/"><img src="/img/Design sem nome (7).svg"></a>
                     <div class="autocomplete-wrapper">
-                        <input type="text" id="pesquisa" placeholder="Pesquisar">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar por título, autor ou tema...">
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                     </div>
                     <th:block sec:authorize="isAuthenticated()">
@@ -116,7 +116,7 @@
                 <input
                         type="text"
                         id="tituloBuscado"
-                        placeholder="Digite o título do livro a ser anunciado">
+                        placeholder="Digite o título ou descreva o livro (ex: suspense policial, clássico grego...)">
 
                 <button
                         id="buscarLivro"
@@ -520,6 +520,7 @@
     </footer>
 </div>
 
+<script src="/js/pesquisa.js"></script>
 <script src="/js/menu-logado.js"></script>
 <script type="module" src="/js/anuncio/anuncio.js"></script>
 <script type="module" src="/js/logout.js"></script>

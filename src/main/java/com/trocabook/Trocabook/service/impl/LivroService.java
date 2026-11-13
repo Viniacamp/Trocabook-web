@@ -16,7 +16,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LivroService implements ILivroService {
@@ -28,6 +31,7 @@ public class LivroService implements ILivroService {
     private final ITraducaoService traducaoService;
     private final GoogleAPIBooksAdapter adapter;
     private final CacheManager cacheManager;
+    private final IaService iaService;
 
     public LivroService(
             LivroRepository livroRepository,
@@ -36,7 +40,8 @@ public class LivroService implements ILivroService {
             GoogleAPIBooksService googleAPIBooksService,
             ITraducaoService traducaoService,
             GoogleAPIBooksAdapter adapter,
-            CacheManager cacheManager
+            CacheManager cacheManager,
+            IaService iaService
     ) {
         this.livroRepository = livroRepository;
         this.autorRepository = autorRepository;
@@ -45,13 +50,46 @@ public class LivroService implements ILivroService {
         this.traducaoService = traducaoService;
         this.adapter = adapter;
         this.cacheManager = cacheManager;
+        this.iaService = iaService;
     }
 
     @Override
-    public List<LivroBuscaOutput> pesquisarLivros(String titulo) {
-        return adapter.adaptar(
-                googleAPIBooksService.buscarTitulo(titulo)
-        );
+    public List<LivroBuscaOutput> pesquisarLivros(String consulta) {
+        if (consulta == null || consulta.isBlank()) {
+            return List.of();
+        }
+
+        String limpa = consulta.trim();
+        boolean pareceDescricao = limpa.split("\\s+").length >= 4 || limpa.contains("?");
+
+        if (!pareceDescricao) {
+            List<LivroBuscaOutput> diretos = adapter.adaptar(
+                    googleAPIBooksService.buscarTitulo(limpa)
+            );
+            if (diretos != null && !diretos.isEmpty()) {
+                return diretos;
+            }
+        }
+
+        List<String> titulosSugeridos = iaService.identificarTitulosParaAnuncio(limpa);
+        Map<String, LivroBuscaOutput> unicos = new LinkedHashMap<>();
+
+        for (String tituloSugerido : titulosSugeridos) {
+            try {
+                List<LivroBuscaOutput> encontrados = adapter.adaptar(
+                        googleAPIBooksService.buscarTitulo(tituloSugerido)
+                );
+                if (encontrados != null) {
+                    for (LivroBuscaOutput item : encontrados.stream().limit(3).toList()) {
+                        String chave = item.googleBooksId() != null ? item.googleBooksId() : item.titulo();
+                        unicos.putIfAbsent(chave, item);
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        return new ArrayList<>(unicos.values());
     }
 
     @Override
@@ -62,9 +100,6 @@ public class LivroService implements ILivroService {
             );
         }
 
-        /*
-         * Verifica se o livro já foi cadastrado.
-         */
         Livro livroExistente =
                 livroRepository.buscarPorGoogleBooksId(
                         livro.googleBooksId()
@@ -73,7 +108,6 @@ public class LivroService implements ILivroService {
         if (livroExistente != null) {
             return livroExistente;
         }
-
 
         List<String> autores =
                 validarEFiltrarLista(
@@ -99,25 +133,11 @@ public class LivroService implements ILivroService {
                         categorias
                 );
 
-        /*
-         * Traduz o título e as categorias em uma única chamada
-         * para a MyMemory API.
-         */
         LivroBuscaOutput livroTraduzido = traduzirLivro(livroValidado);
 
-        /*
-         * Obtém os IDs dos autores.
-         */
         List<String> idsAutores = obterIdsAutores(livroTraduzido.autores());
-
-        /*
-         * Obtém os IDs das categorias.
-         */
         List<String> idsCategorias = obterIdsCategorias(livroTraduzido.categorias());
 
-        /*
-         * Converte o DTO de busca traduzido para a entidade Firebase.
-         */
         Livro entidade =
                 Livro.from(
                         livroTraduzido,
@@ -125,16 +145,10 @@ public class LivroService implements ILivroService {
                         idsCategorias
                 );
 
-        /*
-         * Gera o ID interno do livro.
-         */
         entidade.setId(
                 java.util.UUID.randomUUID().toString()
         );
 
-        /*
-         * Persiste o livro.
-         */
         return livroRepository.salvar(entidade);
     }
 
@@ -165,7 +179,6 @@ public class LivroService implements ILivroService {
             List<String> categorias,
             String urlImagem
     ) {
-
         List<String> autoresValidos =
                 validarEFiltrarLista(
                         autores,
@@ -183,7 +196,6 @@ public class LivroService implements ILivroService {
 
         List<String> idsCategorias =
                 obterIdsCategorias(categoriasValidas);
-
 
         Livro livro = new Livro();
 
@@ -203,17 +215,10 @@ public class LivroService implements ILivroService {
     }
 
     private LivroBuscaOutput traduzirLivro(LivroBuscaOutput livro) {
-
-        /*
-         * Se o livro já estiver em português, não há necessidade
-         * de realizar a chamada à API.
-         */
         if ("pt".equalsIgnoreCase(livro.lingua())
                 || "pt-BR".equalsIgnoreCase(livro.lingua())) {
-
             return livro;
         }
-
 
         String traducao =
                 traducaoService.traduzirTituloECategorias(
@@ -232,7 +237,6 @@ public class LivroService implements ILivroService {
         List<String> categoriasTraduzidas;
 
         if (partes.length > 1 && !partes[1].isBlank()) {
-
             categoriasTraduzidas =
                     List.of(
                                     partes[1]
@@ -242,7 +246,6 @@ public class LivroService implements ILivroService {
                             .map(String::trim)
                             .filter(categoria -> !categoria.isBlank())
                             .toList();
-
         } else {
             categoriasTraduzidas = List.of();
         }
@@ -266,13 +269,11 @@ public class LivroService implements ILivroService {
     }
 
     private List<String> obterIdsAutores(List<String> autores) {
-
         return autores.stream()
                 .map(String::trim)
                 .filter(nome -> !nome.isBlank())
                 .distinct()
                 .map(nome -> {
-
                     Autor autorExistente =
                             autorRepository.buscarPorNome(nome);
 
@@ -281,28 +282,21 @@ public class LivroService implements ILivroService {
                     }
 
                     Autor novoAutor = new Autor();
-
-                    novoAutor.setId(
-                            java.util.UUID.randomUUID().toString()
-                    );
-
+                    novoAutor.setId(java.util.UUID.randomUUID().toString());
                     novoAutor.setNome(nome);
 
                     autorRepository.salvar(novoAutor);
-
                     return novoAutor.getId();
                 })
                 .toList();
     }
 
     private List<String> obterIdsCategorias(List<String> categorias) {
-
         return categorias.stream()
                 .map(String::trim)
                 .filter(nome -> !nome.isBlank())
                 .distinct()
                 .map(nome -> {
-
                     Categoria categoriaExistente =
                             categoriaRepository.buscarPorNome(nome);
 
@@ -310,19 +304,13 @@ public class LivroService implements ILivroService {
                         return categoriaExistente.getId();
                     }
 
-                    Categoria novaCategoria =
-                            new Categoria();
-
-                    novaCategoria.setId(
-                            java.util.UUID.randomUUID().toString()
-                    );
-
+                    Categoria novaCategoria = new Categoria();
+                    novaCategoria.setId(java.util.UUID.randomUUID().toString());
                     novaCategoria.setNome(nome);
 
                     categoriaRepository.salvar(novaCategoria);
 
                     Cache cache = cacheManager.getCache("categorias");
-
                     if (cache != null) {
                         cache.evict("todas");
                     }
@@ -336,7 +324,6 @@ public class LivroService implements ILivroService {
             List<String> valores,
             String mensagemErro
     ) {
-
         if (valores == null) {
             throw new IllegalArgumentException(mensagemErro);
         }
@@ -354,6 +341,4 @@ public class LivroService implements ILivroService {
 
         return valoresValidos;
     }
-
-
 }

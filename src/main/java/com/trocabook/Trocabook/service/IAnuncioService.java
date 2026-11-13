@@ -9,7 +9,6 @@ import java.util.List;
 public interface IAnuncioService {
     AnuncioDTO anunciar(String uidLivro, String uidUsuario, String tipoNegociacao, String descricao);
 
-
     AnuncioDTO buscarPorUid(String uid);
 
     List<AnuncioDTO> listarTodos();
@@ -21,6 +20,8 @@ public interface IAnuncioService {
     List<AnuncioDTO> listarAnunciosAtivosPorUsuarioETipo(String uidUsuario, Anuncio.TipoNegociacao tipoNegociacao);
 
     List<AnuncioDTO> buscarAnunciosAtivosPorTitulo(String titulo);
+
+    List<AnuncioDTO> buscarInteligenteAnunciosAtivos(String consulta);
 
     AnuncioDTO atualizar(
             String uidAnuncio,
@@ -40,7 +41,4 @@ public interface IAnuncioService {
     AnuncioDTO finalizar(String uidAnuncio);
 
     void deletar(String uid);
-
-
-
 }

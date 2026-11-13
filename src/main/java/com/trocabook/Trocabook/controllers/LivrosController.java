@@ -38,7 +38,11 @@ public class LivrosController {
             @RequestParam(
                     value = "livroTipo",
                     defaultValue = "todos"
-            ) String filtroLivros
+            ) String filtroLivros,
+            @RequestParam(
+                    value = "busca",
+                    required = false
+            ) String busca
     ) {
         UsuarioOutput usuarioOutput =
                 usuarioAutenticadoService.getUsuarioOutput(sessao);
@@ -49,7 +53,17 @@ public class LivrosController {
 
         List<AnuncioDTO> listaAnuncios;
 
-        if (filtroLivros.equals("VENDA")
+        if (busca != null && !busca.isBlank()) {
+            listaAnuncios = anuncioService.buscarInteligenteAnunciosAtivos(busca);
+
+            if (filtroLivros.equals("VENDA")
+                    || filtroLivros.equals("TROCA")
+                    || filtroLivros.equals("AMBOS")) {
+                listaAnuncios = listaAnuncios.stream()
+                        .filter(a -> filtroLivros.equals(a.tipoNegociacao()))
+                        .toList();
+            }
+        } else if (filtroLivros.equals("VENDA")
                 || filtroLivros.equals("TROCA")
                 || filtroLivros.equals("AMBOS")) {
 
@@ -63,13 +77,13 @@ public class LivrosController {
         } else {
             listaAnuncios =
                     anuncioService.listarAtivos();
-        }
 
-        listaAnuncios =
-                recomendacaoService.ordenarPorRecomendacao(
-                        usuarioOutput.id(),
-                        listaAnuncios
-                );
+            listaAnuncios =
+                    recomendacaoService.ordenarPorRecomendacao(
+                            usuarioOutput.id(),
+                            listaAnuncios
+                    );
+        }
 
         model.addAttribute(
                 "usuario",
@@ -79,6 +93,11 @@ public class LivrosController {
         model.addAttribute(
                 "filtroLivros",
                 filtroLivros
+        );
+
+        model.addAttribute(
+                "busca",
+                busca != null ? busca : ""
         );
 
         model.addAttribute(

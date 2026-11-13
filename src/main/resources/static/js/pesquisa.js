@@ -4,59 +4,70 @@ const div = document.getElementById("resultadosPesquisa");
 let timeoutPesquisa;
 let timeoutInteracao;
 
-campoPesquisa.addEventListener("input", function () {
+if (campoPesquisa && div) {
+    campoPesquisa.addEventListener("input", function () {
+        const titulo = this.value.trim();
 
-    const titulo = this.value.trim();
+        clearTimeout(timeoutPesquisa);
+        clearTimeout(timeoutInteracao);
 
-    div.innerHTML = "";
+        if (titulo.length < 2) {
+            div.innerHTML = "";
+            div.style.display = "none";
+            return;
+        }
 
-    clearTimeout(timeoutPesquisa);
-    clearTimeout(timeoutInteracao);
+        // Feedback visual imediato enquanto aguarda o debounce e a consulta da IA
+        div.style.display = "block";
+        div.innerHTML = `
+            <p style="padding: 12px; text-align: center; color: #6c63ff; font-weight: 500; margin: 0;">
+                <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i>
+                Buscando livros...
+            </p>
+        `;
 
-    if (titulo.length < 2) {
-        return;
-    }
+        timeoutPesquisa = setTimeout(() => {
+            pesquisar(titulo);
+        }, 600);
+    });
 
-    // Aguarda um pouco antes de buscar
-    timeoutPesquisa = setTimeout(() => {
-        pesquisar(titulo);
-    }, 600);
-});
+    document.addEventListener("click", function (event) {
+        if (!campoPesquisa.contains(event.target) && !div.contains(event.target)) {
+            div.style.display = "none";
+        }
+    });
+
+    campoPesquisa.addEventListener("focus", function () {
+        if (div.innerHTML.trim() !== "") {
+            div.style.display = "block";
+        }
+    });
+}
 
 function pesquisar(titulo) {
-
     fetch(`/pesquisar?titulo=${encodeURIComponent(titulo)}`)
         .then(res => {
-
             if (!res.ok) {
                 throw new Error("Falha ao encontrar livro");
             }
-
             return res.json();
         })
         .then(anuncios => {
-
             div.innerHTML = "";
+            div.style.display = "block";
 
             if (anuncios.length === 0) {
-
                 div.innerHTML = "<p>Nenhum livro encontrado</p>";
-
             } else {
-
-                // Aguarda para considerar o termo como uma pesquisa real
                 clearTimeout(timeoutInteracao);
 
                 timeoutInteracao = setTimeout(() => {
-
                     if (campoPesquisa.value.trim() === titulo) {
                         registrarInteracaoPesquisa(titulo);
                     }
-
                 }, 2000);
 
                 anuncios.forEach(anuncio => {
-
                     const link = document.createElement("a");
                     link.href = "/anuncios/" + anuncio.id;
 
@@ -82,28 +93,21 @@ function pesquisar(titulo) {
             }
         })
         .catch(erro => {
-
-            div.innerHTML =
-                `<p>Ocorreu um erro ao buscar o livro: ${erro.message}</p>`;
+            div.style.display = "block";
+            div.innerHTML = `<p>Ocorreu um erro ao buscar o livro: ${erro.message}</p>`;
         });
 }
 
 function registrarInteracaoPesquisa(termo) {
-
     fetch(`/pesquisar/interacao?termo=${encodeURIComponent(termo)}`, {
         method: "POST"
     })
         .then(res => {
             if (!res.ok) {
-                throw new Error(
-                    `Erro ${res.status} ao registrar interação`
-                );
+                throw new Error(`Erro ${res.status} ao registrar interação`);
             }
         })
         .catch(erro => {
-            console.error(
-                "Erro ao registrar interação de pesquisa:",
-                erro
-            );
+            console.error("Erro ao registrar interação de pesquisa:", erro);
         });
 }

@@ -62,14 +62,12 @@ public class IndexController {
 
 		if (usuario != null) {
 			try {
-				// Tenta buscar a recomendação personalizada
 				recomendacoes = recomendacaoService.buscarRecomendacoes(
 						usuario.id(),
 						5,
 						todosAnuncios
 				);
 			} catch (Exception ex) {
-				// Se a API externa falhar ou der timeout, usa recomendações aleatórias sem travar a página
 				recomendacoes = recomendacaoService.buscarAleatorios(todosAnuncios, 5);
 			}
 		} else {
@@ -103,7 +101,7 @@ public class IndexController {
 		if (nm_livro == null || nm_livro.isBlank()) {
 			return List.of();
 		}
-		return anuncioService.buscarAnunciosAtivosPorTitulo(nm_livro);
+		return anuncioService.buscarInteligenteAnunciosAtivos(nm_livro);
 	}
 
 	@PostMapping("/pesquisar/interacao")

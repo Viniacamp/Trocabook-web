@@ -1,8 +1,12 @@
 package com.trocabook.Trocabook.service.impl;
 
+import java.text.Normalizer;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -20,6 +24,14 @@ public class IaService {
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
             "qwen/qwen3.8-27b"
+    );
+
+    private static final Set<String> STOP_WORDS = Set.of(
+            "a", "o", "as", "os", "um", "uma", "uns", "umas", "de", "do", "da", "dos", "das",
+            "em", "no", "na", "nos", "nas", "por", "para", "com", "sem", "sob", "sobre",
+            "e", "ou", "mas", "que", "qual", "quais", "quero", "queria", "busco", "procuro",
+            "livro", "livros", "obra", "obras", "historia", "história", "algo", "algum", "alguma",
+            "parecido", "parecidos", "tipo", "estilo", "ler", "leitura", "bom", "boa", "muito"
     );
 
     private final RestClient restClient;
@@ -42,9 +54,7 @@ public class IaService {
             String tipoNegociacao,
             String rascunhoUsuario
     ) {
-        if (this.apiKey.isBlank()) {
-            System.err.println("[IaService] GROQ_API_KEY não encontrada no ambiente. Usando fallback local.");
-        } else {
+        if (!this.apiKey.isBlank()) {
             try {
                 String detalhesExtras = (rascunhoUsuario != null && !rascunhoUsuario.isBlank())
                         ? "Observações informadas pelo dono do livro (incorpore isso naturalmente): " + rascunhoUsuario
@@ -77,11 +87,107 @@ public class IaService {
 
                 return chamarIa(prompt);
             } catch (Exception e) {
-                System.err.println("[IaService] Falha ao chamar Groq, acionando fallback local: " + e.getMessage());
+                System.err.println("[IaService] Falha ao chamar Groq na descrição, acionando fallback: " + e.getMessage());
             }
         }
 
         return gerarDescricaoFallbackLocal(titulo, autores, categorias, tipoNegociacao, rascunhoUsuario);
+    }
+
+    /**
+     * Interpreta uma descrição ou consulta livre na tela de anúncio e retorna até 3 títulos reais de livros.
+     */
+    public List<String> identificarTitulosParaAnuncio(String consultaUsuario) {
+        if (consultaUsuario == null || consultaUsuario.isBlank()) {
+            return List.of();
+        }
+
+        if (!this.apiKey.isBlank()) {
+            try {
+                String prompt = String.format("""
+                        O usuário está cadastrando um livro na plataforma Trocabook e digitou: "%s".
+                        Se for um título exato, retorne esse título.
+                        Se for uma descrição de enredo, tema, autor ou pista sobre um livro, identifique até 3 títulos reais de livros que correspondem exatamente ao que foi descrito.
+                        
+                        Regras obrigatórias:
+                        - Retorne APENAS os títulos dos livros, separados por ponto e vírgula (;).
+                        - Não inclua numeração, nomes de autores, aspas, explicações ou textos extras.
+                        - Exemplo de saída válida: Dom Casmurro; Memórias Póstumas de Brás Cubas; Quincas Borba
+                        """, consultaUsuario.trim());
+
+                String resposta = chamarIa(prompt);
+                List<String> titulos = Arrays.stream(resposta.split("[;\\n]+"))
+                        .map(t -> t.replaceAll("^[-*\\d.\\s\"']+|[\"']+$", "").trim())
+                        .filter(t -> !t.isBlank() && t.length() <= 120)
+                        .distinct()
+                        .limit(3)
+                        .toList();
+
+                if (!titulos.isEmpty()) {
+                    return titulos;
+                }
+            } catch (Exception e) {
+                System.err.println("[IaService] Falha ao identificar títulos via Groq: " + e.getMessage());
+            }
+        }
+
+        return List.of(consultaUsuario.trim());
+    }
+
+    /**
+     * Expande uma consulta em linguagem natural para palavras-chave, temas, gêneros e autores relacionados.
+     */
+    public List<String> extrairTermosBuscaSemantica(String consultaUsuario) {
+        if (consultaUsuario == null || consultaUsuario.isBlank()) {
+            return List.of();
+        }
+
+        Set<String> termosFinais = new LinkedHashSet<>(extrairTokensLocais(consultaUsuario));
+
+        if (!this.apiKey.isBlank()) {
+            try {
+                String prompt = String.format("""
+                        Você é o motor de busca semântica do Trocabook (plataforma brasileira de troca e venda de livros).
+                        Um usuário pesquisou: "%s"
+                        
+                        Gere de 5 a 10 palavras-chave curtas (gêneros em português e inglês, temas, sinônimos, autores ou títulos relacionados) para encontrar livros compatíveis no catálogo.
+                        
+                        Regras obrigatórias:
+                        - Retorne APENAS as palavras-chave separadas por vírgula.
+                        - Sem frases, sem numeração, sem explicações.
+                        - Exemplo: suspense, thriller, mistério, investigação, ficção, fiction, Agatha Christie
+                        """, consultaUsuario.trim());
+
+                String resposta = chamarIa(prompt);
+                Arrays.stream(resposta.split("[,;\\n]+"))
+                        .map(this::normalizarTexto)
+                        .filter(t -> t.length() >= 2 && t.length() <= 50)
+                        .limit(12)
+                        .forEach(termosFinais::add);
+            } catch (Exception e) {
+                System.err.println("[IaService] Falha na expansão semântica via Groq, usando tokens locais: " + e.getMessage());
+            }
+        }
+
+        return List.copyOf(termosFinais);
+    }
+
+    public List<String> extrairTokensLocais(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return List.of();
+        }
+        String normalizado = normalizarTexto(texto);
+        return Arrays.stream(normalizado.split("[^a-z0-9]+"))
+                .filter(token -> token.length() >= 2 && !STOP_WORDS.contains(token))
+                .distinct()
+                .toList();
+    }
+
+    public String normalizarTexto(String texto) {
+        if (texto == null) return "";
+        String semAcento = Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return semAcento.toLowerCase(Locale.ROOT).trim();
     }
 
     public String chamarIa(String prompt) {
@@ -91,8 +197,8 @@ public class IaService {
             try {
                 Map<String, Object> body = Map.of(
                         "model", modelo,
-                        "temperature", 0.7,
-                        "max_tokens", 300,
+                        "temperature", 0.4,
+                        "max_tokens", 250,
                         "messages", List.of(
                                 Map.of("role", "user", "content", prompt)
                         )
