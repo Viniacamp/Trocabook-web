@@ -197,23 +197,30 @@
 /* --- ANUNCIANTE --- */
 
 .detalhes-anunciante {
+    margin-top: auto;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color-light, #eee);
+}
+
+.detalhes-anunciante-link {
     display: flex;
     align-items: center;
     gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    width: fit-content;
+    transition: transform 0.2s ease;
+}
 
-    margin-top: auto;
-    margin-bottom: 18px;
-
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color-light);
+.detalhes-anunciante-link:hover {
+    transform: translateX(3px);
 }
 
 .detalhes-anunciante-foto {
-    width: 46px;
-    height: 46px;
-
-    min-width: 46px;
-
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -230,7 +237,7 @@
 
 .detalhes-anunciante-info strong {
     color: #222222;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 /* --- AÇÕES --- */

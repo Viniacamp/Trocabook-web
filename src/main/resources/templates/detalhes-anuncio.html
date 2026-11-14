@@ -204,19 +204,18 @@
             </form>
             <!-- ANUNCIANTE -->
             <div class="detalhes-anunciante">
+                <a th:href="@{'/destaque/' + ${anuncio.uidUsuario()}}" class="detalhes-anunciante-link">
+                    <img th:src="${anuncio.fotoPerfil()}"
+                         alt="Foto do anunciante"
+                         class="detalhes-anunciante-foto">
 
-                <img th:src="${anuncio.fotoPerfil()}"
-                     alt="Foto do anunciante"
-                     class="detalhes-anunciante-foto">
-
-                <div class="detalhes-anunciante-info">
-                    <span>Anunciante</span>
-
-                    <strong th:text="${anuncio.nomeUsuario()}">
-                        Nome do usuário
-                    </strong>
-                </div>
-
+                    <div class="detalhes-anunciante-info">
+                        <span>Anunciante</span>
+                        <strong th:text="${anuncio.nomeUsuario()}">
+                            Nome do usuário
+                        </strong>
+                    </div>
+                </a>
             </div>
 
             <!-- BOTÃO -->

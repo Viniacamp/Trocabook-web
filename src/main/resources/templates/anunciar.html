@@ -332,6 +332,16 @@
 
                     </div>
 
+
+                    <label for="tipoNegociacao">Tipo de negociação:</label>
+                    <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" required>
+                        <option value="">Selecione...</option>
+                        <option value="TROCA">Troca</option>
+                        <option value="VENDA">Venda</option>
+                        <option value="AMBOS">Ambos</option>
+                    </select>
+                    <p id="erroTipo" class="text-danger" style="display: none;"></p>
+
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                         <label for="descricao" style="margin: 0;">Descrição:</label>
                         <button
@@ -349,15 +359,6 @@
                             placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir">
                     </textarea>
                     <p id="erroIa" class="text-danger" style="display: none;"></p>
-
-                    <label for="tipoNegociacao">Tipo de negociação:</label>
-                    <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" required>
-                        <option value="">Selecione...</option>
-                        <option value="TROCA">Troca</option>
-                        <option value="VENDA">Venda</option>
-                        <option value="AMBOS">Ambos</option>
-                    </select>
-                    <p id="erroTipo" class="text-danger" style="display: none;"></p>
 
                     <input type="hidden" th:field="*{lingua}" id="lingua"/>
                     <input type="hidden" th:field="*{googleBooksId}" id="googleBooksId"/>

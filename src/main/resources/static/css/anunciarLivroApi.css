@@ -142,6 +142,11 @@
     min-height: 80px;
 }
 
+label[for="descricao"],
+textarea#descricao {
+    margin-top: 15px;
+}
+
 /* Capa do livro */
 .capaLivro {
     width: 180px;
