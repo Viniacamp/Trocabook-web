@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -57,7 +58,7 @@ public class WebSecurityConfig {
                                 "/uploads/**",
                                 "/vendor/**",
                                 "/dados/**",
-                                "/api/auth/**", // Garantido para o fluxo de autenticação
+                                "/api/auth/**",
                                 "/esqueci-senha",
                                 "/redefinir-senha",
                                 "/firebase-messaging-sw.js"
@@ -123,19 +124,17 @@ public class WebSecurityConfig {
                                                 "https://recaptcha.google.com " +
                                                 "https://www.recaptcha.net; " +
 
-                                                "img-src 'self' data: blob: http://localhost:8080 http://localhost:8181 " +
+                                                "img-src 'self' data: blob: " +
                                                 "https://*.azurewebsites.net " +
                                                 "https://vlibras.gov.br " +
                                                 "https://cdn.jsdelivr.net " +
                                                 "https://books.google.com " +
                                                 "https://books.googleusercontent.com " +
                                                 "https://books.google.com/books/content " +
-                                                "https://www.gstatic.com; " +
+                                                "https://www.gstatic.com " +
+                                                "https://firebasestorage.googleapis.com; " +
 
                                                 "connect-src 'self' " +
-                                                "http://localhost:8181 " +
-                                                "http://localhost:8282 " +
-                                                "ws://localhost:8282 " +
                                                 "https://*.azurewebsites.net " +
                                                 "wss://*.azurewebsites.net " +
                                                 "https://trocabookchatservice.onrender.com " +
@@ -148,6 +147,7 @@ public class WebSecurityConfig {
                                                 "https://securetoken.googleapis.com " +
                                                 "https://fcmregistrations.googleapis.com " +
                                                 "https://firebaseinstallations.googleapis.com " +
+                                                "https://firebasestorage.googleapis.com " +
                                                 "https://www.google.com " +
                                                 "https://vlibras.gov.br " +
                                                 "https://api.mymemory.translated.net; " +
@@ -156,6 +156,10 @@ public class WebSecurityConfig {
                                                 "frame-ancestors 'self';"
                                 )
                         )
+
+                        .addHeaderWriter(new StaticHeadersWriter(
+                                "Permissions-Policy", "camera=(), microphone=(), geolocation=()"
+                        ))
 
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
