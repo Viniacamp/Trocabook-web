@@ -33,6 +33,7 @@ public class WebSecurityConfig {
                                 "/dados/**",
                                 "/chat/**",
                                 "/pesquisar/**",
+                                "/uploads/**",
                                 "/api/auth/**",
                                 "/api/fcm/**",
                                 "/api/suporte/**", // <--- Libera o CSRF para as requisições de suporte
