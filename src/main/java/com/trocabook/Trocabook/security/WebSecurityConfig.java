@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -55,7 +56,6 @@ public class WebSecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
-                                "/uploads/**",
                                 "/vendor/**",
                                 "/dados/**",
                                 "/api/auth/**",
@@ -63,6 +63,7 @@ public class WebSecurityConfig {
                                 "/redefinir-senha",
                                 "/firebase-messaging-sw.js"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -80,7 +81,8 @@ public class WebSecurityConfig {
 
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
-                            if (request.getRequestURI().startsWith("/api/")) {
+                            String uri = request.getRequestURI();
+                            if (uri.startsWith("/api/") || uri.startsWith("/uploads/")) {
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Não autenticado");
                             } else {
                                 response.sendRedirect("/login");
