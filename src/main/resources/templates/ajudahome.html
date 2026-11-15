@@ -7,42 +7,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/img/logo-trocabook.png"/>
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+
+    <!-- Meta tags CSRF para autenticação correta das requisições POST -->
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
+
     <title>Central de Ajuda | Trocabook</title>
+    <style>
+        .ajudahome-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: inherit;
+        }
+
+        .ajudahome-container h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .search-box-ajuda {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: 1px solid #dcdde1;
+            border-radius: 8px;
+            margin-bottom: 35px;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        .search-box-ajuda:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.15);
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .ajuda-card {
+            background: #ffffff;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .ajuda-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+
+        .ajuda-card h3 {
+            color: #1e293b;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .ajuda-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .artigo-detalhe {
+            display: none;
+            background: #ffffff;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .artigo-detalhe.ativo {
+            display: block;
+        }
+
+        .btn-voltar {
+            background: #f1f5f9;
+            color: #334155;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 25px;
+            transition: background 0.2s;
+        }
+
+        .btn-voltar:hover {
+            background: #e2e8f0;
+        }
+
+        .artigo-detalhe h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .artigo-detalhe .conteudo-corpo {
+            color: #334155;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .artigo-detalhe .conteudo-corpo p {
+            margin-bottom: 15px;
+        }
+
+        .artigo-detalhe .conteudo-corpo ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .artigo-detalhe .conteudo-corpo li {
+            margin-bottom: 8px;
+        }
+
+        .escondido {
+            display: none !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <header>
         <div class="wrapper">
-            <table class="cabecalho"><tr>
-                <th id="cabecalhoelementos">
-                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
-                    <div class="autocomplete-wrapper">
-                        <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
-                        <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
-                    </div>
-
-                    <th:block sec:authorize="isAuthenticated()">
-                        <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img src="/img/vendedor4.svg" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
-                            </button>
-                            
-                            <div id="userDropdown" class="dropdown-content">
-                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                                <a href="/chat">Chat</a>
-                                <hr class="divider">
-                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
-                            </div>
+            <table class="cabecalho">
+                <tr>
+                    <th id="cabecalhoelementos">
+                        <a href="/"><img src="/img/Design sem nome (7).svg" alt="Logo Trocabook"></a>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
+                            <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                         </div>
-                    </th:block>
 
-                    <th:block sec:authorize="!isAuthenticated()">
-                        <a href="/login" id="loginbotao"><button type="submit" style="width: 150px; height:37px;">Fazer login</button></a>
-                    </th:block>
-                </th></tr>
+                        <th:block sec:authorize="isAuthenticated()">
+                            <div class="user-menu-container">
+                                <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                                    <img th:src="${usuario?.fotoPerfil}" class="user-menu-icon" alt="Ícone do usuário">
+                                    <span>Olá, <span th:text="${usuario?.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span></span>
+                                    <span class="arrow">▼</span>
+                                </button>
+
+                                <div id="userDropdown" class="dropdown-content">
+                                    <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                    <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                    <a href="/chat">Chat</a>
+                                    <hr class="divider">
+                                    <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                                </div>
+                            </div>
+                        </th:block>
+
+                        <th:block sec:authorize="!isAuthenticated()">
+                            <a href="/login" id="loginbotao">
+                                <button type="button" style="width: 150px; height:37px;">Fazer login</button>
+                            </a>
+                        </th:block>
+                    </th>
+                </tr>
                 <tr>
                     <th:block sec:authorize="!isAuthenticated()">
                         <th>
@@ -65,83 +204,260 @@
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
 
-    <div class="ajudahome">
-        <h1>Bem-vindo a central de ajuda da Trocabook</h1>
-        <input type="text" placeholder="Como podemos ajudar?">
-        <div class="blocos">
-            <section class="flex">
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso incrível projeto!</h3>
-                        <p>Descubra Como Nosso Projeto se alinha com os Objetivos de Desenvolvimento Sustentável (ODS)</p>
-                    </a>
-                </div>
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso sistema de troca e venda</h3>
-                        <p>Entenda Como Funciona Nosso Sistema de Troca e Venda de Livros</p>
-                    </a>
-                </div>
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Segurança da plataforma</h3>
-                        <p>Sua Segurança em Primeiro Lugar: Nossas Medidas de Proteção na Plataforma</p>
-                    </a>
-                </div>
-            </section>
-            <section class="flex">
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Política Trocabook</h3>
-                        <p>Nossa Política Trocabook: Compromisso com a Sustentabilidade e a Transparência</p>
-                    </a>
-                </div>
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso incrível projeto!</h3>
-                        <p>lorem ipsum</p>
-                    </a>
-                </div>
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso incrível projeto!</h3>
-                        <p>lorem ipsum</p>
-                    </a>
-                </div>
-            </section>
-            <section class="flex">
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso incrível projeto!</h3>
-                        <p>lorem ipsum</p>
-                    </a>
-                </div>
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso incrível projeto!</h3>
-                        <p>lorem ipsum</p>
-                    </a>
-                </div>
-                <div class="ajudahome">
-                    <a href="">
-                        <h3>Conheça nosso incrível projeto!</h3>
-                        <p>lorem ipsum</p>
-                    </a>
-                </div>
-            </section>
+    <div class="ajudahome-container">
+        <h1>Bem-vindo à Central de Ajuda da Trocabook</h1>
+
+        <input type="text" id="inputBuscaAjuda" class="search-box-ajuda" placeholder="Como podemos ajudar? Digite sua dúvida...">
+
+        <!-- SEÇÃO 1: LISTAGEM DE CARDS -->
+        <div id="secaoCards" class="grid-cards">
+
+            <div class="ajuda-card" data-keywords="ods sustentabilidade objetivo desenvolvimento sustentavel projeto" onclick="abrirArtigo('artigoOds')">
+                <h3>Conheça nosso incrível projeto!</h3>
+                <p>Descubra como nosso projeto se alinha com os Objetivos de Desenvolvimento Sustentável (ODS).</p>
+            </div>
+
+            <div class="ajuda-card" data-keywords="troca venda sistema livros anunciar comprar" onclick="abrirArtigo('artigoSistema')">
+                <h3>Conheça nosso sistema de troca e venda</h3>
+                <p>Entenda como funciona nosso sistema de troca e venda de livros.</p>
+            </div>
+
+            <div class="ajuda-card" data-keywords="seguranca protecao dados plataforma senha" onclick="abrirArtigo('artigoSeguranca')">
+                <h3>Segurança da plataforma</h3>
+                <p>Sua segurança em primeiro lugar: Nossas medidas de proteção na plataforma.</p>
+            </div>
+
+            <div class="ajuda-card" data-keywords="politica trocabook transparencia sustentabilidade regras" onclick="abrirArtigo('artigoPolitica')">
+                <h3>Política Trocabook</h3>
+                <p>Nossa Política Trocabook: Compromisso com a sustentabilidade e a transparência.</p>
+            </div>
+
+            <div class="ajuda-card" data-keywords="duvidas frequentes suporte ajuda perguntas" onclick="abrirArtigo('artigoDuvidas')">
+                <h3>Dúvidas Frequentes</h3>
+                <p>Encontre respostas rápidas para as principais dúvidas sobre o uso.</p>
+            </div>
+
+            <div class="ajuda-card" data-keywords="contato suporte equipe problema tecnico" id="cardSuporte" onclick="abrirArtigo('artigoSuporte')">
+                <h3>Suporte ao Usuário</h3>
+                <p>Precisa de ajuda extra? Envie sua dúvida diretamente para nossa equipe.</p>
+            </div>
+
         </div>
+
+        <!-- SEÇÃO 2: ARTIGOS DETALHADOS -->
+        <div id="artigosContainer">
+
+            <div id="artigoOds" class="artigo-detalhe">
+                <button class="btn-voltar" onclick="voltarParaCards()">← Voltar para a Central de Ajuda</button>
+                <h2>Conheça nosso incrível projeto!</h2>
+                <div class="conteudo-corpo">
+                    <p>O <strong>Trocabook</strong> nasceu com a missão de transformar a forma como estudantes e leitores acessam literatura e materiais de estudo. Acreditamos que o conhecimento deve circular livremente, sem barreiras financeiras ou descarte desnecessário de livros.</p>
+                    <p>Nossa plataforma apoia diretamente iniciativas globais de sustentabilidade:</p>
+                    <ul>
+                        <li><strong>ODS 4 (Educação de Qualidade):</strong> Democratizamos o acesso a livros didáticos e literários.</li>
+                        <li><strong>ODS 12 (Consumo e Produção Responsáveis):</strong> Combatemos o desperdício editorial através da economia circular, estendendo o ciclo de vida útil de cada exemplar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="artigoSistema" class="artigo-detalhe">
+                <button class="btn-voltar" onclick="voltarParaCards()">← Voltar para a Central de Ajuda</button>
+                <h2>Conheça nosso sistema de troca e venda</h2>
+                <div class="conteudo-corpo">
+                    <p>O funcionamento do Trocabook é intuitivo e voltado para a comunidade:</p>
+                    <ul>
+                        <li><strong>Anúncio Simplificado:</strong> Cadastre livros em poucos cliques, informando o estado de conservação, fotos e preferências.</li>
+                        <li><strong>Busca Inteligente:</strong> Encontre rapidamente os títulos desejados por título, autor ou categoria.</li>
+                        <li><strong>Chat Integrado:</strong> Negocie diretamente com outros leitores de forma privada e segura para alinhar a entrega.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="artigoSeguranca" class="artigo-detalhe">
+                <button class="btn-voltar" onclick="voltarParaCards()">← Voltar para a Central de Ajuda</button>
+                <h2>Segurança da plataforma</h2>
+                <div class="conteudo-corpo">
+                    <p>Sua segurança e a integridade dos seus dados são prioridades absolutas no Trocabook:</p>
+                    <ul>
+                        <li><strong>Proteção de Dados Pessoais:</strong> Criptografia moderna em todas as informações cadastrais.</li>
+                        <li><strong>Controle de Acesso Confiável:</strong> Apenas usuários autenticados e verificados podem realizar anúncios e interagir no chat.</li>
+                        <li><strong>Ambiente Monitorado:</strong> Auditorias e manutenções preventivas contínuas para mitigar vulnerabilidades.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="artigoPolitica" class="artigo-detalhe">
+                <button class="btn-voltar" onclick="voltarParaCards()">← Voltar para a Central de Ajuda</button>
+                <h2>Política Trocabook</h2>
+                <div class="conteudo-corpo">
+                    <p>A Política do Trocabook rege a convivência e transparência da nossa comunidade:</p>
+                    <ul>
+                        <li><strong>Transparência nas Negociações:</strong> Descrição fiel do estado físico e real dos livros oferecidos.</li>
+                        <li><strong>Respeito Mútuo:</strong> Tolerância zero a fraudes, preconceito ou conduta inadequada no chat.</li>
+                        <li><strong>Sustentabilidade e Ética:</strong> Fomento constante ao consumo consciente e à responsabilidade social.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="artigoDuvidas" class="artigo-detalhe">
+                <button class="btn-voltar" onclick="voltarParaCards()">← Voltar para a Central de Ajuda</button>
+                <h2>Dúvidas Frequentes</h2>
+                <div class="conteudo-corpo">
+                    <p><strong>1. Como faço para anunciar um livro?</strong><br>
+                        Faça login, clique em "Anunciar Livro" no menu superior e preencha os dados solicitados.</p>
+                    <p><strong>2. A troca de livros tem custo?</strong><br>
+                        Não cobramos taxas de troca direta. O frete ou entrega é combinado entre os usuários.</p>
+                    <p><strong>3. Como gerenciar meus anúncios?</strong><br>
+                        Acesse a seção "Meus Livros" no menu da sua conta.</p>
+                </div>
+            </div>
+
+            <!-- Artigo 6: Suporte com Formulário de Envio -->
+            <div id="artigoSuporte" class="artigo-detalhe">
+                <button class="btn-voltar" onclick="voltarParaCards()">← Voltar para a Central de Ajuda</button>
+                <h2>Suporte ao Usuário</h2>
+                <div class="conteudo-corpo">
+                    <p>Encontrou algum erro técnico ou problema inesperado? Envie sua dúvida e nossa equipe analisará diretamente no painel administrativo.</p>
+
+                    <form id="formSuporte" onsubmit="enviarDuvidaSuporte(event)">
+                        <!-- NOVO: Campo de Título / Assunto -->
+                        <div style="margin-bottom: 15px;">
+                            <label for="tituloDuvida" style="display: block; margin-bottom: 5px; font-weight: 600; color: #334155;">Título / Assunto:</label>
+                            <input type="text" id="tituloDuvida" required placeholder="Ex: Problema ao carregar imagens..." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label for="mensagemDuvida" style="display: block; margin-bottom: 5px; font-weight: 600; color: #334155;">Sua Mensagem / Dúvida:</label>
+                            <textarea id="mensagemDuvida" rows="5" required placeholder="Descreva detalhadamente o ocorrido..." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
+                        </div>
+                        <button type="submit" style="background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                            Enviar Dúvida
+                        </button>
+                    </form>
+                    <div id="sucessoEnvio" style="display: none; margin-top: 15px; font-weight: 600;"></div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
+
     <footer>
         <div class="rodapenovo">
-            <a href="/"><img src="/img/Design sem nome.svg"></a>
-            <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
+            <a href="/"><img src="/img/Design sem nome.svg" alt="Rodapé Logo"></a>
+            <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo à reutilização</p></a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
-            <small>© 2025 Sistema Trocabook<br>Todos os direitos reservados</small>
+            <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
         </div>
     </footer>
 </div>
 </body>
+
 <script src="/js/pesquisa.js"></script>
 <script type="module" src="/js/logout.js"></script>
 <script src="/js/menu-logado.js"></script>
+
+<script>
+    function abrirArtigo(idArtigo) {
+        document.getElementById('secaoCards').style.display = 'none';
+        document.getElementById('inputBuscaAjuda').style.display = 'none';
+
+        document.querySelectorAll('.artigo-detalhe').forEach(artigo => {
+            artigo.classList.remove('ativo');
+        });
+
+        const artigoEscolhido = document.getElementById(idArtigo);
+        if (artigoEscolhido) {
+            artigoEscolhido.classList.add('ativo');
+            window.scrollTo({ top: 200, behavior: 'smooth' });
+        }
+    }
+
+    function voltarParaCards() {
+        document.querySelectorAll('.artigo-detalhe').forEach(artigo => {
+            artigo.classList.remove('ativo');
+        });
+        document.getElementById('secaoCards').style.display = 'grid';
+        document.getElementById('inputBuscaAjuda').style.display = 'block';
+        document.getElementById('inputBuscaAjuda').value = '';
+
+        document.querySelectorAll('.ajuda-card').forEach(card => {
+            card.classList.remove('escondido');
+        });
+
+        window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+
+    function enviarDuvidaSuporte(event) {
+        event.preventDefault();
+        const titulo = document.getElementById('tituloDuvida').value; // <-- Captura o título
+        const mensagem = document.getElementById('mensagemDuvida').value;
+
+        const tokenCsrf = document.querySelector("meta[name='_csrf']") ? document.querySelector("meta[name='_csrf']").content : '';
+        const headerCsrf = document.querySelector("meta[name='_csrf_header']") ? document.querySelector("meta[name='_csrf_header']").content : 'X-CSRF-TOKEN';
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (tokenCsrf) {
+            headers[headerCsrf] = tokenCsrf;
+        }
+
+        const msgSucesso = document.getElementById('sucessoEnvio');
+        msgSucesso.style.display = 'block';
+        msgSucesso.style.color = '#2563eb';
+        msgSucesso.innerText = 'Enviando requisição...';
+
+        fetch('/api/suporte/enviar', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ titulo: titulo, mensagem: mensagem }) // <-- Envia o título junto
+        })
+            .then(async response => {
+                const textoResposta = await response.text();
+                if (response.ok) {
+                    document.getElementById('formSuporte').style.display = 'none';
+                    msgSucesso.style.color = '#16a34a';
+                    msgSucesso.innerText = 'Dúvida enviada com sucesso!';
+                } else {
+                    msgSucesso.style.color = '#dc2626';
+                    msgSucesso.innerText = `Erro HTTP ${response.status}: ${textoResposta}`;
+                }
+            })
+            .catch(error => {
+                console.error('Erro de rede:', error);
+                msgSucesso.style.color = '#dc2626';
+                msgSucesso.innerText = 'Erro de conexão: ' + error.message;
+            });
+    }
+
+    const inputBuscaAjuda = document.getElementById('inputBuscaAjuda');
+    if (inputBuscaAjuda) {
+        inputBuscaAjuda.addEventListener('input', function(e) {
+            const termo = e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            const cards = document.querySelectorAll('.ajuda-card');
+            const cardSuporte = document.getElementById('cardSuporte');
+
+            let encontrouAlgum = false;
+
+            cards.forEach(card => {
+                const keywords = card.getAttribute('data-keywords') || '';
+                const textoCard = card.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                if (termo === "" || keywords.includes(termo) || textoCard.includes(termo)) {
+                    card.classList.remove('escondido');
+                    if (termo !== "") encontrouAlgum = true;
+                } else {
+                    card.classList.add('escondido');
+                }
+            });
+
+            if (termo !== "" && !encontrouAlgum && cardSuporte) {
+                cards.forEach(card => card.classList.add('escondido'));
+                cardSuporte.classList.remove('escondido');
+            }
+        });
+    }
+</script>
 </html>
