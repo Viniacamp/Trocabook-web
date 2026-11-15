@@ -64,7 +64,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "squirtle@gmail.com",
                                 null,
                                 "Squirtle@123",
-                                "/img/vendedor1.svg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/vendedor1.svg",
                                 null,
                                 LocalDate.of(2000, 1, 1),
                                 "123456789",
@@ -79,7 +79,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "pedrol@gmail.com",
                                 null,
                                 "Pedro@456",
-                                "/img/vendedor2.svg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/vendedor2.svg",
                                 null,
                                 LocalDate.of(2000, 2, 2),
                                 "234567890",
@@ -94,7 +94,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "rafa@gmail.com",
                                 null,
                                 "Rafaela@789",
-                                "/img/vendedor3.svg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/vendedor3.svg",
                                 null,
                                 LocalDate.of(2000, 3, 3),
                                 "345678901",
@@ -109,7 +109,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "vini@gmail.com",
                                 null,
                                 "Vini@101",
-                                "/img/vendedor4.svg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/vendedor4.svg",
                                 null,
                                 LocalDate.of(2000, 4, 4),
                                 "456789012",
@@ -124,7 +124,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "well@gmail.com",
                                 null,
                                 "Well@202",
-                                "/img/vendedor5.svg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/vendedor5.svg",
                                 null,
                                 LocalDate.of(2000, 5, 5),
                                 "567890123",
@@ -139,7 +139,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "gpt@gmail.com",
                                 null,
                                 "GptBot@2025!",
-                                "/img/vendedor6.svg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/vendedor6.svg",
                                 null,
                                 LocalDate.of(2000, 6, 6),
                                 "678901234",
@@ -158,7 +158,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Henry Kissinger"),
                                 "Companhia das Letras",
                                 "1980",
-                                "/img/IALIVRO.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/IALIVRO.png",
                                 "pt",
                                 List.of("Tecnologia", "Inteligência Artificial")
                         )
@@ -171,7 +171,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Liu Cixin"),
                                 "Suma",
                                 "1980",
-                                "/img/livro2.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/livro2.png",
                                 "pt",
                                 List.of("Ficção Científica")
                         )
@@ -184,7 +184,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("John Green"),
                                 "Intrínseca",
                                 "1980",
-                                "/img/culpa.jpg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/culpa.jpg",
                                 "pt",
                                 List.of("Romance")
                         )
@@ -197,7 +197,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Antoine de Saint-Exupéry"),
                                 "Agir",
                                 "1980",
-                                "/img/livro4.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/livro4.png",
                                 "pt",
                                 List.of("Literatura", "Infantil")
                         )
@@ -210,7 +210,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Ryan Holiday"),
                                 "Alta Books",
                                 "1980",
-                                "/img/livro6.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/livro6.png",
                                 "pt",
                                 List.of("Filosofia")
                         )
@@ -223,7 +223,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Machado de Assis"),
                                 "Penguin-Companhia",
                                 "1980",
-                                "/img/dom casmurro.jpg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/dom casmurro.jpg",
                                 "pt",
                                 List.of("Literatura Brasileira")
                         )
@@ -236,7 +236,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("J. K. Rowling"),
                                 "Rocco",
                                 "1980",
-                                "/img/harry.jpg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/harry.jpg",
                                 "pt",
                                 List.of("Fantasia")
                         )
@@ -249,7 +249,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Eric Freeman", "Elisabeth Robson"),
                                 "Alta Books",
                                 "1980",
-                                "/img/capa-ampliada-9788575224380.jpg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/capa-ampliada-9788575224380.jpg",
                                 "pt",
                                 List.of("Programação", "Web")
                         )
@@ -262,7 +262,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Ian Sommerville"),
                                 "Pearson",
                                 "1980",
-                                "/img/engenharia de software.jpg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/engenharia de software.jpg",
                                 "pt",
                                 List.of("Engenharia de Software")
                         )
@@ -275,7 +275,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("J. R. R. Tolkien"),
                                 "HarperCollins",
                                 "1980",
-                                "/img/61460909.jpg",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/61460909.jpg",
                                 "pt",
                                 List.of("Fantasia")
                         )
@@ -288,7 +288,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Bram Stoker"),
                                 "Penguin",
                                 "1980",
-                                "/img/livro5.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/livro5.png",
                                 "pt",
                                 List.of("Terror", "Literatura")
                         )
@@ -301,7 +301,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("J. K. Rowling"),
                                 "Rocco",
                                 "1980",
-                                "/img/livro3.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/livro3.png",
                                 "pt",
                                 List.of("Fantasia")
                         )
@@ -314,7 +314,7 @@ public class DataInitializer implements CommandLineRunner {
                                 List.of("Charlie Donlea"),
                                 "Faro Editorial",
                                 "1980",
-                                "/img/image-15@2x.png",
+                                "https://trocabook-web-cme0guh4a8btf7fd.eastus2-01.azurewebsites.net/img/image-15@2x.png",
                                 "pt",
                                 List.of("Suspense", "Mistério")
                         )
