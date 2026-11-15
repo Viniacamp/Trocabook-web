@@ -26,7 +26,7 @@ public class FileController {
     public ResponseEntity<String> uploadUsuario(@RequestParam("file") MultipartFile file) {
         try {
             String filePath = fs.armazenarArquivoUsuario(file);
-            return ResponseEntity.ok("Arquivo salvo em: " + filePath);
+            return ResponseEntity.ok(filePath);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar arquivo.");
         }
@@ -36,7 +36,7 @@ public class FileController {
     public ResponseEntity<String> uploadLivro(@RequestParam("file") MultipartFile file) {
         try {
             String filePath = fs.armazenarArquivoLivro(file);
-            return ResponseEntity.ok("Arquivo salvo em: " + filePath);
+            return ResponseEntity.ok(filePath);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar arquivo.");
         }
