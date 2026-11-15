@@ -34,6 +34,7 @@ public class WebSecurityConfig {
                                 "/pesquisar/**",
                                 "/api/auth/**",
                                 "/api/fcm/**",
+                                "/api/suporte/**", // <--- Libera o CSRF para as requisições de suporte
                                 "/deslogar",
                                 "/cadastro"
                         )
@@ -52,6 +53,7 @@ public class WebSecurityConfig {
                                 "/cadastroNovo",
                                 "/sobreNos",
                                 "/ajuda",
+                                "/api/suporte/**", // <--- Permite acesso público à API de suporte do site
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",

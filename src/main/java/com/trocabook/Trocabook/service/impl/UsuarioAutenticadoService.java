@@ -23,29 +23,30 @@ public class UsuarioAutenticadoService {
     }
 
     public Usuario getUsuario(HttpSession sessao) {
-
-        Usuario usuario =
-                (Usuario) sessao.getAttribute(USUARIO_LOGADO);
-
+        // 1. Tenta pegar da sessão HTTP primeiro
+        Usuario usuario = (Usuario) sessao.getAttribute(USUARIO_LOGADO);
         if (usuario != null) {
             return usuario;
         }
 
-        FirebaseToken firebaseToken = getFirebaseToken();
+        // 2. Se não estiver na sessão, tenta recuperar via Token do Firebase
+        try {
+            FirebaseToken firebaseToken = getFirebaseToken();
+            if (firebaseToken != null) {
+                String uid = firebaseToken.getUid();
+                usuario = usuarioRepository.buscarPorUid(uid);
 
-        String uid = firebaseToken.getUid();
-
-        usuario = usuarioRepository.buscarPorUid(uid);
-
-        if (usuario == null){
-            throw  new IllegalStateException(
-                    "Usuário autenticado não encontrado."
-            );
+                if (usuario != null) {
+                    atualizarSessao(sessao, usuario);
+                    return usuario;
+                }
+            }
+        } catch (Exception e) {
+            // Se falhar a extração do token, apenas retorna null em vez de quebrar a aplicação
+            return null;
         }
 
-        atualizarSessao(sessao, usuario);
-
-        return usuario;
+        return null;
     }
 
     public void atualizarSessao(
@@ -62,8 +63,11 @@ public class UsuarioAutenticadoService {
     public UsuarioOutput getUsuarioOutput(
             HttpSession sessao
     ) {
-
         Usuario usuario = getUsuario(sessao);
+
+        if (usuario == null) {
+            return null; // Retorna null para o Controller tratar com elegância
+        }
 
         return new UsuarioOutput(
                 usuario.getId(),
@@ -73,7 +77,6 @@ public class UsuarioAutenticadoService {
     }
 
     private FirebaseToken getFirebaseToken() {
-
         Authentication authentication =
                 SecurityContextHolder
                         .getContext()
@@ -82,13 +85,9 @@ public class UsuarioAutenticadoService {
         if (authentication == null ||
                 !(authentication.getPrincipal()
                         instanceof FirebaseToken)) {
-
-            throw new IllegalStateException(
-                    "Usuário não autenticado."
-            );
+            return null; // Retorna null em vez de lançar exceção travada
         }
 
         return (FirebaseToken) authentication.getPrincipal();
     }
-
 }
