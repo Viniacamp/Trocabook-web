@@ -58,6 +58,7 @@ public class WebSecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
+                                "/uploads/**",
                                 "/vendor/**",
                                 "/dados/**",
                                 "/api/auth/**",
@@ -65,8 +66,6 @@ public class WebSecurityConfig {
                                 "/redefinir-senha",
                                 "/firebase-messaging-sw.js"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/uploads/usuario", "/uploads/livro").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
