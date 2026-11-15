@@ -7,6 +7,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+effective-pom
+*.versionsBackup
 
 ### STS ###
 .apt_generated
