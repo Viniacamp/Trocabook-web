@@ -24,7 +24,7 @@
                 <tr>
                     <th id="cabecalhoelementos">
                         <a href="/admin">
-                            <img src="/img/Design sem nome (7).svg" alt="Trocabook">
+                            <img src="/img/Design sem nome (7).svg" alt="Logo Trocabook Administração">
                         </a>
                         <span class="admin-header-title">Administração</span>
                         <button type="button" id="deslogar" class="admin-logout-btn">Sair</button>
@@ -33,6 +33,20 @@
             </table>
         </div>
     </header>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
     <nav class="admin-nav">
         <a href="/admin">Início</a>
@@ -49,25 +63,25 @@
         </section>
 
         <!-- Navegação entre abas de análises -->
-        <div class="admin-tabs">
-            <button type="button" class="admin-tab-btn admin-tab-ativa" data-aba="anuncios">
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn admin-tab-ativa" data-aba="anuncios" role="tab" aria-selected="true">
                 📢 Anúncios
             </button>
-            <button type="button" class="admin-tab-btn" data-aba="negociacoes">
+            <button type="button" class="admin-tab-btn" data-aba="negociacoes" role="tab" aria-selected="false">
                 🤝 Negociações
             </button>
-            <button type="button" class="admin-tab-btn" data-aba="previsao">
+            <button type="button" class="admin-tab-btn" data-aba="previsao" role="tab" aria-selected="false">
                 📈 Previsão de Usuários
             </button>
         </div>
 
         <!-- Indicador de Carregamento Geral -->
-        <div id="dashboardCarregando" class="admin-estado-listagem">
+        <div id="dashboardCarregando" class="admin-estado-listagem" role="status" aria-live="polite">
             Carregando indicadores...
         </div>
 
         <!-- Indicador de Erro -->
-        <div id="dashboardErro" class="admin-estado-listagem admin-estado-erro" hidden>
+        <div id="dashboardErro" class="admin-estado-listagem admin-estado-erro" role="alert" hidden>
             Não foi possível carregar os dados desta análise.
         </div>
 
@@ -91,11 +105,11 @@
             <div class="admin-graficos-grid">
                 <div class="admin-grafico-card">
                     <h2>Evolução Mensal e Projeção de Anúncios</h2>
-                    <canvas id="chartEvolucaoAnuncios"></canvas>
+                    <canvas id="chartEvolucaoAnuncios" aria-label="Gráfico de evolução mensal de anúncios" role="img"></canvas>
                 </div>
                 <div class="admin-grafico-card">
                     <h2>Distribuição por Tipo de Negociação</h2>
-                    <canvas id="chartTiposAnuncios"></canvas>
+                    <canvas id="chartTiposAnuncios" aria-label="Gráfico de distribuição por tipo de negociação" role="img"></canvas>
                 </div>
             </div>
 
@@ -125,11 +139,11 @@
             <div class="admin-graficos-grid">
                 <div class="admin-grafico-card">
                     <h2>Histórico Mensal de Negociações</h2>
-                    <canvas id="chartHistoricoNegociacoes"></canvas>
+                    <canvas id="chartHistoricoNegociacoes" aria-label="Gráfico de histórico mensal de negociações" role="img"></canvas>
                 </div>
                 <div class="admin-grafico-card">
                     <h2>Afinidade de Categorias (Trocas)</h2>
-                    <canvas id="chartAfinidadeCategorias"></canvas>
+                    <canvas id="chartAfinidadeCategorias" aria-label="Gráfico de afinidade de categorias" role="img"></canvas>
                 </div>
             </div>
 
@@ -159,7 +173,7 @@
             <div class="admin-graficos-grid">
                 <div class="admin-grafico-card admin-grafico-largura-total">
                     <h2>Projeção Temporal de Cadastros de Usuários</h2>
-                    <canvas id="chartPrevisaoUsuarios"></canvas>
+                    <canvas id="chartPrevisaoUsuarios" aria-label="Gráfico de projeção temporal de cadastros" role="img"></canvas>
                 </div>
             </div>
 

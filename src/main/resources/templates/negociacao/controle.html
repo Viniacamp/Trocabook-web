@@ -17,15 +17,15 @@
         <div class="wrapper">
             <table class="cabecalho"><tr>
                 <th id="cabecalhoelementos">
-                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <a href="/"><img src="/img/Design sem nome (7).svg" alt="Logo Trocabook"></a>
                     <div class="autocomplete-wrapper">
-                        <input type="text" id="pesquisa" placeholder="Pesquisar">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar" aria-label="Pesquisar">
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                     </div>
 
                     <th:block sec:authorize="isAuthenticated()">
                         <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()" aria-label="Menu do usuário">
                                 <img
                                         th:src="${usuarioLogado.fotoPerfil}"
                                         class="user-menu-icon"
@@ -35,7 +35,7 @@
                                         th:text="${usuarioLogado.nome}"
                                         style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);">
                                 </span>
-                                <span class="arrow">▼</span>
+                                <span class="arrow" aria-hidden="true">▼</span>
                             </button>
 
                             <div id="userDropdown" class="dropdown-content">
@@ -57,7 +57,7 @@
     </header>
 
     <div vw class="enabled">
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
@@ -66,6 +66,8 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
     <main class="negociacao-container">
 
@@ -122,10 +124,10 @@
                 </div>
 
 
-                    <!-- Livro oferecido quando existe anúncio -->
-                    <div
-                            class="negociacao-livro-card"
-                            th:if="${negociacao.tipoNegociacao == 'TROCA'
+                <!-- Livro oferecido quando existe anúncio -->
+                <div
+                        class="negociacao-livro-card"
+                        th:if="${negociacao.tipoNegociacao == 'TROCA'
                     and negociacao.anuncioOferecidoId != null}">
 
                     <span class="negociacao-label">
@@ -157,17 +159,17 @@
                 </div>
 
 
-                    <!-- Troca com livro que não possui anúncio -->
-                    <div
-                            class="negociacao-livro-card livro-nao-anunciado"
-                            th:if="${negociacao.tipoNegociacao == 'TROCA'
+                <!-- Troca com livro que não possui anúncio -->
+                <div
+                        class="negociacao-livro-card livro-nao-anunciado"
+                        th:if="${negociacao.tipoNegociacao == 'TROCA'
                     and negociacao.anuncioOferecidoId == null}">
 
                     <span class="negociacao-label">
                         Livro oferecido
                     </span>
 
-                    <div class="livro-nao-anunciado-icone">
+                    <div class="livro-nao-anunciado-icone" aria-hidden="true">
                         📖
                     </div>
 
@@ -187,7 +189,7 @@
                         class="negociacao-venda-info"
                         th:if="${negociacao.tipoNegociacao == 'VENDA'}">
 
-                    <div class="venda-icone">
+                    <div class="venda-icone" aria-hidden="true">
                         ✓
                     </div>
 
@@ -237,7 +239,7 @@
                 </div>
 
 
-                <div class="participante-separador">
+                <div class="participante-separador" aria-hidden="true">
                     <span>⇄</span>
                 </div>
 
@@ -407,10 +409,10 @@
 
         <div class="rodapenovo">
 
-            <a href="/static">
+            <a href="/">
 
                 <img
-                        src="/img/Design%20sem%20nome.svg">
+                        src="/img/Design%20sem%20nome.svg" alt="Logo Trocabook Rodapé">
 
             </a>
 

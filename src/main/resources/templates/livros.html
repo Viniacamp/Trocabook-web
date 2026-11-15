@@ -17,18 +17,18 @@
             <table class="cabecalho">
                 <tr>
                     <th id="cabecalhoelementos">
-                        <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                        <a href="/"><img src="/img/Design sem nome (7).svg" alt="Logo Trocabook"></a>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="pesquisa" placeholder="Pesquisar por título, autor ou tema...">
+                            <input type="text" id="pesquisa" placeholder="Pesquisar por título, autor ou tema..." aria-label="Pesquisar por título, autor ou tema">
                             <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                         </div>
 
                         <th:block sec:authorize="isAuthenticated()">
                             <div class="user-menu-container">
-                                <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                    <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
+                                <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()" aria-label="Menu do usuário">
+                                    <img th:src="${usuario.fotoPerfil}" class="user-menu-icon" alt="Foto de perfil">
                                     <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span></span>
-                                    <span class="arrow">▼</span>
+                                    <span class="arrow" aria-hidden="true">▼</span>
                                 </button>
 
                                 <div id="userDropdown" class="dropdown-content">
@@ -50,7 +50,7 @@
         </div>
     </header>
     <div vw class="enabled">
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
@@ -59,18 +59,21 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
     <h1 style="text-align: center; margin-top: 30px; margin-bottom: 40px;">Livros Disponíveis na Plataforma</h1>
 
     <div class="container-livros">
         <aside class="filtro-lateral">
-            <h3><i class="fas fa-filter"></i> Filtrar por</h3>
+            <h3><i class="fas fa-filter" aria-hidden="true"></i> Filtrar por</h3>
             <form id="formFiltroLivros" th:action="@{/livros}" method="get">
                 <input type="text" name="busca" th:value="${busca}"
                        placeholder="Título, autor ou tema..."
+                       aria-label="Filtrar por título, autor ou tema"
                        style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
 
-                <select name="livroTipo" class="categoriaNegociacao" onchange="exibirCarregamentoLivros(); this.form.submit();">
+                <select name="livroTipo" class="categoriaNegociacao" aria-label="Selecione o tipo de transação" onchange="exibirCarregamentoLivros(); this.form.submit();">
                     <option value="todos">-- Todos --</option>
                     <option value="TROCA" th:selected="${filtroLivros == 'TROCA'}">Troca</option>
                     <option value="VENDA" th:selected="${filtroLivros == 'VENDA'}">Venda</option>
@@ -78,7 +81,7 @@
                 </select>
 
                 <button type="submit" id="btnBuscarLivros" style="width: 100%; margin-top: 10px; padding: 8px; cursor: pointer;">
-                    <i class="fas fa-search"></i> Buscar
+                    <i class="fas fa-search" aria-hidden="true"></i> Buscar
                 </button>
             </form>
         </aside>
@@ -90,18 +93,18 @@
 
             <div th:each="anuncio : ${listaAnuncios}" class="livro-card">
 
-                <img th:src="${anuncio.capa}" class="capaLivros">
+                <img th:src="${anuncio.capa}" class="capaLivros" th:alt="'Capa do livro ' + ${anuncio.titulo}">
 
                 <p th:text="${anuncio.titulo}"></p>
 
                 <div class="info-usuario">
-                    <a th:href="@{'/destaque/' + ${anuncio.uidUsuario}}">
-                        <img th:src="${anuncio.fotoPerfil}" class="PerfilIcon">
+                    <a th:href="@{'/destaque/' + ${anuncio.uidUsuario}}" th:aria-label="'Ver perfil de ' + (${anuncio.uidUsuario == usuario.id ? 'Você' : anuncio.nomeUsuario})">
+                        <img th:src="${anuncio.fotoPerfil}" class="PerfilIcon" alt="Foto do usuário">
                         <span th:text="${anuncio.uidUsuario == usuario.id ? 'Você' : anuncio.nomeUsuario}"></span>
                     </a>
                 </div>
 
-                <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                <a th:href="@{'/anuncios/' + ${anuncio.id}}" th:aria-label="'Ver detalhes do livro ' + ${anuncio.titulo}">
                     <button type="button">Ver detalhes</button>
                 </a>
 
@@ -109,17 +112,17 @@
         </section>
     </div>
 
-    <!-- Overlay de carregamento ao pesquisar/filtrar na vitrine -->
-    <div id="loadingVitrine" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; align-items: center; justify-content: center;">
+    <!-- Overlay de carregamento acessível com aria-live e role="status" -->
+    <div id="loadingVitrine" role="status" aria-live="polite" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; align-items: center; justify-content: center;">
         <div style="background: #fff; padding: 28px 36px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-            <i class="fas fa-spinner fa-spin" style="font-size: 2.2rem; color: #7b61ff; margin-bottom: 12px;"></i>
+            <i class="fas fa-spinner fa-spin" aria-hidden="true" style="font-size: 2.2rem; color: #7b61ff; margin-bottom: 12px;"></i>
             <p style="margin: 0; font-weight: 600; color: #333;">Buscando livros disponíveis...</p>
         </div>
     </div>
 
     <footer>
         <div class="rodapenovo">
-            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/"><img src="/img/Design sem nome.svg" alt="Logo Trocabook rodapé"></a>
             <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
             <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>
@@ -134,7 +137,7 @@
         if (overlay) overlay.style.display = "flex";
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Buscando...';
         }
     }
 

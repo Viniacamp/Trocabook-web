@@ -21,7 +21,7 @@
 
                         <a href="/admin">
                             <img src="/img/Design sem nome (7).svg"
-                                 alt="Trocabook">
+                                 alt="Logo Trocabook Administração">
                         </a>
 
                         <span class="admin-header-title">
@@ -39,6 +39,20 @@
             </table>
         </div>
     </header>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
     <nav class="admin-nav">
         <a href="/admin">Início</a>
@@ -64,16 +78,20 @@
                         id="pesquisaUsuario"
                         class="admin-pesquisa"
                         placeholder="Pesquisar por nome ou e-mail..."
+                        aria-label="Pesquisar por nome ou e-mail"
                         autocomplete="off">
             </div>
 
             <div id="usuariosCarregando"
-                 class="admin-estado-listagem">
+                 class="admin-estado-listagem"
+                 role="status"
+                 aria-live="polite">
                 Carregando usuários...
             </div>
 
             <div id="usuariosErro"
                  class="admin-estado-listagem admin-estado-erro"
+                 role="alert"
                  hidden>
                 Não foi possível carregar os usuários.
             </div>
@@ -123,7 +141,7 @@
                         class="admin-modal-fechar"
                         data-fechar-modal="modalAlterarUsuario"
                         aria-label="Fechar">
-                    &times;
+                    ×
                 </button>
             </div>
 
@@ -143,7 +161,8 @@
                        class="admin-modal-input"
                        min="0"
                        max="5"
-                       step="0.1">
+                       step="0.1"
+                       aria-label="Avaliação do usuário">
 
                 <p class="admin-modal-ajuda">
                     Informe uma avaliação entre 0 e 5.
@@ -151,6 +170,7 @@
 
                 <p id="alterarUsuarioErro"
                    class="admin-modal-erro"
+                   role="alert"
                    hidden>
                 </p>
 
@@ -191,7 +211,7 @@
                         class="admin-modal-fechar"
                         data-fechar-modal="modalStatusUsuario"
                         aria-label="Fechar">
-                    &times;
+                    ×
                 </button>
             </div>
 
@@ -205,6 +225,7 @@
 
                 <p id="statusUsuarioErro"
                    class="admin-modal-erro"
+                   role="alert"
                    hidden>
                 </p>
 

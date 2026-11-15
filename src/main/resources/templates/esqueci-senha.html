@@ -28,12 +28,12 @@
 
         <div class="loginlogo">
             <a href="/">
-                <img src="/img/Design sem nome (4).svg">
+                <img src="/img/Design sem nome (4).svg" alt="Logo Trocabook Redefinição">
             </a>
         </div>
 
         <div vw class="enabled">
-            <div vw-access-button class="active"></div>
+            <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
 
             <div vw-plugin-wrapper>
                 <div class="vw-plugin-top-wrapper"></div>
@@ -45,6 +45,8 @@
         <script>
             new window.VLibras.Widget('https://vlibras.gov.br/app');
         </script>
+        <!-- Sienna Accessibility Widget -->
+        <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
         <form class="login" method="post" th:action="@{/esqueci-senha}">
 
@@ -60,12 +62,16 @@
             <div
                     th:if="${sucesso}"
                     class="alert alert-success"
+                    role="alert"
+                    aria-live="polite"
                     th:text="${sucesso}">
             </div>
 
             <div
                     th:if="${erro}"
                     class="alert alert-danger"
+                    role="alert"
+                    aria-live="polite"
                     th:text="${erro}">
             </div>
 
@@ -86,6 +92,8 @@
                             class="form-control"
                             id="email"
                             name="email"
+                            placeholder="Digite seu e-mail"
+                            aria-label="Digite seu e-mail"
                             required>
 
                 </div>
@@ -121,7 +129,7 @@
         <div class="rodapenovo">
 
             <a href="/">
-                <img src="/img/Design sem nome.svg">
+                <img src="/img/Design sem nome.svg" alt="Logo Trocabook Rodapé">
             </a>
 
             <a href="/sobreNos">

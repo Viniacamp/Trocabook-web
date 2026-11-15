@@ -23,18 +23,18 @@
         <div class="wrapper">
             <table class="cabecalho"><tr>
                 <th id="cabecalhoelementos">
-                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <a href="/"><img src="/img/Design sem nome (7).svg" alt="Logo Trocabook"></a>
                     <div class="autocomplete-wrapper">
-                        <input type="text" id="pesquisa" placeholder="Pesquisar">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar" aria-label="Pesquisar">
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                     </div>
 
                     <th:block sec:authorize="isAuthenticated()">
                         <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuarioLogado.fotoPerfil}" class="user-menu-icon">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()" aria-label="Menu do usuário">
+                                <img th:src="${usuarioLogado.fotoPerfil}" class="user-menu-icon" alt="Foto de perfil">
                                 <span>Olá, <span th:text="${usuarioLogado.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
+                                <span class="arrow" aria-hidden="true">▼</span></span>
                             </button>
 
                             <div id="userDropdown" class="dropdown-content">
@@ -56,7 +56,7 @@
     </header>
 
     <div vw class="enabled">
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
@@ -65,6 +65,8 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 </div>
 
 <main class="detalhes-anuncio-container">
@@ -87,7 +89,7 @@
                     title="Editar anúncio"
                     aria-label="Editar anúncio">
 
-                <i class="fas fa-pen"></i>
+                <i class="fas fa-pen" aria-hidden="true"></i>
 
             </button>
 
@@ -152,6 +154,7 @@
 
                     <select id="tipoNegociacaoEdicao"
                             name="tipoNegociacao"
+                            aria-label="Tipo de negociação"
                             required>
 
                         <option value="TROCA"
@@ -182,6 +185,7 @@
                     <textarea id="descricaoEdicao"
                               name="descricao"
                               maxlength="1000"
+                              aria-label="Editar descrição"
                               th:text="${anuncio.descricao()}"></textarea>
 
                 </div>
@@ -204,7 +208,7 @@
             </form>
             <!-- ANUNCIANTE -->
             <div class="detalhes-anunciante">
-                <a th:href="@{'/destaque/' + ${anuncio.uidUsuario()}}" class="detalhes-anunciante-link">
+                <a th:href="@{'/destaque/' + ${anuncio.uidUsuario()}}" class="detalhes-anunciante-link" th:aria-label="'Ver perfil do anunciante ' + ${anuncio.nomeUsuario()}">
                     <img th:src="${anuncio.fotoPerfil()}"
                          alt="Foto do anunciante"
                          class="detalhes-anunciante-foto">

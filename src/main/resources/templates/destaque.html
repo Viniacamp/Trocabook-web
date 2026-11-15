@@ -23,7 +23,7 @@
                     <th id="cabecalhoelementos">
 
                         <a href="/">
-                            <img src="/img/Design sem nome (7).svg">
+                            <img src="/img/Design sem nome (7).svg" alt="Logo Trocabook">
                         </a>
 
                         <div class="autocomplete-wrapper">
@@ -31,7 +31,8 @@
                                     type="text"
                                     style="width: 100%; height: 35px;"
                                     id="pesquisa"
-                                    placeholder="Pesquisar">
+                                    placeholder="Pesquisar"
+                                    aria-label="Pesquisar">
 
                             <div
                                     id="resultadosPesquisa"
@@ -39,27 +40,21 @@
                             </div>
                         </div>
                         <th:block sec:authorize="isAuthenticated()">
-                            <th:block sec:authorize="isAuthenticated()">
-                        <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuarioLogin.fotoPerfil}" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuarioLogin.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
-                            </button>
-                            
-                            <div id="userDropdown" class="dropdown-content">
-                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                                <a href="/chat">Chat</a>
-                                <hr class="divider">
-                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
-                            </div>
-                        </th:block>
+                            <div class="user-menu-container">
+                                <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()" aria-label="Menu do usuário">
+                                    <img th:src="${usuarioLogin.fotoPerfil}" class="user-menu-icon" alt="Foto de perfil">
+                                    <span>Olá, <span th:text="${usuarioLogin.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                    <span class="arrow" aria-hidden="true">▼</span></span>
+                                </button>
 
-                        <th:block sec:authorize="!isAuthenticated()">
-                        
-                        </div>
-                    </th:block>
+                                <div id="userDropdown" class="dropdown-content">
+                                    <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                    <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                    <a href="/chat">Chat</a>
+                                    <hr class="divider">
+                                    <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                                </div>
+                            </div>
                         </th:block>
 
                     </th>
@@ -73,10 +68,10 @@
 
     <div vw class="enabled">
 
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
 
         <div vw-plugin-wrapper>
-            <div vw-plugin-top-wrapper></div>
+            <div class="vw-plugin-top-wrapper"></div>
         </div>
 
     </div>
@@ -87,6 +82,8 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
 
     <div class="container-destaque">
@@ -96,7 +93,7 @@
             <img
                     class="PerfilFotoDestaque"
                     th:src="${usuarioDestaque.fotoPerfil}"
-                    alt="Foto do usuário">
+                    alt="Foto do usuário em destaque">
 
             <div class="info-usuario">
 
@@ -146,7 +143,7 @@
 
                 <div th:each="anuncio : ${livros}">
 
-                    <a th:href="@{'/anuncios/' + ${anuncio.id}}">
+                    <a th:href="@{'/anuncios/' + ${anuncio.id}}" th:aria-label="'Ver detalhes do livro ' + ${anuncio.titulo}">
                         <img
                                 class="capa-livro"
                                 th:src="${anuncio.capa}"
@@ -167,7 +164,7 @@
         <div class="rodapenovo">
 
             <a href="/">
-                <img src="/img/Design sem nome.svg">
+                <img src="/img/Design sem nome.svg" alt="Logo Trocabook Rodapé">
             </a>
 
             <a href="/sobreNos">

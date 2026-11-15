@@ -38,7 +38,7 @@
     <!-- VLibras -->
     <div vw class="enabled">
 
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
 
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
@@ -51,6 +51,8 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
 
     <style>
@@ -68,7 +70,7 @@
 
             <a href="/">
                 <img src="/img/Design sem nome (4).svg"
-                     alt="Logo Trocabook">
+                     alt="Logo Trocabook - Página de Login">
             </a>
 
         </div>
@@ -122,6 +124,7 @@
                            id="email"
                            name="email"
                            placeholder="Digite seu e-mail"
+                           aria-label="Digite seu e-mail"
                            autocomplete="email"
                            required>
 
@@ -147,6 +150,7 @@
                                id="senha"
                                name="senha"
                                placeholder="Digite sua senha"
+                               aria-label="Digite sua senha"
                                autocomplete="current-password"
                                required>
 
@@ -155,7 +159,7 @@
                                 id="togglePassword"
                                 aria-label="Mostrar senha">
 
-                            <i class="fa fa-eye"></i>
+                            <i class="fa fa-eye" aria-hidden="true"></i>
 
                         </button>
 
@@ -237,7 +241,7 @@
 
                 <a href="/">
                     <img src="/img/Design sem nome.svg"
-                         alt="Trocabook">
+                         alt="Logo Trocabook Rodapé">
                 </a>
 
 

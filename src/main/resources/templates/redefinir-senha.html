@@ -25,6 +25,20 @@
 
 <div class="container">
 
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
+
     <style>
 
         body {
@@ -46,7 +60,7 @@
 
                 <img
                         src="/img/Design sem nome (4).svg"
-                        alt="Logo Trocabook">
+                        alt="Logo Trocabook - Redefinição de Senha">
 
             </a>
 
@@ -62,7 +76,9 @@
 
             <div
                     id="mensagem"
-                    class="alert d-none">
+                    class="alert d-none"
+                    role="alert"
+                    aria-live="polite">
             </div>
 
             <div class="row mb-3">
@@ -81,6 +97,7 @@
                             type="password"
                             class="form-control"
                             id="senha"
+                            aria-label="Digite a nova senha"
                             required
                             minlength="6">
 
@@ -104,6 +121,7 @@
                             type="password"
                             class="form-control"
                             id="confirmaSenha"
+                            aria-label="Confirme a nova senha"
                             required
                             minlength="6">
 

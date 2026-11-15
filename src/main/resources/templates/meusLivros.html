@@ -17,27 +17,27 @@
             <table class="cabecalho">
                 <tr>
                     <th id="cabecalhoelementos">
-                        <a href="/"><img src="img/Design sem nome (7).svg"></a>
+                        <a href="/"><img src="img/Design sem nome (7).svg" alt="Logo Trocabook"></a>
                         <div class="autocomplete-wrapper">
-                            <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar">
+                            <input type="text" style="width: 100%; height: 35px;" id="pesquisa" placeholder="Pesquisar" aria-label="Pesquisar livros">
                             <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                         </div>
                         <th:block sec:authorize="isAuthenticated()">
-                        <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuarioLogado.fotoPerfil}" class="user-menu-icon">
-                                <span>Olá, <span th:text="${usuarioLogado.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
-                                <span class="arrow">▼</span>
-                            </button>
-                            
-                            <div id="userDropdown" class="dropdown-content">
-                                <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
-                                <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
-                                <a href="/chat">Chat</a>
-                                <hr class="divider">
-                                <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                            <div class="user-menu-container">
+                                <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()" aria-label="Menu do usuário">
+                                    <img th:src="${usuarioLogado.fotoPerfil}" class="user-menu-icon" alt="Foto de perfil">
+                                    <span>Olá, <span th:text="${usuarioLogado.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span>
+                                    <span class="arrow" aria-hidden="true">▼</span></span>
+                                </button>
+
+                                <div id="userDropdown" class="dropdown-content">
+                                    <a class="anunciar-livro4" href="/AnunciarLivro">Anunciar Livro</a>
+                                    <a class="meus-livros4" href="/MeusLivros">Meus Livros</a>
+                                    <a href="/chat">Chat</a>
+                                    <hr class="divider">
+                                    <button type="submit" id="deslogar" class="logout-btn">Sair</button>
+                                </div>
                             </div>
-                        </div>
                         </th:block>
                     </th>
                 </tr>
@@ -45,7 +45,7 @@
         </div>
     </header>
     <div vw class="enabled">
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
@@ -54,13 +54,15 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
     <h1 id="tituloMeusLivros">Meus Livros</h1>
 
     <aside class="filtro-lateral">
-        <h3><i class="fas fa-filter"></i> Filtrar por</h3>
+        <h3><i class="fas fa-filter" aria-hidden="true"></i> Filtrar por</h3>
         <form th:action="@{/MeusLivros}" method="get">
-            <select name="filtroAnuncio" class="categoriaNegociacao" onchange="this.form.submit()">
+            <select name="filtroAnuncio" class="categoriaNegociacao" aria-label="Filtrar tipo de anúncio" onchange="this.form.submit()">
                 <option th:value="todos">-- Todos --</option>
                 <option th:value="TROCA" th:selected="${filtroSelecionadoAnuncio == 'TROCA'}">Troca</option>
                 <option th:value="VENDA" th:selected="${filtroSelecionadoAnuncio == 'VENDA'}">Venda</option>
@@ -87,23 +89,24 @@
              th:if="${anuncios != null && !anuncios.isEmpty()}">
 
 
-                <div th:each="anuncio : ${anuncios}">
-                    <a th:href="@{'/anuncios/' + ${anuncio.id}}">
-                        <img th:src="${anuncio.capa}"
-                             class="capa-livro"
-                             alt="Capa do livro"/>
-                    </a>
-                </div>
+            <div th:each="anuncio : ${anuncios}">
+                <a th:href="@{'/anuncios/' + ${anuncio.id}}" th:aria-label="'Ver detalhes do livro ' + ${anuncio.titulo}">
+                    <img th:src="${anuncio.capa}"
+                         class="capa-livro"
+                         th:alt="'Capa do livro ' + ${anuncio.titulo}"/>
+                </a>
+            </div>
 
         </div>
 
     </div>
 
     <aside class="filtro-lateral">
-        <h3><i class="fas fa-filter"></i> Filtrar por</h3>
+        <h3><i class="fas fa-filter" aria-hidden="true"></i> Filtrar por</h3>
         <form th:action="@{/MeusLivros}" method="get">
             <select name="filtroT/V"
                     class="categoriaNegociacao"
+                    aria-label="Filtrar por troca ou venda"
                     onchange="this.form.submit()">
 
                 <option th:value="todos">-- Todos --</option>
@@ -142,7 +145,7 @@
 
             <div th:each="negociacao : ${negociacoes}">
 
-                <a th:href="@{'/negociacoes/' + ${negociacao.id}}">
+                <a th:href="@{'/negociacoes/' + ${negociacao.id}}" th:aria-label="'Ver detalhes da negociação do livro ' + ${negociacao.titulo}">
                     <img th:src="${negociacao.capa}"
                          class="capa-livro"
                          th:alt="'Capa de ' + ${negociacao.titulo}"/>
@@ -156,7 +159,7 @@
 
     <footer>
         <div class="rodapenovo">
-            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/"><img src="/img/Design sem nome.svg" alt="Logo Trocabook Rodapé"></a>
             <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo à reutilização</p></a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
             <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>

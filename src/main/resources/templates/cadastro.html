@@ -37,7 +37,7 @@
         <!-- VLibras -->
         <div vw class="enabled">
 
-            <div vw-access-button class="active"></div>
+            <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
 
             <div vw-plugin-wrapper>
 
@@ -52,6 +52,8 @@
         <script>
             new window.VLibras.Widget('https://vlibras.gov.br/app');
         </script>
+        <!-- Sienna Accessibility Widget -->
+        <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
 
         <!-- FORMULÁRIO -->
@@ -102,7 +104,8 @@
                             th:field="*{nmUsuario}"
                             class="form-control"
                             id="nmUsuario"
-                            placeholder="Digite seu nome">
+                            placeholder="Digite seu nome"
+                            aria-label="Digite seu nome">
 
                     <div
                             th:if="${#fields.hasErrors('nmUsuario')}"
@@ -132,7 +135,8 @@
                             th:field="*{email}"
                             class="form-control"
                             id="email"
-                            placeholder="Digite seu e-mail">
+                            placeholder="Digite seu e-mail"
+                            aria-label="Digite seu e-mail">
 
                     <div
                             th:if="${#fields.hasErrors('email')}"
@@ -165,6 +169,7 @@
                                 class="form-control"
                                 id="senha"
                                 placeholder="Digite sua senha"
+                                aria-label="Digite sua senha"
                                 aria-describedby="passwordHelpBlock">
 
                         <button type="button"
@@ -172,7 +177,7 @@
                                 id="togglePassword"
                                 aria-label="Mostrar senha">
 
-                            <i class="fa fa-eye"></i>
+                            <i class="fa fa-eye" aria-hidden="true"></i>
 
                         </button>
 
@@ -227,7 +232,8 @@
                             th:field="*{CPF}"
                             class="form-control"
                             id="CPF"
-                            placeholder="000.000.000-00">
+                            placeholder="000.000.000-00"
+                            aria-label="Digite seu CPF">
 
                     <div
                             th:if="${#fields.hasErrors('CPF')}"
@@ -261,7 +267,7 @@
                         <div id="upload-prompt"
                              class="upload-prompt">
 
-                            <i class="fa fa-upload fa-2x"></i>
+                            <i class="fa fa-upload fa-2x" aria-hidden="true"></i>
 
                             <span id="file-name"
                                   class="upload-file-name">
@@ -277,12 +283,13 @@
                             <img id="image-preview"
                                  class="upload-image-preview"
                                  src="#"
-                                 alt="Prévia da imagem">
+                                 alt="Prévia da imagem de perfil">
 
                             <span id="remove-photo-btn"
-                                  class="upload-remove-btn">
+                                  class="upload-remove-btn"
+                                  aria-label="Remover foto">
 
-                                <i class="fa fa-times"></i>
+                                <i class="fa fa-times" aria-hidden="true"></i>
 
                             </span>
 
@@ -295,6 +302,7 @@
                             id="fotoA"
                             name="fotoA"
                             accept="image/*"
+                            aria-label="Enviar arquivo de foto"
                             class="d-none">
 
                     <div
@@ -339,7 +347,7 @@
 
                 <img
                         src="/img/Design sem nome (7).svg"
-                        alt="Logo">
+                        alt="Logo Trocabook">
 
             </a>
 
@@ -368,7 +376,7 @@
         <div class="rodapenovo">
 
             <a href="/">
-                <img src="/img/Design sem nome.svg">
+                <img src="/img/Design sem nome.svg" alt="Logo Trocabook Rodapé">
             </a>
 
             <a href="/sobreNos">

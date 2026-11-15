@@ -19,17 +19,17 @@
         <div class="wrapper">
             <table class="cabecalho"><tr>
                 <th id="cabecalhoelementos">
-                    <a href="/"><img src="/img/Design sem nome (7).svg"></a>
+                    <a href="/"><img src="/img/Design sem nome (7).svg" alt="Logo Trocabook"></a>
                     <div class="autocomplete-wrapper">
-                        <input type="text" id="pesquisa" placeholder="Pesquisar por título, autor ou tema...">
+                        <input type="text" id="pesquisa" placeholder="Pesquisar por título, autor ou tema..." aria-label="Pesquisar por título, autor ou tema">
                         <div id="resultadosPesquisa" class="sugestoes-autocomplete"></div>
                     </div>
                     <th:block sec:authorize="isAuthenticated()">
                         <div class="user-menu-container">
-                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()">
-                                <img th:src="${usuario.fotoPerfil}" class="user-menu-icon">
+                            <button id="userMenuBtn" class="user-menu-btn" onclick="toggleMenu()" aria-label="Menu do usuário">
+                                <img th:src="${usuario.fotoPerfil}" class="user-menu-icon" alt="Foto de perfil">
                                 <span>Olá, <span th:text="${usuario.nome}" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);"></span></span>
-                                <span class="arrow">▼</span>
+                                <span class="arrow" aria-hidden="true">▼</span>
                             </button>
 
                             <div id="userDropdown" class="dropdown-content">
@@ -51,7 +51,7 @@
         </div>
     </header>
     <div vw class="enabled">
-        <div vw-access-button class="active"></div>
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
@@ -60,6 +60,9 @@
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
+
     <div class="paganunciar">
         <div class="anuncio">
             <h1>Crie o seu anúncio</h1>
@@ -76,7 +79,7 @@
                             role="button"
                             tabindex="0">
 
-                        <i class="fas fa-search"></i>
+                        <i class="fas fa-search" aria-hidden="true"></i>
 
                         <h2>Buscar automaticamente</h2>
 
@@ -93,7 +96,7 @@
                             role="button"
                             tabindex="0">
 
-                        <i class="fas fa-pen"></i>
+                        <i class="fas fa-pen" aria-hidden="true"></i>
 
                         <h2>Preencher manualmente</h2>
 
@@ -116,7 +119,8 @@
                 <input
                         type="text"
                         id="tituloBuscado"
-                        placeholder="Digite o título ou descreva o livro (ex: suspense policial, clássico grego...)">
+                        placeholder="Digite o título ou descreva o livro (ex: suspense policial, clássico grego...)"
+                        aria-label="Pesquisar título ou descrição do livro">
 
                 <button
                         id="buscarLivro"
@@ -165,6 +169,7 @@
                                 id="capaLivro"
                                 class="capaLivro"
                                 th:src="${anuncioRequest.urlImagem != null ? anuncioRequest.urlImagem : ''}"
+                                alt="Capa do livro buscada automaticamente"
                                 style="display: none;">
 
                         <input
@@ -187,7 +192,7 @@
                                     id="upload-prompt-livro"
                                     class="upload-prompt">
 
-                                <i class="fa fa-upload fa-2x"></i>
+                                <i class="fa fa-upload fa-2x" aria-hidden="true"></i>
 
                                 <span class="upload-file-name">
                     Selecione ou arraste a capa aqui
@@ -209,9 +214,10 @@
                                 <span
                                         id="remove-image-btn"
                                         class="upload-remove-btn"
-                                        title="Remover capa">
+                                        title="Remover capa"
+                                        aria-label="Remover capa">
 
-                    <i class="fa fa-times"></i>
+                    <i class="fa fa-times" aria-hidden="true"></i>
 
                 </span>
 
@@ -224,13 +230,14 @@
                                 id="imagem"
                                 name="imagem"
                                 accept="image/jpeg,image/png,image/gif"
+                                aria-label="Enviar imagem da capa"
                                 style="display: none;">
 
                         <p id="erroFoto" class="text-danger" style="display: none;"></p>
 
                     </div>
                     <label for="titulo">Título:</label>
-                    <input type="text" id="titulo" th:field="*{titulo}" placeholder="Título do livro" readonly>
+                    <input type="text" id="titulo" th:field="*{titulo}" placeholder="Título do livro" aria-label="Título do livro" readonly>
                     <p id="erroTitulo" class="text-danger" style="display: none;"></p>
                     <div id="dataPublicacaoContainer">
 
@@ -242,6 +249,7 @@
                                 type="date"
                                 id="dataPublicacao"
                                 th:field="*{dataPublicacao}"
+                                aria-label="Data de publicação"
                                 readonly>
 
                     </div>
@@ -256,14 +264,15 @@
                             <input
                                     type="text"
                                     id="novoAutorAutomatico"
-                                    placeholder="Adicionar outro autor">
+                                    placeholder="Adicionar outro autor"
+                                    aria-label="Adicionar outro autor">
 
                             <button
                                     type="button"
                                     id="btnAdicionarAutorAutomatico"
                                     class="btn-adicionar-dado">
 
-                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-plus" aria-hidden="true"></i>
                                 Adicionar autor
 
                             </button>
@@ -280,7 +289,8 @@
                         <input
                                 type="text"
                                 id="autoresManual"
-                                placeholder="Ex.: Machado de Assis, José de Alencar">
+                                placeholder="Ex.: Machado de Assis, José de Alencar"
+                                aria-label="Autores do livro">
 
                         <div id="autoresManuaisHidden"></div>
                     </div>
@@ -296,7 +306,7 @@
                                 id="btnComplementarCategorias"
                                 class="btn-selecionar-categorias">
 
-                            <i class="fas fa-list"></i>
+                            <i class="fas fa-list" aria-hidden="true"></i>
                             Adicionar categorias
 
                         </button>
@@ -320,7 +330,7 @@
                                 id="btnSelecionarCategorias"
                                 class="btn-selecionar-categorias">
 
-                            <i class="fas fa-list"></i>
+                            <i class="fas fa-list" aria-hidden="true"></i>
                             Selecionar categorias
 
                         </button>
@@ -334,7 +344,7 @@
 
 
                     <label for="tipoNegociacao">Tipo de negociação:</label>
-                    <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" required>
+                    <select id="tipoNegociacao" style="font-family: manrope;" th:field="*{tipoNegociacao}" aria-label="Tipo de negociação" required>
                         <option value="">Selecione...</option>
                         <option value="TROCA">Troca</option>
                         <option value="VENDA">Venda</option>
@@ -349,14 +359,15 @@
                                 id="btnGerarDescricaoIa"
                                 class="btn-selecionar-categorias"
                                 style="margin: 0; font-size: 0.85rem; padding: 6px 12px;">
-                            <i class="fas fa-magic"></i>
+                            <i class="fas fa-magic" aria-hidden="true"></i>
                             Gerar com IA
                         </button>
                     </div>
                     <textarea
                             id="descricao"
                             th:field="*{descricao}"
-                            placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir">
+                            placeholder="Descreva o livro, estado de conservação e outros detalhes que queira incluir"
+                            aria-label="Descrição do livro">
                     </textarea>
                     <p id="erroIa" class="text-danger" style="display: none;"></p>
 
@@ -384,7 +395,7 @@
                                 class="modal-fechar"
                                 aria-label="Fechar">
 
-                            <i class="fas fa-times"></i>
+                            <i class="fas fa-times" aria-hidden="true"></i>
 
                         </button>
 
@@ -457,7 +468,8 @@
                             type="text"
                             id="novaCategoria"
                             maxlength="60"
-                            placeholder="Digite o nome da categoria">
+                            placeholder="Digite o nome da categoria"
+                            aria-label="Nome da nova categoria">
 
                     <div class="modal-nova-categoria-acoes">
 
@@ -480,7 +492,7 @@
             </div>
 
 
-            <div id="modalLoading" class="modal-loading" style="display: none;">
+            <div id="modalLoading" role="status" aria-live="polite" class="modal-loading" style="display: none;">
                 <div class="modal-loading-card">
                     <div class="window-bar">
                         <span class="dot red"></span>
@@ -492,7 +504,7 @@
 
                     <div class="loading-body">
                         <div class="spinner-container">
-                            <i class="fas fa-hourglass-half spinning-icon"></i>
+                            <i class="fas fa-hourglass-half spinning-icon" aria-hidden="true"></i>
                             <div class="spinning-circle"></div>
                         </div>
                         <p>Por favor aguarde um momento<br>enquanto a busca é concluída</p>
@@ -502,9 +514,9 @@
 
             </div>
 
-            <div id="snackbarAnuncio" class="snackbar-container" style="display: none;">
+            <div id="snackbarAnuncio" role="status" aria-live="polite" class="snackbar-container" style="display: none;">
                 <div class="snackbar-content">
-                    <i class="fas fa-check-circle snackbar-icon"></i>
+                    <i class="fas fa-check-circle snackbar-icon" aria-hidden="true"></i>
                     <span>Anúncio criado com sucesso!</span>
                     <a href="/MeusLivros" class="btn-snackbar-action">Ver meus livros</a>
                 </div>
@@ -513,7 +525,7 @@
     </div>
     <footer>
         <div class="rodapenovo">
-            <a href="/"><img src="/img/Design sem nome.svg"></a>
+            <a href="/"><img src="/img/Design sem nome.svg" alt="Logo Trocabook rodapé"></a>
             <a href="/sobreNos"><p>Conheça nosso incrível projeto <br>de incentivo a reutilização</p></a>
             <a href="/ajuda"><p>Central de ajuda</p></a>
             <small>© 2026 Sistema Trocabook<br>Todos os direitos reservados</small>

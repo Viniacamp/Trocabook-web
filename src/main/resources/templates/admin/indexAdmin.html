@@ -21,7 +21,7 @@
 
                         <a href="/admin">
                             <img src="/img/Design sem nome (7).svg"
-                                 alt="Trocabook">
+                                 alt="Logo Trocabook Administração">
                         </a>
 
                         <span class="admin-header-title">
@@ -40,6 +40,20 @@
         </div>
     </header>
 
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
+
     <nav class="admin-nav">
         <a href="/admin">Início</a>
         <a href="/admin/usuarios">Usuários</a>
@@ -57,7 +71,7 @@
         <section class="admin-acoes">
 
             <article class="admin-card">
-                <div class="admin-card-icon">
+                <div class="admin-card-icon" aria-hidden="true">
                     👥
                 </div>
 
@@ -75,7 +89,7 @@
             </article>
 
             <article class="admin-card">
-                <div class="admin-card-icon">
+                <div class="admin-card-icon" aria-hidden="true">
                     📊
                 </div>
 
@@ -93,7 +107,7 @@
             </article>
 
             <article class="admin-card">
-                <div class="admin-card-icon">
+                <div class="admin-card-icon" aria-hidden="true">
                     ❓
                 </div>
 

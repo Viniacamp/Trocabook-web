@@ -50,7 +50,7 @@
                     <th id="cabecalhoelementos">
 
                         <a href="/">
-                            <img src="/img/Design%20sem%20nome%20(7).svg">
+                            <img src="/img/Design%20sem%20nome%20(7).svg" alt="Logo Trocabook">
                         </a>
 
 
@@ -60,7 +60,8 @@
                                     type="text"
                                     style="width: 100%; height: 35px;"
                                     id="pesquisa"
-                                    placeholder="Pesquisar">
+                                    placeholder="Pesquisar"
+                                    aria-label="Pesquisar">
 
                             <div
                                     id="resultadosPesquisa"
@@ -81,11 +82,13 @@
                                 <button
                                         id="userMenuBtn"
                                         class="user-menu-btn"
-                                        onclick="toggleMenu()">
+                                        onclick="toggleMenu()"
+                                        aria-label="Menu do usuário">
 
                                     <img
                                             th:src="${usuarioLogado.fotoPerfil}"
-                                            class="user-menu-icon">
+                                            class="user-menu-icon"
+                                            alt="Foto de perfil">
 
                                     <span>
 
@@ -98,7 +101,7 @@
 
                                     </span>
 
-                                    <span class="arrow">
+                                    <span class="arrow" aria-hidden="true">
                                         ▼
                                     </span>
 
@@ -156,6 +159,10 @@
     <!-- ===================================================== -->
 
     <div vw class="enabled">
+        <div vw-access-button class="active" aria-label="Conteúdo em Libras (VLibras)"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
     </div>
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
@@ -167,6 +174,8 @@
         );
 
     </script>
+    <!-- Sienna Accessibility Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna.min.js" defer></script>
 
 
     <!-- ===================================================== -->
@@ -194,7 +203,8 @@
                 <input
                         type="text"
                         id="pesquisaConversas"
-                        placeholder="Pesquisar conversas">
+                        placeholder="Pesquisar conversas"
+                        aria-label="Pesquisar conversas">
 
             </div>
 
@@ -222,7 +232,7 @@
 
                     <img
                             th:src="${conversa.fotoDestinatario}"
-                            alt="Usuário"
+                            alt="Avatar do usuário"
                             class="chat-avatar">
 
 
@@ -283,7 +293,7 @@
 
                 <div class="chat-placeholder-content">
 
-                    <i class="fa-solid fa-comments"></i>
+                    <i class="fa-solid fa-comments" aria-hidden="true"></i>
 
                     <h2>
                         Seu chat
@@ -339,7 +349,7 @@
                     class="chat-info"
                     style="display: none;">
 
-                <i class="fa-solid fa-handshake"></i>
+                <i class="fa-solid fa-handshake" aria-hidden="true"></i>
 
                 <span>
                     Lembre-se de trocar mensagens com respeito e cordialidade.
@@ -398,10 +408,11 @@
                         type="text"
                         id="conteudo"
                         placeholder="Mensagem"
+                        aria-label="Digite sua mensagem"
                         autocomplete="off">
 
 
-                <button type="submit">
+                <button type="submit" aria-label="Enviar mensagem">
 
                     <img
                             src="/img/aviao.png"
@@ -427,7 +438,7 @@
             <img
                     id="bookCapa"
                     src=""
-                    alt="Capa do livro">
+                    alt="Capa do livro em negociação">
 
 
             <p>
@@ -481,12 +492,13 @@
 
             <button
                     type="button"
-                    class="modal-troca-fechar">
-                &times;
+                    class="modal-troca-fechar"
+                    aria-label="Fechar">
+                ×
             </button>
 
             <div class="modal-troca-icone">
-                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-book" aria-hidden="true"></i>
             </div>
 
             <h3>
@@ -505,7 +517,7 @@
                         id="btnSelecionarLivroAnunciado"
                         class="btn-negociacao">
 
-                    <i class="fa-solid fa-check"></i>
+                    <i class="fa-solid fa-check" aria-hidden="true"></i>
                     Sim
                 </button>
 
@@ -514,7 +526,7 @@
                         id="btnSelecionarLivroNaoAnunciado"
                         class="btn-negociacao btn-secundario">
 
-                    <i class="fa-solid fa-pen"></i>
+                    <i class="fa-solid fa-pen" aria-hidden="true"></i>
                     Não
                 </button>
 
@@ -538,8 +550,9 @@
 
             <button
                     type="button"
-                    class="modal-troca-fechar">
-                &times;
+                    class="modal-troca-fechar"
+                    aria-label="Fechar">
+                ×
             </button>
 
             <h3>
@@ -562,7 +575,8 @@
                     id="descricaoOfertaAnunciada"
                     class="descricao-oferta"
                     maxlength="500"
-                    placeholder="Ex.: livro em ótimo estado.">
+                    placeholder="Ex.: livro em ótimo estado."
+                    aria-label="Observação sobre a oferta">
         </textarea>
 
             <div class="modal-troca-acoes">
@@ -601,8 +615,9 @@
 
             <button
                     type="button"
-                    class="modal-troca-fechar">
-                &times;
+                    class="modal-troca-fechar"
+                    aria-label="Fechar">
+                ×
             </button>
 
             <h3>
@@ -618,7 +633,8 @@
                     id="descricaoOfertaManual"
                     class="descricao-oferta"
                     maxlength="500"
-                    placeholder="Ex.: O Hobbit, J. R. R. Tolkien, edição de 2019, em bom estado.">
+                    placeholder="Ex.: O Hobbit, J. R. R. Tolkien, edição de 2019, em bom estado."
+                    aria-label="Descrição manual do livro oferecido">
         </textarea>
 
             <small
@@ -662,12 +678,13 @@
 
             <button
                     type="button"
-                    class="modal-troca-fechar">
-                &times;
+                    class="modal-troca-fechar"
+                    aria-label="Fechar">
+                ×
             </button>
 
             <div class="modal-troca-icone">
-                <i class="fa-solid fa-pen"></i>
+                <i class="fa-solid fa-pen" aria-hidden="true"></i>
             </div>
 
             <h3>
@@ -678,7 +695,8 @@
                     id="inputEditarMensagem"
                     class="descricao-oferta"
                     maxlength="1000"
-                    placeholder="Digite a nova mensagem...">
+                    placeholder="Digite a nova mensagem..."
+                    aria-label="Editar conteúdo da mensagem">
             </textarea>
 
             <div class="modal-troca-acoes">
@@ -717,12 +735,13 @@
 
             <button
                     type="button"
-                    class="modal-troca-fechar">
-                &times;
+                    class="modal-troca-fechar"
+                    aria-label="Fechar">
+                ×
             </button>
 
             <div class="modal-troca-icone" style="background: #fff5f5; color: #c94c4c;">
-                <i class="fa-solid fa-trash"></i>
+                <i class="fa-solid fa-trash" aria-hidden="true"></i>
             </div>
 
             <h3>
@@ -764,10 +783,10 @@
 
         <div class="rodapenovo">
 
-            <a href="/static">
+            <a href="/">
 
                 <img
-                        src="/img/Design%20sem%20nome.svg">
+                        src="/img/Design%20sem%20nome.svg" alt="Logo Trocabook Rodapé">
 
             </a>
 
