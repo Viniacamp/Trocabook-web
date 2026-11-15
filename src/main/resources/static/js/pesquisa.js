@@ -17,7 +17,23 @@ if (campoPesquisa && div) {
             return;
         }
 
-        // Feedback visual imediato enquanto aguarda o debounce e a consulta da IA
+        // Verifica de forma segura se o botão de login existe em qualquer parte da página
+        const botaoLogin = document.getElementById('loginbotao') || document.querySelector('a[href="/login"]');
+
+        if (botaoLogin) {
+            div.style.display = "block";
+            div.innerHTML = `
+                <div style="padding: 16px; text-align: center; color: #333; font-size: 14px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                    <p style="margin: 0 0 10px 0; font-weight: 600; color: #1e293b;">🔒 Faça login para pesquisar e ver os livros disponíveis.</p>
+                    <a href="/login" style="display: inline-block; background: #007BFF; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px;">
+                        Fazer login agora
+                    </a>
+                </div>
+            `;
+            return; // Para aqui e não chama o servidor!
+        }
+
+        // Feedback visual imediato enquanto aguarda o debounce
         div.style.display = "block";
         div.innerHTML = `
             <p style="padding: 12px; text-align: center; color: #6c63ff; font-weight: 500; margin: 0;">
@@ -47,8 +63,10 @@ if (campoPesquisa && div) {
 function pesquisar(titulo) {
     fetch(`/pesquisar?titulo=${encodeURIComponent(titulo)}`)
         .then(res => {
-            if (!res.ok) {
-                throw new Error("Falha ao encontrar livro");
+            // Se o servidor retornar redirecionamento ou HTML (por falta de autenticação)
+            const contentType = res.headers.get("content-type");
+            if (!res.ok || (contentType && contentType.includes("text/html"))) {
+                throw new Error("Faça login para continuar.");
             }
             return res.json();
         })
@@ -57,7 +75,7 @@ function pesquisar(titulo) {
             div.style.display = "block";
 
             if (anuncios.length === 0) {
-                div.innerHTML = "<p>Nenhum livro encontrado</p>";
+                div.innerHTML = "<p style='padding: 12px; text-align: center; color: #666; margin: 0;'>Nenhum livro encontrado</p>";
             } else {
                 clearTimeout(timeoutInteracao);
 
@@ -74,7 +92,7 @@ function pesquisar(titulo) {
                     const capa = document.createElement("img");
                     capa.src = anuncio.capa;
                     capa.className = "livro-capa";
-                    capa.alt = "Capa do livro";
+                    capa.alt = "Capa do livro " + anuncio.titulo;
 
                     const texto = document.createElement("p");
                     texto.innerText = anuncio.titulo;
@@ -94,20 +112,19 @@ function pesquisar(titulo) {
         })
         .catch(erro => {
             div.style.display = "block";
-            div.innerHTML = `<p>Ocorreu um erro ao buscar o livro: ${erro.message}</p>`;
+            div.innerHTML = `
+                <div style="padding: 16px; text-align: center; color: #333; font-size: 14px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                    <p style="margin: 0 0 10px 0; font-weight: 600; color: #dc2626;">🔒 Faça login para pesquisar e ver os livros.</p>
+                    <a href="/login" style="display: inline-block; background: #007BFF; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px;">
+                        Fazer login agora
+                    </a>
+                </div>
+            `;
         });
 }
 
 function registrarInteracaoPesquisa(termo) {
     fetch(`/pesquisar/interacao?termo=${encodeURIComponent(termo)}`, {
         method: "POST"
-    })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`Erro ${res.status} ao registrar interação`);
-            }
-        })
-        .catch(erro => {
-            console.error("Erro ao registrar interação de pesquisa:", erro);
-        });
+    }).catch(() => {});
 }
